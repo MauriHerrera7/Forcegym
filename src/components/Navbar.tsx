@@ -3,8 +3,6 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import Button from '@/components/Button'
-import Container from '@/components/Container'
 import { usePathname } from 'next/navigation'
 
 interface NavbarProps {
@@ -25,31 +23,32 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn = false }) => {
 
   return (
     <nav
-      className={[
-        'fixed top-0 left-0 right-0 z-50 transition-colors duration-300',
-        scrolled
-          ? 'bg-black/70 backdrop-blur-md shadow-[0_8px_30px_rgba(0,0,0,0.25)]'
-          : 'bg-transparent backdrop-blur-0 shadow-none'
-      ].join(' ')}
+      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+      style={{
+        backgroundColor: scrolled ? 'rgba(17, 24, 39, 0.95)' : 'transparent',
+        backdropFilter: scrolled ? 'blur(12px)' : 'none',
+        boxShadow: scrolled ? '0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)' : 'none'
+      }}
     >
-      <Container>
-  <div className="grid grid-cols-3 items-center h-16 lg:h-28">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between" style={{ height: '85px' }}>
           {/* Logo (left) */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center">
               <Image
-                src="https://res.cloudinary.com/dry6dvzoj/image/upload/v1757705905/Forcegym_nwhlvh.png"
+                src="https://res.cloudinary.com/dry6dvzoj/image/upload/v1757729690/Forcegym_1_nxwdfw.png"
                 alt="Forcegym"
-                width={96}
-                height={96}
-                className="rounded-lg size-16 md:size-20 lg:size-24 hover:scale-110 transition-transform duration-200 drop-shadow-[0_4px_12px_rgba(0,0,0,0.45)]"
+                width={220}
+                height={70}
+                className="transition-all duration-500 hover:brightness-110"
+                style={{ height: '125px', width: 'auto', filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3))' }}
               />
             </Link>
           </div>
 
           {/* Centered Navigation (desktop) */}
-          <div className="hidden md:flex justify-center">
-            <nav className="flex items-center gap-10">
+          <div className="hidden md:flex items-center justify-center flex-1">
+            <nav className="flex items-center" style={{ gap: '48px' }}>
               {[
                 { href: '/', label: 'Inicio' },
                 { href: '/subscripcion', label: 'Planes' },
@@ -60,22 +59,35 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn = false }) => {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={[
-                      'relative group font-semibold px-2 py-1',
-                      active ? 'text-white' : 'text-white/80 hover:text-white'
-                    ].join(' ')}
+                    className="relative font-bold px-6 py-3 transition-all duration-400 rounded-lg backdrop-blur-sm"
+                    style={{
+                      fontSize: '17px',
+                      color: active ? '#ef4444' : '#ffffff',
+                      textShadow: '0 2px 4px rgba(0, 0, 0, 0.4)',
+                      letterSpacing: '0.5px',
+                      background: 'transparent',
+                      border: '1px solid transparent'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!active) {
+                        e.currentTarget.style.color = '#ef4444'
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                        e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.3)'
+                        e.currentTarget.style.transform = 'translateY(-3px)'
+                        e.currentTarget.style.boxShadow = '0 8px 25px rgba(239, 68, 68, 0.15)'
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!active) {
+                        e.currentTarget.style.color = '#ffffff'
+                        e.currentTarget.style.background = 'transparent'
+                        e.currentTarget.style.borderColor = 'transparent'
+                        e.currentTarget.style.transform = 'translateY(0)'
+                        e.currentTarget.style.boxShadow = 'none'
+                      }
+                    }}
                   >
-                    <span className="px-1">
-                      {item.label}
-                      <span
-                        className={[
-                          'absolute left-0 -bottom-1 h-[2px] w-full origin-left scale-x-0',
-                          'bg-[linear-gradient(90deg,rgba(239,68,68,0.9),rgba(249,115,22,0.9))]',
-                          'transition-transform duration-300 group-hover:scale-x-100',
-                          active ? 'scale-x-100' : ''
-                        ].join(' ')}
-                      />
-                    </span>
+                    {item.label}
                   </Link>
                 )
               })}
@@ -83,40 +95,106 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn = false }) => {
           </div>
 
           {/* Actions (right) */}
-          <div className="hidden md:flex justify-end items-center gap-5">
+          <div className="hidden md:flex items-center" style={{ gap: '20px' }}>
             {isLoggedIn ? (
               <Link
                 href="/profile"
-                className="text-white/90 hover:text-white transition-colors duration-200 font-medium"
+                className="font-semibold transition-all duration-400 px-5 py-2 rounded-lg backdrop-blur-sm"
+                style={{ 
+                  fontSize: '16px',
+                  color: '#ffffff',
+                  textShadow: '0 2px 4px rgba(0, 0, 0, 0.4)',
+                  letterSpacing: '0.3px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = '#ef4444'
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                  e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.4)'
+                  e.currentTarget.style.transform = 'scale(1.05)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = '#ffffff'
+                  e.currentTarget.style.background = 'transparent'
+                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'
+                  e.currentTarget.style.transform = 'scale(1)'
+                }}
               >
-                Perfil
+                Mi Perfil
               </Link>
             ) : (
               <>
                 <Link
                   href="/auth"
-                  className="text-white/80 hover:text-white transition-colors duration-200 font-medium px-3 py-2 rounded-none bg-white/0 hover:bg-white/10"
+                  className="font-medium px-5 py-2 transition-all duration-300 rounded-md"
+                  style={{ 
+                    fontSize: '15px',
+                    color: '#ffffff',
+                    letterSpacing: '0.2px',
+                    background: 'transparent'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = '#ef4444'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = '#ffffff'
+                  }}
                 >
                   Iniciar Sesión
                 </Link>
-                <Link href="/auth?mode=register" className="inline-flex">
-                  <Button size="md" variant="primary" className="px-8 rounded-xl">Únete</Button>
+                <Link 
+                  href="/auth?mode=register" 
+                  className="font-medium px-5 py-2 transition-all duration-300 rounded-md flex items-center gap-2"
+                  style={{
+                    fontSize: '15px',
+                    background: '#ef4444',
+                    color: '#ffffff',
+                    letterSpacing: '0.2px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = '#dc2626'
+                    e.currentTarget.style.transform = 'translateY(-1px)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = '#ef4444'
+                    e.currentTarget.style.transform = 'translateY(0)'
+                  }}
+                >
+                  Únete
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
                 </Link>
               </>
             )}
           </div>
 
-          {/* Mobile menu button (right-most cell overlaid) */}
-          <div className="md:hidden col-start-3 justify-self-end">
+          {/* Mobile menu button */}
+          <div className="md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-white hover:text-white/90 focus:outline-none transition-colors duration-200 p-2 rounded-md bg-white/0 hover:bg-white/10"
+              className="p-3 transition-all duration-400 rounded-lg backdrop-blur-sm"
+              style={{ 
+                color: '#ffffff',
+                border: '2px solid rgba(255, 255, 255, 0.3)',
+                background: 'rgba(0, 0, 0, 0.2)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = '#ef4444'
+                e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'
+                e.currentTarget.style.transform = 'scale(1.05)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)'
+                e.currentTarget.style.background = 'rgba(0, 0, 0, 0.2)'
+                e.currentTarget.style.transform = 'scale(1)'
+              }}
             >
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 {isMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                 )}
               </svg>
             </button>
@@ -125,60 +203,139 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn = false }) => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden mt-2">
-            <div className="px-3 py-3 space-y-2 bg-black/70 backdrop-blur-md rounded-xl border border-red-500/20">
-              <Link
-                href="/"
-                className="block text-white/90 hover:text-white px-3 py-2 transition-colors duration-200 font-medium rounded-lg hover:bg-red-500/10"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Inicio
-              </Link>
-              <Link
-                href="/subscripcion"
-                className="block text-white/90 hover:text-white px-3 py-2 transition-colors duration-200 font-medium rounded-lg hover:bg-red-500/10"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Planes
-              </Link>
-              <Link
-                href="/contact"
-                className="block text-white/90 hover:text-white px-3 py-2 transition-colors duration-200 font-medium rounded-lg hover:bg-red-500/10"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Contacto
-              </Link>
+          <div className="md:hidden">
+            <div 
+              className="px-6 pt-6 pb-8 rounded-xl mt-4 backdrop-blur-lg"
+              style={{
+                background: 'rgba(0, 0, 0, 0.9)',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                gap: '12px',
+                display: 'flex',
+                flexDirection: 'column',
+                boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)'
+              }}
+            >
+              {[
+                { href: '/', label: 'Inicio' },
+                { href: '/subscripcion', label: 'Planes' },
+                { href: '/contact', label: 'Contacto' }
+              ].map((item) => {
+                const active = pathname === item.href
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="font-semibold px-5 py-4 rounded-lg transition-all duration-400 backdrop-blur-sm"
+                    style={{ 
+                      color: active ? '#ef4444' : '#ffffff',
+                      textShadow: '0 2px 4px rgba(0, 0, 0, 0.5)',
+                      fontSize: '17px',
+                      letterSpacing: '0.3px',
+                      background: 'transparent',
+                      border: '1px solid transparent'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!active) {
+                        e.currentTarget.style.color = '#ef4444'
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                        e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.3)'
+                        e.currentTarget.style.transform = 'translateX(8px)'
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!active) {
+                        e.currentTarget.style.color = '#ffffff'
+                        e.currentTarget.style.background = 'transparent'
+                        e.currentTarget.style.borderColor = 'transparent'
+                        e.currentTarget.style.transform = 'translateX(0)'
+                      }
+                    }}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+                )
+              })}
 
               {isLoggedIn ? (
                 <Link
                   href="/profile"
-                  className="block text-white/90 hover:text-white px-3 py-2 transition-colors duration-200 font-medium rounded-lg hover:bg-white/10"
+                  className="font-semibold px-5 py-4 rounded-lg transition-all duration-400 backdrop-blur-sm mt-4"
+                  style={{ 
+                    color: '#ffffff',
+                    border: '2px solid rgba(255, 255, 255, 0.3)',
+                    textShadow: '0 2px 4px rgba(0, 0, 0, 0.5)',
+                    fontSize: '17px',
+                    letterSpacing: '0.3px',
+                    textAlign: 'center'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = '#ef4444'
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                    e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.4)'
+                    e.currentTarget.style.transform = 'scale(1.02)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = '#ffffff'
+                    e.currentTarget.style.background = 'transparent'
+                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)'
+                    e.currentTarget.style.transform = 'scale(1)'
+                  }}
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Perfil
+                  Mi Perfil
                 </Link>
               ) : (
-                <div className="grid grid-cols-1 gap-2">
+                <div style={{ paddingTop: '20px', gap: '16px', display: 'flex', flexDirection: 'column' }}>
                   <Link
                     href="/auth"
-                    className="block text-white/90 hover:text-white px-3 py-2 transition-colors duration-200 font-medium rounded-none text-center bg-white/0 hover:bg-red-500/10 border border-white/10"
+                    className="font-medium px-5 py-3 rounded-md transition-all duration-300 text-center"
+                    style={{ 
+                      color: '#ffffff',
+                      fontSize: '16px',
+                      letterSpacing: '0.2px',
+                      background: 'transparent'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = '#ef4444'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = '#ffffff'
+                    }}
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Iniciar Sesión
                   </Link>
-                  <Link href="/auth?mode=register" className="inline-flex">
-                    <Button size="md" className="w-full justify-center">Únete</Button>
+                  <Link 
+                    href="/auth?mode=register"
+                    className="font-medium px-5 py-3 rounded-md transition-all duration-300 text-center flex items-center justify-center gap-2"
+                    style={{
+                      fontSize: '16px',
+                      background: '#ef4444',
+                      color: '#ffffff',
+                      letterSpacing: '0.2px'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = '#dc2626'
+                      e.currentTarget.style.transform = 'translateY(-1px)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = '#ef4444'
+                      e.currentTarget.style.transform = 'translateY(0)'
+                    }}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Únete
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
                   </Link>
                 </div>
               )}
             </div>
           </div>
         )}
-  </Container>
-      {/* Gradient hairline (only when scrolled) */}
-      {scrolled && (
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-red-500/40 to-transparent" />
-      )}
+      </div>
     </nav>
   )
 }
