@@ -125,7 +125,7 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn = false }) => {
             ) : (
               <>
                 <Link
-                  href="/auth"
+                  href="/auth/login"
                   className="font-medium px-5 py-2 transition-all duration-300 rounded-md"
                   style={{ 
                     fontSize: '15px',
@@ -143,7 +143,7 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn = false }) => {
                   Iniciar Sesión
                 </Link>
                 <Link 
-                  href="/auth?mode=register" 
+                  href="/auth/register" 
                   className="font-medium px-5 py-2 transition-all duration-300 rounded-md flex items-center gap-2"
                   style={{
                     fontSize: '15px',
@@ -288,7 +288,7 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn = false }) => {
               ) : (
                 <div style={{ paddingTop: '20px', gap: '16px', display: 'flex', flexDirection: 'column' }}>
                   <Link
-                    href="/auth"
+                    href="/auth/login"
                     className="font-medium px-5 py-3 rounded-md transition-all duration-300 text-center"
                     style={{ 
                       color: '#ffffff',
@@ -307,7 +307,7 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn = false }) => {
                     Iniciar Sesión
                   </Link>
                   <Link 
-                    href="/auth?mode=register"
+                    href="/auth/register"
                     className="font-medium px-5 py-3 rounded-md transition-all duration-300 text-center flex items-center justify-center gap-2"
                     style={{
                       fontSize: '16px',
