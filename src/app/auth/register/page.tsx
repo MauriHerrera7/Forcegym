@@ -8,7 +8,7 @@ export default function RegisterPage() {
       <div className="relative">
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-black/20 to-black/40 z-10" />
         <Image
-          src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          src="https://res.cloudinary.com/dry6dvzoj/image/upload/v1758478009/imagen-realista-de-persona-haciendo-ejercicio-en-g_1_yc3fzm.png"
           alt="Gimnasio ForceGym"
           fill
           className="object-cover"

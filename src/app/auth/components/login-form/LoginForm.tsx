@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useAuthContext } from '@/providers/AuthProvider';
 
 interface LoginFormProps {
   className?: string;
@@ -12,6 +13,7 @@ interface FormErrors {
 }
 
 export default function LoginForm({ className = '' }: LoginFormProps) {
+  const { login } = useAuthContext();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -50,14 +52,7 @@ export default function LoginForm({ className = '' }: LoginFormProps) {
     setIsLoading(true);
 
     try {
-      // Aquí iría la lógica de autenticación
-      console.log('Login attempt:', { email, password });
-      
-      // Simulamos una petición async
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      alert('¡Login exitoso! Bienvenido a ForceGym');
-      
+      await login({ email, password });
     } catch (error) {
       console.error('Error en el login:', error);
       alert('Hubo un error en el login. Por favor intenta de nuevo.');

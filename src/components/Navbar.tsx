@@ -4,12 +4,11 @@ import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
+import UserMenu from './UserMenu'
+import { useAuthContext } from '@/providers/AuthProvider'
 
-interface NavbarProps {
-  isLoggedIn?: boolean
-}
-
-const Navbar: React.FC<NavbarProps> = ({ isLoggedIn = false }) => {
+const Navbar: React.FC = () => {
+  const { user, isAuthenticated } = useAuthContext()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const pathname = usePathname()
@@ -40,6 +39,7 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn = false }) => {
                 alt="Forcegym"
                 width={220}
                 height={70}
+                priority
                 className="transition-all duration-500 hover:brightness-110"
                 style={{ height: '125px', width: 'auto', filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3))' }}
               />
@@ -96,32 +96,8 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn = false }) => {
 
           {/* Actions (right) */}
           <div className="hidden md:flex items-center" style={{ gap: '20px' }}>
-            {isLoggedIn ? (
-              <Link
-                href="/profile"
-                className="font-semibold transition-all duration-400 px-5 py-2 rounded-lg backdrop-blur-sm"
-                style={{ 
-                  fontSize: '16px',
-                  color: '#ffffff',
-                  textShadow: '0 2px 4px rgba(0, 0, 0, 0.4)',
-                  letterSpacing: '0.3px',
-                  border: '1px solid rgba(255, 255, 255, 0.2)'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.color = '#ef4444'
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
-                  e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.4)'
-                  e.currentTarget.style.transform = 'scale(1.05)'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.color = '#ffffff'
-                  e.currentTarget.style.background = 'transparent'
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'
-                  e.currentTarget.style.transform = 'scale(1)'
-                }}
-              >
-                Mi Perfil
-              </Link>
+            {isAuthenticated ? (
+              <UserMenu userName={user?.name || 'Usuario'} userImage={user?.image} />
             ) : (
               <>
                 <Link
@@ -257,34 +233,10 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn = false }) => {
                 )
               })}
 
-              {isLoggedIn ? (
-                <Link
-                  href="/profile"
-                  className="font-semibold px-5 py-4 rounded-lg transition-all duration-400 backdrop-blur-sm mt-4"
-                  style={{ 
-                    color: '#ffffff',
-                    border: '2px solid rgba(255, 255, 255, 0.3)',
-                    textShadow: '0 2px 4px rgba(0, 0, 0, 0.5)',
-                    fontSize: '17px',
-                    letterSpacing: '0.3px',
-                    textAlign: 'center'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = '#ef4444'
-                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
-                    e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.4)'
-                    e.currentTarget.style.transform = 'scale(1.02)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = '#ffffff'
-                    e.currentTarget.style.background = 'transparent'
-                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)'
-                    e.currentTarget.style.transform = 'scale(1)'
-                  }}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Mi Perfil
-                </Link>
+              {isAuthenticated ? (
+                <div className="mt-4 px-4">
+                  <UserMenu userName={user?.name || 'Usuario'} userImage={user?.image} />
+                </div>
               ) : (
                 <div style={{ paddingTop: '20px', gap: '16px', display: 'flex', flexDirection: 'column' }}>
                   <Link
