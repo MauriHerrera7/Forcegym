@@ -53,6 +53,7 @@ const Navbar: React.FC = () => {
                 { href: '/', label: 'Inicio' },
                 { href: '/subscripcions', label: 'Planes' },
                 ...(isAuthenticated ? [{ href: '/videos', label: 'Videos' }] : []),
+                ...(isAuthenticated ? [{ href: '/stats', label: 'Estadísticas' }] : []),
                 { href: '/contact', label: 'Contacto' }
               ].map((item) => {
                 const active = pathname === item.href
@@ -94,7 +95,7 @@ const Navbar: React.FC = () => {
                 <Link
                   href="/auth/login"
                   className="font-medium px-5 py-2 transition-all duration-300 rounded-md"
-                  style={{ 
+                  style={{
                     fontSize: '15px',
                     color: '#ffffff',
                     letterSpacing: '0.2px',
@@ -109,8 +110,8 @@ const Navbar: React.FC = () => {
                 >
                   Iniciar Sesión
                 </Link>
-                <Link 
-                  href="/auth/register" 
+                <Link
+                  href="/auth/register"
                   className="font-medium px-5 py-2 transition-all duration-300 rounded-md flex items-center gap-2"
                   style={{
                     fontSize: '15px',
@@ -141,7 +142,7 @@ const Navbar: React.FC = () => {
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="p-3 transition-all duration-400 rounded-lg backdrop-blur-sm"
-              style={{ 
+              style={{
                 color: '#ffffff',
                 border: '2px solid rgba(255, 255, 255, 0.3)',
                 background: 'rgba(0, 0, 0, 0.2)'
@@ -171,7 +172,7 @@ const Navbar: React.FC = () => {
         {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="md:hidden">
-            <div 
+            <div
               className="px-6 pt-6 pb-8 rounded-xl mt-4 backdrop-blur-lg"
               style={{
                 background: 'rgba(0, 0, 0, 0.9)',
@@ -186,6 +187,7 @@ const Navbar: React.FC = () => {
                 { href: '/', label: 'Inicio' },
                 { href: '/subscripcions', label: 'Planes' },
                 ...(isAuthenticated ? [{ href: '/videos', label: 'Videos' }] : []),
+                ...(isAuthenticated ? [{ href: '/stats', label: 'Estadísticas' }] : []),
                 { href: '/contact', label: 'Contacto' }
               ].map((item) => {
                 const active = pathname === item.href
@@ -194,7 +196,7 @@ const Navbar: React.FC = () => {
                     key={item.href}
                     href={item.href}
                     className="font-semibold px-5 py-4 rounded-lg transition-all duration-300"
-                    style={{ 
+                    style={{
                       color: active ? '#ef4444' : '#ffffff',
                       textShadow: '0 2px 4px rgba(0, 0, 0, 0.5)',
                       fontSize: '17px',
@@ -226,7 +228,7 @@ const Navbar: React.FC = () => {
                   <Link
                     href="/auth/login"
                     className="font-medium px-5 py-3 rounded-md transition-all duration-300 text-center"
-                    style={{ 
+                    style={{
                       color: '#ffffff',
                       fontSize: '16px',
                       letterSpacing: '0.2px',
@@ -242,7 +244,7 @@ const Navbar: React.FC = () => {
                   >
                     Iniciar Sesión
                   </Link>
-                  <Link 
+                  <Link
                     href="/auth/register"
                     className="font-medium px-5 py-3 rounded-md transition-all duration-300 text-center flex items-center justify-center gap-2"
                     style={{

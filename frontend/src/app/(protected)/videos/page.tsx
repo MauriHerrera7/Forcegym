@@ -26,10 +26,10 @@ const demoVideos: Video[] = [
     },
     {
         id: '2',
-        title: 'Alimentación para Deportistas',
-        description: 'Estrategias nutricionales para optimizar tu entrenamiento',
-        youtubeId: 'SY78E56B7mU',
-        thumbnail: 'https://img.youtube.com/vi/SY78E56B7mU/maxresdefault.jpg',
+        title: 'Cuándo Tomar SUPLEMENTOS NATURALES?',
+        description: 'Guía completa sobre cuándo y cómo tomar suplementos naturales',
+        youtubeId: 'zCO2vQKWFUI',
+        thumbnail: 'https://img.youtube.com/vi/zCO2vQKWFUI/maxresdefault.jpg',
         duration: '12:45',
         category: 'Nutrición'
     },
@@ -277,9 +277,6 @@ const VideosPage: React.FC = () => {
                     >
                         Biblioteca de Videos
                     </h1>
-                    <p className="text-gray-300 text-lg max-w-2xl mx-auto">
-                        Accede a nuestra colección exclusiva de videos de entrenamiento, nutrición y consejos fitness
-                    </p>
                 </div>
 
                 {/* Category Filter */}

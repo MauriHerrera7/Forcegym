@@ -52,21 +52,21 @@ const Hero: React.FC = () => {
   useEffect(() => {
     const preloadImages = async () => {
       const imageCache: { [key: string]: HTMLImageElement } = {}
-      
+
       const imagePromises = slides.map((slide) => {
         return new Promise<void>((resolve) => {
           const img = new Image()
-          
+
           // Force immediate loading
           img.setAttribute('loading', 'eager')
           img.crossOrigin = 'anonymous'
-          
+
           img.onload = () => {
             imageCache[slide.image] = img
             console.log(`✅ Image preloaded:`, slide.title)
             resolve()
           }
-          
+
           img.onerror = () => {
             console.error('❌ Failed to preload image:', slide.image)
             // Create a fallback element
@@ -75,11 +75,11 @@ const Hero: React.FC = () => {
             imageCache[slide.image] = fallbackImg
             resolve()
           }
-          
+
           img.src = slide.image
         })
       })
-      
+
       await Promise.all(imagePromises)
       setLoadedImages(imageCache)
       setAllImagesLoaded(true)
@@ -121,14 +121,13 @@ const Hero: React.FC = () => {
             {slides.map((slide, index) => {
               const cachedImage = loadedImages[slide.image]
               if (!cachedImage) return null
-              
+
               return (
                 <div
                   key={slide.id}
-                  className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                    index === currentSlide ? 'opacity-100' : 'opacity-0'
-                  }`}
-                  style={{ 
+                  className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === currentSlide ? 'opacity-100' : 'opacity-0'
+                    }`}
+                  style={{
                     zIndex: index === currentSlide ? 2 : 1,
                     willChange: 'opacity'
                   }}
@@ -148,8 +147,8 @@ const Hero: React.FC = () => {
                     }}
                   />
                   {/* Dark overlay - More transparent on mobile for better readability */}
-                  <div 
-                    className="absolute inset-0 bg-black/50 md:bg-black/40" 
+                  <div
+                    className="absolute inset-0 bg-black/50 md:bg-black/40"
                     style={{ zIndex: 3 }}
                   />
                 </div>
@@ -163,9 +162,6 @@ const Hero: React.FC = () => {
               <div className="max-w-5xl mx-auto text-center md:text-left md:ml-0 md:mr-auto md:pl-10 lg:pl-16">
                 <h1
                   className="hero-title text-3xl sm:text-4xl md:text-6xl lg:text-8xl xl:text-9xl mb-6 md:mb-8 font-black uppercase tracking-wide md:tracking-wider leading-tight md:leading-none text-red-500"
-                  style={{ 
-                    textShadow: '2px 2px 4px rgba(0,0,0,0.7)'
-                  }}
                 >
                   {slides[currentSlide].title}
                 </h1>
@@ -176,8 +172,8 @@ const Hero: React.FC = () => {
                       <p
                         key={i}
                         className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-100/90 leading-relaxed md:leading-relaxed drop-shadow-[0_4px_18px_rgba(0,0,0,0.6)] mb-2 md:mb-0"
-                        dangerouslySetInnerHTML={{ 
-                          __html: highlighted + (part.endsWith('.') ? '' : '.') 
+                        dangerouslySetInnerHTML={{
+                          __html: highlighted + (part.endsWith('.') ? '' : '.')
                         }}
                       />
                     )
@@ -194,11 +190,10 @@ const Hero: React.FC = () => {
                 <button
                   key={index}
                   onClick={() => goToSlide(index)}
-                  className={`w-2 h-2 md:w-3 md:h-3 rounded-full transition-all duration-300 shadow-[0_4px_12px_rgba(0,0,0,0.4)] ${
-                    index === currentSlide
+                  className={`w-2 h-2 md:w-3 md:h-3 rounded-full transition-all duration-300 shadow-[0_4px_12px_rgba(0,0,0,0.4)] ${index === currentSlide
                       ? 'bg-white scale-125'
                       : 'bg-white/50 hover:bg-white/80'
-                  }`}
+                    }`}
                   aria-label={`Ir al slide ${index + 1}`}
                 />
               ))}
@@ -215,7 +210,7 @@ const Hero: React.FC = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-          
+
           <button
             onClick={() => setCurrentSlide((prev) => (prev + 1) % slides.length)}
             className="absolute right-2 md:right-4 top-1/2 transform -translate-y-1/2 z-20 bg-black/40 hover:bg-black/60 text-white p-2 md:p-3 rounded-none transition-all duration-200 shadow-[0_10px_30px_rgba(0,0,0,0.35)] backdrop-blur-sm"

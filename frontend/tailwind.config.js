@@ -9,7 +9,12 @@ module.exports = {
     "./node_modules/flowbite-react/lib/**/*.js"
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        body: ['var(--font-body)', 'sans-serif'],
+        heading: ['var(--font-heading)', 'sans-serif'],
+      },
+    },
   },
   plugins: [],
 };
