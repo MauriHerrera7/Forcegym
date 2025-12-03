@@ -77,7 +77,7 @@ export default function UserMenu({ userImage = '', userName }: UserMenuProps) {
             className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors duration-200"
             onClick={() => setIsOpen(false)}
           >
-            📊 Mi Progreso
+            Mi Progreso
           </Link>
           <button
             onClick={() => {
