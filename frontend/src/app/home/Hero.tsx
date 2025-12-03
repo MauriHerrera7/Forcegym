@@ -172,10 +172,6 @@ const Hero: React.FC = () => {
                 <div className="text-center md:text-left md:pl-10 lg:pl-16 mb-8 md:mb-10 max-w-3xl mx-auto md:mx-0">
                   {slides[currentSlide].description.split('. ').filter(Boolean).slice(0, 2).map((part, i) => {
                     const highlighted = part
-                      .replace(/buffet saludable/gi, '<span class="font-semibold text-red-400">$&</span>')
-                      .replace(/socializar/gi, '<span class="font-semibold text-red-400">$&</span>')
-                      .replace(/energías/gi, '<span class="font-semibold text-red-400">$&</span>')
-                    
                     return (
                       <p
                         key={i}

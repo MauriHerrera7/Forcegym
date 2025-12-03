@@ -51,7 +51,8 @@ const Navbar: React.FC = () => {
             <nav className="flex items-center" style={{ gap: '48px' }}>
               {[
                 { href: '/', label: 'Inicio' },
-                { href: '/subscripcion', label: 'Planes' },
+                { href: '/subscripcions', label: 'Planes' },
+                ...(isAuthenticated ? [{ href: '/videos', label: 'Videos' }] : []),
                 { href: '/contact', label: 'Contacto' }
               ].map((item) => {
                 const active = pathname === item.href
@@ -59,31 +60,21 @@ const Navbar: React.FC = () => {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="relative font-bold px-6 py-3 transition-all duration-400 rounded-lg backdrop-blur-sm"
+                    className="relative font-bold px-6 py-3 transition-all duration-300"
                     style={{
                       fontSize: '17px',
                       color: active ? '#ef4444' : '#ffffff',
                       textShadow: '0 2px 4px rgba(0, 0, 0, 0.4)',
-                      letterSpacing: '0.5px',
-                      background: 'transparent',
-                      border: '1px solid transparent'
+                      letterSpacing: '0.5px'
                     }}
                     onMouseEnter={(e) => {
                       if (!active) {
                         e.currentTarget.style.color = '#ef4444'
-                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
-                        e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.3)'
-                        e.currentTarget.style.transform = 'translateY(-3px)'
-                        e.currentTarget.style.boxShadow = '0 8px 25px rgba(239, 68, 68, 0.15)'
                       }
                     }}
                     onMouseLeave={(e) => {
                       if (!active) {
                         e.currentTarget.style.color = '#ffffff'
-                        e.currentTarget.style.background = 'transparent'
-                        e.currentTarget.style.borderColor = 'transparent'
-                        e.currentTarget.style.transform = 'translateY(0)'
-                        e.currentTarget.style.boxShadow = 'none'
                       }
                     }}
                   >
@@ -193,7 +184,8 @@ const Navbar: React.FC = () => {
             >
               {[
                 { href: '/', label: 'Inicio' },
-                { href: '/subscripcion', label: 'Planes' },
+                { href: '/subscripcions', label: 'Planes' },
+                ...(isAuthenticated ? [{ href: '/videos', label: 'Videos' }] : []),
                 { href: '/contact', label: 'Contacto' }
               ].map((item) => {
                 const active = pathname === item.href
@@ -201,29 +193,21 @@ const Navbar: React.FC = () => {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="font-semibold px-5 py-4 rounded-lg transition-all duration-400 backdrop-blur-sm"
+                    className="font-semibold px-5 py-4 rounded-lg transition-all duration-300"
                     style={{ 
                       color: active ? '#ef4444' : '#ffffff',
                       textShadow: '0 2px 4px rgba(0, 0, 0, 0.5)',
                       fontSize: '17px',
-                      letterSpacing: '0.3px',
-                      background: 'transparent',
-                      border: '1px solid transparent'
+                      letterSpacing: '0.3px'
                     }}
                     onMouseEnter={(e) => {
                       if (!active) {
                         e.currentTarget.style.color = '#ef4444'
-                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
-                        e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.3)'
-                        e.currentTarget.style.transform = 'translateX(8px)'
                       }
                     }}
                     onMouseLeave={(e) => {
                       if (!active) {
                         e.currentTarget.style.color = '#ffffff'
-                        e.currentTarget.style.background = 'transparent'
-                        e.currentTarget.style.borderColor = 'transparent'
-                        e.currentTarget.style.transform = 'translateX(0)'
                       }
                     }}
                     onClick={() => setIsMenuOpen(false)}

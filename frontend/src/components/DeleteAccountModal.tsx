@@ -47,11 +47,11 @@ export default function DeleteAccountModal({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+    <div className="fixed inset-0 z-[100] overflow-y-auto">
+      <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
         {/* Overlay */}
         <div
-          className="fixed inset-0 bg-gray-900/75 backdrop-blur-sm transition-opacity"
+          className="fixed inset-0 bg-black/90 transition-opacity"
           aria-hidden="true"
         />
 
@@ -63,13 +63,13 @@ export default function DeleteAccountModal({
         {/* Modal */}
         <div
           ref={modalRef}
-          className="inline-block align-bottom bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full"
+          className="relative inline-block align-bottom bg-gray-800 border-2 border-red-600 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full"
         >
-          <div className="bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+          <div className="bg-gray-800 px-6 pt-6 pb-4">
             <div className="sm:flex sm:items-start">
-              <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+              <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-600 sm:mx-0 sm:h-10 sm:w-10">
                 <svg
-                  className="h-6 w-6 text-red-600"
+                  className="h-6 w-6 text-white"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -83,12 +83,12 @@ export default function DeleteAccountModal({
                   />
                 </svg>
               </div>
-              <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                <h3 className="text-lg leading-6 font-medium text-white">
+              <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left flex-1">
+                <h3 className="text-xl leading-6 font-bold text-white uppercase">
                   Eliminar cuenta
                 </h3>
-                <div className="mt-2">
-                  <p className="text-sm text-gray-300">
+                <div className="mt-3">
+                  <p className="text-base text-gray-300">
                     ¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer
                     y perderás todos tus datos y progreso.
                   </p>
@@ -96,10 +96,10 @@ export default function DeleteAccountModal({
               </div>
             </div>
           </div>
-          <div className="bg-gray-800 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+          <div className="bg-gray-800 px-6 py-4 sm:flex sm:flex-row-reverse gap-3">
             <button
               type="button"
-              className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+              className="w-full inline-flex justify-center rounded-lg shadow-lg px-6 py-3 bg-red-600 text-base font-bold text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
               onClick={onConfirm}
               disabled={isLoading}
             >
@@ -114,7 +114,7 @@ export default function DeleteAccountModal({
             </button>
             <button
               type="button"
-              className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-600 shadow-sm px-4 py-2 bg-gray-700 text-base font-medium text-gray-200 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+              className="mt-3 w-full inline-flex justify-center rounded-lg border-2 border-gray-600 shadow-lg px-6 py-3 bg-gray-700 text-base font-bold text-white hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 sm:mt-0 sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
               onClick={onClose}
               disabled={isLoading}
             >

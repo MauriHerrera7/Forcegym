@@ -1,8 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
 import { QRCodeSVG } from 'qrcode.react'
 import DeleteAccountModal from '@/components/DeleteAccountModal'
 import QRModal from '@/components/QRModal'
@@ -39,6 +38,9 @@ export default function DashboardPage() {
   const [isDeletingAccount, setIsDeletingAccount] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const { user, deleteAccount, loading, updateProfile } = useAuth()
   const [editedData, setEditedData] = useState<EditableData>({
     name: '',
@@ -59,6 +61,7 @@ export default function DashboardPage() {
         objective: user.objective || '',
         activityLevel: user.activityLevel || ''
       })
+      setImagePreview(user.image || null)
     }
   }, [user])
 
@@ -69,18 +72,71 @@ export default function DashboardPage() {
     setEditedData(prev => ({ ...prev, [name]: value }))
   }
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      // Validar tipo de archivo
+      if (!file.type.startsWith('image/')) {
+        alert('Por favor selecciona un archivo de imagen válido')
+        return
+      }
+      
+      // Validar tamaño (máximo 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('La imagen no debe superar los 5MB')
+        return
+      }
+
+      setImageFile(file)
+      
+      // Crear preview
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const handleImageClick = () => {
+    if (isEditing) {
+      fileInputRef.current?.click()
+    }
+  }
+
   const handleSave = async () => {
     try {
       setIsSaving(true)
+      
+      // Si hay una nueva imagen, primero súbela
+      let imageUrl = imagePreview
+      if (imageFile) {
+        // Aquí debes implementar la lógica para subir la imagen
+        // Por ejemplo, usando Cloudinary, Firebase Storage, o tu propio backend
+        const formData = new FormData()
+        formData.append('image', imageFile)
+        
+        // Ejemplo de llamada a API (ajusta según tu backend)
+        // const response = await fetch('/api/upload-image', {
+        //   method: 'POST',
+        //   body: formData
+        // })
+        // const data = await response.json()
+        // imageUrl = data.imageUrl
+      }
+
       await updateProfile({
         name: editedData.name,
         email: editedData.email,
         height: Number(editedData.height),
         weight: Number(editedData.weight),
         objective: editedData.objective,
-        activityLevel: editedData.activityLevel
+        activityLevel: editedData.activityLevel,
+        image: imageUrl || undefined
       })
+      
       setIsEditing(false)
+      setImageFile(null)
     } catch (error) {
       console.error('Error al actualizar el perfil:', error)
       alert('Error al actualizar el perfil. Por favor, inténtalo de nuevo.')
@@ -150,25 +206,65 @@ export default function DashboardPage() {
         <div className="bg-gray-800/50 rounded-2xl p-8 backdrop-blur-sm border border-gray-700 shadow-lg">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex flex-col md:flex-row items-center gap-6">
-              <div className="group">
-                {userData.image ? (
-                  <div className="relative">
+              <div className="group relative">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="hidden"
+              />
+              
+              <div 
+                onClick={handleImageClick}
+                className={`relative ${isEditing ? 'cursor-pointer' : ''}`}
+              >
+                {imagePreview ? (
+                  <div className="relative w-[100px] h-[100px] rounded-full ring-2 ring-gray-700 transition-all duration-300 group-hover:ring-red-500 overflow-hidden">
                     <Image
-                      src={userData.image}
+                      src={imagePreview}
                       alt={userData.name}
-                      width={100}
-                      height={100}
-                      className="rounded-full ring-2 ring-gray-700 transition-all duration-300 group-hover:ring-red-500"
+                      fill
+                      className="object-cover"
                     />
                   </div>
                 ) : (
-                  <div className="relative">
-                    <div className="w-[100px] h-[100px] rounded-full bg-red-600 flex items-center justify-center text-3xl font-bold text-white ring-2 ring-gray-700 transition-all duration-300">
-                      {userData.name.charAt(0)}
-                    </div>
+                  <div className="w-[100px] h-[100px] rounded-full bg-red-600 flex items-center justify-center text-3xl font-bold text-white ring-2 ring-gray-700 transition-all duration-300 group-hover:ring-red-500">
+                    {userData.name.charAt(0)}
+                  </div>
+                )}
+                
+                {isEditing && (
+                  <div className="absolute inset-0 rounded-full bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <svg 
+                      className="w-8 h-8 text-white" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
+                      <path 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        strokeWidth={2} 
+                        d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" 
+                      />
+                      <path 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        strokeWidth={2} 
+                        d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" 
+                      />
+                    </svg>
                   </div>
                 )}
               </div>
+              
+              {isEditing && (
+                <p className="text-xs text-gray-400 text-center mt-2">
+                  Click para cambiar
+                </p>
+              )}
+            </div>
 
               <div className="text-center md:text-left">
                 {isEditing ? (
@@ -238,8 +334,14 @@ export default function DashboardPage() {
             onClick={() => setIsQRModalOpen(true)}
           >
             <h3 className="text-xl font-semibold text-white mb-6">Mi código QR</h3>
-            <div className="flex justify-center bg-white p-6 rounded-xl shadow-inner">
-              <QRCodeSVG value={userData.id} size={180} level="H" />
+            <div className="flex justify-center bg-white rounded-xl overflow-hidden">
+              <QRCodeSVG 
+                value={userData.id} 
+                size={300} 
+                level="H"
+                includeMargin={false}
+                marginSize={1}
+              />
             </div>
             <p className="text-center text-gray-400 text-sm mt-6">
               Toca para ver en pantalla completa
@@ -250,12 +352,6 @@ export default function DashboardPage() {
           <div className="bg-gray-800/50 rounded-2xl p-8 backdrop-blur-sm border border-gray-700 shadow-lg">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-semibold text-white">Información física</h3>
-              <button
-                onClick={() => setIsEditing(!isEditing)}
-                className="text-sm text-gray-400 hover:text-white transition-colors duration-200"
-              >
-                {isEditing ? 'Cancelar' : 'Editar'}
-              </button>
             </div>
 
             <div className="space-y-6">
@@ -328,6 +424,7 @@ export default function DashboardPage() {
                 <button
                   onClick={() => {
                     setIsEditing(false)
+                    setImageFile(null)
                     if (user) {
                       setEditedData({
                         name: user.name || '',
@@ -337,6 +434,7 @@ export default function DashboardPage() {
                         objective: user.objective || '',
                         activityLevel: user.activityLevel || ''
                       })
+                      setImagePreview(user.image || null)
                     }
                   }}
                   className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors duration-200"
@@ -367,7 +465,7 @@ export default function DashboardPage() {
                   name="objective"
                   value={editedData.objective}
                   onChange={handleInputChange}
-                  className="w-full bg-gray-600 text-white rounded px-3 py-2 min-h-[100px]"
+                  className="w-full bg-gray-600 text-white rounded px-3 py-2 min-h-[100px] resize-none"
                   placeholder="Describe tu objetivo..."
                 />
               ) : (
@@ -379,12 +477,12 @@ export default function DashboardPage() {
 
         {/* Acciones */}
         <div className="mt-8 flex flex-col md:flex-row gap-4 justify-end">
-          <Link
-            href="/profile"
+          <button
+            onClick={() => setIsEditing(!isEditing)}
             className="inline-flex items-center justify-center px-6 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white hover:bg-gray-700 transition-all duration-300 shadow-lg hover:shadow-xl"
           >
-            Editar perfil
-          </Link>
+            {isEditing ? 'Cancelar' : 'Editar'}
+          </button>
           <button
             onClick={() => setIsDeleteModalOpen(true)}
             className="inline-flex items-center justify-center px-6 py-3 bg-red-500/10 border border-red-500 rounded-lg text-red-500 hover:bg-red-500/20 transition-all duration-300 shadow-lg hover:shadow-xl"
