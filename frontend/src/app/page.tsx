@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Hero from "./home/Hero";
 import Container from "@/components/Container";
 import Link from 'next/link';
+import { Footer } from '@/components/layout/Footer';
 
 export default function Home() {
   useEffect(() => {
@@ -329,15 +330,17 @@ export default function Home() {
                 COMENZAR AHORA
               </Link>
               <Link
-                href="/subscripcions"
+                href="/auth/login"
                 className="border-2 border-white hover:bg-white hover:text-black text-white px-8 py-4 rounded-xl text-lg font-bold uppercase tracking-wide transition-all duration-300 scale-hover text-center"
               >
-                VER PLANES
+                INICIAR SESIÓN
               </Link>
             </div>
           </div>
         </Container>
       </section>
+
+      <Footer />
     </main>
   );
 }
