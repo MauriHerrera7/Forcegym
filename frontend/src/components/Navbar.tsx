@@ -46,48 +46,8 @@ const Navbar: React.FC = () => {
             </Link>
           </div>
 
-          {/* Centered Navigation (desktop) */}
-          <div className="hidden md:flex items-center justify-center flex-1">
-            <nav className="flex items-center" style={{ gap: '48px' }}>
-              {[
-                { href: '/', label: 'Inicio' },
-                { href: '/subscripcions', label: 'Planes' },
-                ...(isAuthenticated ? [{ href: '/videos', label: 'Videos' }] : []),
-                ...(isAuthenticated ? [{ href: '/stats', label: 'Estadísticas' }] : []),
-                { href: '/contact', label: 'Contacto' }
-              ].map((item) => {
-                const active = pathname === item.href
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className="relative font-bold px-6 py-3 transition-all duration-300"
-                    style={{
-                      fontSize: '17px',
-                      color: active ? '#ef4444' : '#ffffff',
-                      textShadow: '0 2px 4px rgba(0, 0, 0, 0.4)',
-                      letterSpacing: '0.5px'
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!active) {
-                        e.currentTarget.style.color = '#ef4444'
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!active) {
-                        e.currentTarget.style.color = '#ffffff'
-                      }
-                    }}
-                  >
-                    {item.label}
-                  </Link>
-                )
-              })}
-            </nav>
-          </div>
-
-          {/* Actions (right) */}
-          <div className="hidden md:flex items-center" style={{ gap: '20px' }}>
+          {/* Actions (right) - Flex-1 to push it to the right */}
+          <div className="flex-1 md:flex items-center justify-end" style={{ gap: '20px' }}>
             {isAuthenticated ? (
               <UserMenu userName={user?.name || 'Usuario'} userImage={user?.image} />
             ) : (
@@ -183,41 +143,6 @@ const Navbar: React.FC = () => {
                 boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)'
               }}
             >
-              {[
-                { href: '/', label: 'Inicio' },
-                { href: '/subscripcions', label: 'Planes' },
-                ...(isAuthenticated ? [{ href: '/videos', label: 'Videos' }] : []),
-                ...(isAuthenticated ? [{ href: '/stats', label: 'Estadísticas' }] : []),
-                { href: '/contact', label: 'Contacto' }
-              ].map((item) => {
-                const active = pathname === item.href
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className="font-semibold px-5 py-4 rounded-lg transition-all duration-300"
-                    style={{
-                      color: active ? '#ef4444' : '#ffffff',
-                      textShadow: '0 2px 4px rgba(0, 0, 0, 0.5)',
-                      fontSize: '17px',
-                      letterSpacing: '0.3px'
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!active) {
-                        e.currentTarget.style.color = '#ef4444'
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!active) {
-                        e.currentTarget.style.color = '#ffffff'
-                      }
-                    }}
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {item.label}
-                  </Link>
-                )
-              })}
 
               {isAuthenticated ? (
                 <div className="mt-4 px-4">

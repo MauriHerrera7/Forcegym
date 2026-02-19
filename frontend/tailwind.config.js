@@ -33,6 +33,12 @@ module.exports = {
           light: "#ff7673",
           foreground: "#ffffff",
         },
+        apple: {
+          black: "#0B0B0B",
+          red: "#ff0800ff",
+          pink: "#FF1B6B",
+          orange: "#FF4D00",
+        },
         dark: {
           DEFAULT: "#191919",
           soft: "#404040",

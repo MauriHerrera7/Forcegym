@@ -17,6 +17,7 @@ interface User {
   weight: number
   objective: string
   activityLevel: string
+  gender: 'male' | 'female'
 }
 
 export function useAuth() {
@@ -42,7 +43,8 @@ export function useAuth() {
             (parsedUser.membershipStatus === 'active' ||
              parsedUser.membershipStatus === 'expired' ||
              parsedUser.membershipStatus === 'pending') &&
-            typeof parsedUser.joinDate === 'string'
+            typeof parsedUser.joinDate === 'string' &&
+            (parsedUser.gender === 'male' || parsedUser.gender === 'female')
           ) {
             setUser(parsedUser)
           } else {
@@ -75,7 +77,8 @@ export function useAuth() {
         height: 180,
         weight: 75,
         objective: 'Ganar masa muscular y mejorar resistencia',
-        activityLevel: 'Moderada'
+        activityLevel: 'Moderada',
+        gender: 'male' as const
       }
       
       localStorage.setItem('user', JSON.stringify(mockUser))

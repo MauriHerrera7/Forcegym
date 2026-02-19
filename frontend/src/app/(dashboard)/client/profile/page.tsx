@@ -6,9 +6,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Pencil, Save } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
+import { Pencil, Save, X } from 'lucide-react';
 import QRCode from 'qrcode';
+import { QRCodeSVG } from 'qrcode.react';
 import { useEffect, useRef } from 'react';
 
 export default function ClientProfile() {
@@ -257,7 +258,7 @@ export default function ClientProfile() {
                   </div>
                 </div>
 
-                <Button type="submit" className="w-full gap-2 bg-[#ff0400] hover:bg-[#ff3936]">
+                <Button type="submit" className="w-full gap-2 bg-[#404040] hover:bg-[#ff0400] text-white transition-all duration-300">
                   <Save className="h-4 w-4" />
                   Guardar Cambios
                 </Button>
@@ -293,21 +294,33 @@ export default function ClientProfile() {
 
       {/* QR Modal */}
       <Dialog open={isQRModalOpen} onOpenChange={setIsQRModalOpen}>
-        <DialogContent className="bg-[#191919] border-[#404040] sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle className="text-white text-center text-xl font-bold">Tu Código QR de Acceso</DialogTitle>
+        <DialogContent className="bg-[#191919] border-none sm:max-w-md p-0 overflow-hidden shadow-2xl">
+          <DialogHeader className="p-6 bg-[#111111] border-b border-[#404040] relative">
+            <DialogTitle className="text-white text-center text-xl font-bold uppercase tracking-wider">
+              Tu Código QR de Acceso
+            </DialogTitle>
+            <DialogClose className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-2 text-gray-400 hover:bg-[#404040] hover:text-white transition-all">
+              <X className="h-6 w-6" />
+            </DialogClose>
           </DialogHeader>
-          <div className="flex flex-col items-center space-y-6 p-6">
-            <div className="rounded-xl bg-white p-8 shadow-2xl">
-              <canvas ref={modalCanvasRef} />
+          
+          <div className="flex flex-col items-center gap-8 p-10 bg-[#191919]">
+            <div className="rounded-2xl bg-white p-6 shadow-[0_0_50px_rgba(255,4,0,0.15)] flex items-center justify-center">
+              <QRCodeSVG 
+                value={`FORCEGYM-USER-12345`} 
+                size={280}
+                level="H"
+                includeMargin={true}
+              />
             </div>
-            <div className="text-center space-y-2">
-              <p className="text-base text-gray-300 font-medium">
-                Escanea este código en la entrada del gimnasio
+            
+            <div className="text-center space-y-3">
+              <p className="text-lg text-gray-200 font-medium">
+                Escanea este código en la entrada
               </p>
-              <p className="text-sm text-gray-500">
+              <div className="inline-flex items-center px-3 py-1 rounded-full bg-[#ff0400]/10 text-[#ff0400] text-sm font-bold border border-[#ff0400]/20">
                 ID: USER-12345
-              </p>
+              </div>
             </div>
           </div>
         </DialogContent>

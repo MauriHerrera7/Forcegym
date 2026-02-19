@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Montserrat, Bebas_Neue } from "next/font/google";
+import { Montserrat, Bebas_Neue, Permanent_Marker } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/providers/AuthProvider";
 import ConditionalNavbar from "@/components/ConditionalNavbar";
@@ -12,6 +12,12 @@ const montserrat = Montserrat({
 
 const bebasNeue = Bebas_Neue({
   variable: "--font-heading",
+  subsets: ["latin"],
+  weight: ["400"],
+});
+
+const permanentMarker = Permanent_Marker({
+  variable: "--font-brush",
   subsets: ["latin"],
   weight: ["400"],
 });
@@ -29,7 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${montserrat.variable} ${bebasNeue.variable} antialiased font-body`}
+        className={`${montserrat.variable} ${bebasNeue.variable} ${permanentMarker.variable} antialiased font-body`}
       >
         <AuthProvider>
           <ConditionalNavbar />

@@ -23,6 +23,10 @@
     --input: 0 0% 89.8%;
     --ring: 0 100% 50%;
     --radius: 0.5rem;
+    --anatomical-default: #4b5563;
+    --anatomical-face: #6b7280;
+    --anatomical-hair: #2a2627;
+    --anatomical-border: #dfdfdf;
   }
 
   .dark {
@@ -45,6 +49,10 @@
     --border: 0 0% 14.9%;
     --input: 0 0% 14.9%;
     --ring: 0 100% 50%;
+    --anatomical-default: #9ca3af;
+    --anatomical-face: #99a1af;
+    --anatomical-hair: #525252;
+    --anatomical-border: #99a1af;
   }
 }
 
@@ -232,5 +240,45 @@
     .section-padding {
       padding: 7rem 0;
     }
+  }
+
+  /* Marquee Animation */
+  .animate-marquee {
+    animation: marquee 20s linear infinite;
+  }
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* Grunge & Brush Styles */
+  .font-brush {
+    font-family: var(--font-brush);
+  }
+
+  .text-grunge {
+    position: relative;
+    color: white;
+  }
+
+  .bg-grunge {
+    background-image: url("https://www.transparenttextures.com/patterns/concrete-wall.png");
+    background-color: #000;
+  }
+
+  .brush-stroke-divider {
+    mask-image: url("https://upload.wikimedia.org/wikipedia/commons/0/05/Brush_stroke.svg");
+    mask-size: cover;
+    mask-repeat: no-repeat;
+  }
+
+  .halftone-bg {
+    background-image: radial-gradient(#ffffff20 1px, transparent 0);
+    background-size: 20px 20px;
   }
 }

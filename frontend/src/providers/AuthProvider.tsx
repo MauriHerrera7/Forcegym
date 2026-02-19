@@ -8,6 +8,16 @@ interface User {
   name: string;
   email: string;
   image?: string;
+  membershipType: string;
+  membershipStatus: 'active' | 'expired' | 'pending';
+  lastCheckIn?: string;
+  joinDate: string;
+  nextPayment?: string;
+  height: number;
+  weight: number;
+  objective: string;
+  activityLevel: string;
+  gender: 'male' | 'female';
 }
 
 interface AuthContextType {
