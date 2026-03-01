@@ -1,12 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useAdmin, AdminUser } from '@/hooks/useAdmin';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Search, RefreshCw, AlertCircle, CheckCircle, Calendar } from 'lucide-react';
+import { fetchApi } from '@/lib/api';
 import {
   Dialog,
   DialogContent,
@@ -16,103 +18,94 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 
-interface RenewalUser {
-  id: string;
-  name: string;
-  email: string;
-  photo?: string;
-  membership: 'Premium' | 'Standard' | 'Básico';
-  status: 'active' | 'expired' | 'soon';
-  expirationDate: string;
-  daysRemaining: number;
-}
-
 export default function AdminRenewalsPage() {
+  const { getUsers, loading: adminLoading } = useAdmin();
+  const [loading, setLoading] = useState(false);
+  const [users, setUsers] = useState<AdminUser[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedUser, setSelectedUser] = useState<RenewalUser | null>(null);
+  const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
   const [isRenewalModalOpen, setIsRenewalModalOpen] = useState(false);
 
-  // Mock data - replace with actual API
-  const [users, setUsers] = useState<RenewalUser[]>([
-    {
-      id: '1',
-      name: 'Juan Pérez',
-      email: 'juan@example.com',
-      membership: 'Premium',
-      status: 'active',
-      expirationDate: '2024-04-15',
-      daysRemaining: 45,
-    },
-    {
-      id: '2',
-      name: 'María García',
-      email: 'maria@example.com',
-      membership: 'Standard',
-      status: 'soon',
-      expirationDate: '2024-03-05',
-      daysRemaining: 5,
-    },
-    {
-      id: '4',
-      name: 'Ana Martínez',
-      email: 'ana@example.com',
-      membership: 'Básico',
-      status: 'expired',
-      expirationDate: '2024-02-28',
-      daysRemaining: -2,
-    },
-    {
-      id: '5',
-      name: 'Pedro Sánchez',
-      email: 'pedro@example.com',
-      membership: 'Premium',
-      status: 'active',
-      expirationDate: '2024-05-20',
-      daysRemaining: 80,
-    },
-    {
-      id: '7',
-      name: 'Diego Fernández',
-      email: 'diego@example.com',
-      membership: 'Básico',
-      status: 'expired',
-      expirationDate: '2024-01-15',
-      daysRemaining: -45,
-    },
-  ]);
+  const fetchUsers = useCallback(async () => {
+    setLoading(true);
+    try {
+      // Obtenemos todos los usuarios y filtramos los que tienen membresía próxima a vencer o vencida
+      const data = await getUsers();
+      setUsers(data);
+    } catch (err) {
+      console.error('Error fetching users for renewals:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [getUsers]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
+
+  const getMembershipStatus = (endDate: string | undefined) => {
+    if (!endDate) return 'expired';
+    const expiration = new Date(endDate);
+    const today = new Date();
+    const diffTime = expiration.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays < 0) return 'expired';
+    if (diffDays <= 7) return 'soon';
+    return 'active';
+  };
+
+  const getDaysRemaining = (endDate: string | undefined) => {
+    if (!endDate) return 0;
+    const expiration = new Date(endDate);
+    const today = new Date();
+    const diffTime = expiration.getTime() - today.getTime();
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  };
 
   const filteredUsers = users
-    .filter(user =>
-      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchQuery.toLowerCase())
-    )
+    .filter(user => {
+      const fullName = `${user.full_name || ''} ${user.first_name || ''} ${user.last_name || ''} ${user.username || ''}`;
+      const matchesSearch = fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          (user.email || '').toLowerCase().includes(searchQuery.toLowerCase());
+      const status = getMembershipStatus(user.membership_info?.end_date);
+      // Solo mostrar vencidas o por vencer para esta página
+      return matchesSearch && (status === 'expired' || status === 'soon');
+    })
     .sort((a, b) => {
-      const priority = { expired: 0, soon: 1, active: 2 };
-      return priority[a.status] - priority[b.status];
+      const daysA = getDaysRemaining(a.membership_info?.end_date);
+      const daysB = getDaysRemaining(b.membership_info?.end_date);
+      return daysA - daysB;
     });
 
-  const handleRenewClick = (user: RenewalUser) => {
+  const handleRenewClick = (user: AdminUser) => {
     setSelectedUser(user);
     setIsRenewalModalOpen(true);
   };
 
-  const confirmRenewal = () => {
-    if (selectedUser) {
-      setUsers(users.map(u => {
-        if (u.id === selectedUser.id) {
-          const newDate = new Date();
-          newDate.setMonth(newDate.getMonth() + 1); // Add 1 month
-          return {
-            ...u,
-            status: 'active',
-            expirationDate: newDate.toISOString().split('T')[0],
-            daysRemaining: 30,
-          };
-        }
-        return u;
-      }));
-      setIsRenewalModalOpen(false);
-      setSelectedUser(null);
+  const confirmRenewal = async () => {
+    if (selectedUser && selectedUser.membership_info) {
+      setLoading(true);
+      try {
+        // En un sistema real, esto crearía o activaría una membresía
+        // Por ahora simularemos la activación
+        await fetchApi(`/memberships/memberships/`, {
+          method: 'POST',
+          body: JSON.stringify({
+            userId: selectedUser.id,
+            planId: '1', // Default Premium for simulation
+            months: 1
+          })
+        });
+        
+        await fetchUsers(); // Refresh
+        setIsRenewalModalOpen(false);
+        setSelectedUser(null);
+      } catch (err) {
+        console.error('Error renewing membership:', err);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -142,7 +135,7 @@ export default function AdminRenewalsPage() {
             <div>
               <p className="text-sm text-gray-400">Próximos Vencimientos</p>
               <div className="text-3xl font-semibold text-yellow-400">
-                {users.filter(u => u.status === 'soon').length}
+                {users.filter(u => getMembershipStatus(u.membership_info?.end_date) === 'soon').length}
               </div>
             </div>
             <AlertCircle className="h-8 w-8 text-yellow-400 opacity-50" />
@@ -153,7 +146,7 @@ export default function AdminRenewalsPage() {
             <div>
               <p className="text-sm text-gray-400">Vencidas</p>
               <div className="text-3xl font-semibold text-red-400">
-                {users.filter(u => u.status === 'expired').length}
+                {users.filter(u => getMembershipStatus(u.membership_info?.end_date) === 'expired').length}
               </div>
             </div>
             <AlertCircle className="h-8 w-8 text-red-400 opacity-50" />
@@ -162,9 +155,9 @@ export default function AdminRenewalsPage() {
         <Card className="bg-[#191919] border-[#404040]">
           <CardContent className="p-4 flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-400">Total Activas</p>
+              <p className="text-sm text-gray-400">Total Usuarios</p>
               <div className="text-3xl font-semibold text-green-400">
-                {users.filter(u => u.status === 'active' || u.status === 'soon').length}
+                {users.length}
               </div>
             </div>
             <CheckCircle className="h-8 w-8 text-green-400 opacity-50" />
@@ -176,7 +169,7 @@ export default function AdminRenewalsPage() {
       <Card className="bg-[#191919] border-[#404040]">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-white">Usuarios</CardTitle>
+            <CardTitle className="text-white">Usuarios {loading && <span className="text-sm font-normal text-gray-500 italic ml-2">Actualizando...</span>}</CardTitle>
             <div className="relative w-64">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
@@ -201,53 +194,64 @@ export default function AdminRenewalsPage() {
                 </tr>
               </thead>
               <tbody>
-                {filteredUsers.map((user) => (
-                  <tr key={user.id} className="border-b border-[#404040]/50 hover:bg-[#404040]/20 transition-colors">
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-3">
-                        <Avatar className="h-10 w-10 ring-2 ring-[#404040]">
-                          <AvatarImage src={user.photo} alt={user.name} />
-                          <AvatarFallback className="bg-[#ff0400] text-white font-semibold">
-                            {user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="font-medium text-white">{user.name}</p>
-                          <p className="text-sm text-gray-400">{user.email}</p>
+                {filteredUsers.map((user) => {
+                  const status = getMembershipStatus(user.membership_info?.end_date);
+                  const days = getDaysRemaining(user.membership_info?.end_date);
+                  
+                  return (
+                    <tr key={user.id} className="border-b border-[#404040]/50 hover:bg-[#404040]/20 transition-colors">
+                      <td className="py-4 px-4">
+                        <div className="flex items-center gap-3">
+                          <Avatar className="h-10 w-10 ring-2 ring-[#404040]">
+                            <AvatarImage src={user.profile_picture_url || user.profile_picture} alt={user.first_name || user.username} />
+                            <AvatarFallback className="bg-[#ff0400] text-white font-semibold">
+                              {user.first_name?.[0] || user.username?.[0] || 'U'}
+                              {user.last_name?.[0] || ''}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-medium text-white">
+                              {user.full_name || (user.first_name || user.last_name ? 
+                                `${user.first_name || ''} ${user.last_name || ''}`.trim() 
+                                : user.username || 'Usuario')}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                    <td className="py-4 px-4">
-                      <Badge variant="outline" className="border-[#404040] text-gray-300">
-                        {user.membership}
-                      </Badge>
-                    </td>
-                    <td className="py-4 px-4">
-                      {getStatusBadge(user.status, user.daysRemaining)}
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-2 text-sm text-gray-300">
-                        <Calendar className="h-4 w-4 text-gray-500" />
-                        {new Date(user.expirationDate).toLocaleDateString('es-ES')}
-                      </div>
-                    </td>
-                    <td className="py-4 px-4 text-right">
-                      <Button
-                        size="sm"
-                        className={`${
-                          user.status === 'active' 
-                            ? 'bg-gray-700 text-gray-400 cursor-not-allowed hover:bg-gray-700' 
-                            : 'bg-[#ff0400] hover:bg-[#ff3936] text-white'
-                        } gap-2`}
-                        onClick={() => user.status !== 'active' && handleRenewClick(user)}
-                        disabled={user.status === 'active'}
-                      >
-                        <RefreshCw className="h-4 w-4" />
-                        {user.status === 'active' ? 'Al día' : 'Renovar'}
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                      <td className="py-4 px-4">
+                        <Badge variant="outline" className="border-[#404040] text-gray-300">
+                          {user.membership_info?.plan_name || 'Sin plan'}
+                        </Badge>
+                      </td>
+                      <td className="py-4 px-4">
+                        {getStatusBadge(status, days)}
+                      </td>
+                      <td className="py-4 px-4">
+                        <div className="flex items-center gap-2 text-sm text-gray-300">
+                          <Calendar className="h-4 w-4 text-gray-500" />
+                          {user.membership_info?.end_date 
+                            ? new Date(user.membership_info.end_date).toLocaleDateString('es-ES')
+                            : 'N/A'}
+                        </div>
+                      </td>
+                      <td className="py-4 px-4 text-right">
+                        <Button
+                          size="sm"
+                          className={`${
+                            status === 'active' 
+                              ? 'bg-gray-700 text-gray-400 cursor-not-allowed hover:bg-gray-700' 
+                              : 'bg-[#ff0400] hover:bg-[#ff3936] text-white'
+                          } gap-2`}
+                          onClick={() => status !== 'active' && handleRenewClick(user)}
+                          disabled={status === 'active' || loading}
+                        >
+                          <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+                          {status === 'active' ? 'Al día' : 'Renovar'}
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -268,19 +272,29 @@ export default function AdminRenewalsPage() {
             <div className="py-4 space-y-4">
               <div className="flex items-center gap-4 p-4 rounded-lg bg-[#404040]/30 border border-[#404040]">
                 <Avatar className="h-12 w-12">
+                  <AvatarImage src={selectedUser.profile_picture_url || selectedUser.profile_picture} alt={selectedUser.first_name || selectedUser.username} />
                   <AvatarFallback className="bg-[#ff0400] text-white">
-                    {selectedUser.name.split(' ').map(n => n[0]).join('')}
+                    {selectedUser.first_name?.[0] || selectedUser.username?.[0] || 'U'}
+                    {selectedUser.last_name?.[0] || ''}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <h4 className="font-bold text-lg">{selectedUser.name}</h4>
-                  <p className="text-gray-400">{selectedUser.membership}</p>
+                  <h4 className="font-bold text-lg">
+                    {selectedUser.full_name || (selectedUser.first_name || selectedUser.last_name ? 
+                      `${selectedUser.first_name || ''} ${selectedUser.last_name || ''}`.trim() 
+                      : selectedUser.username || 'Usuario')}
+                  </h4>
+                  <p className="text-gray-400">{selectedUser.membership_info?.plan_name || 'Sin membresía'}</p>
                 </div>
               </div>
               
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-400">Vencimiento actual:</span>
-                <span className="text-red-400 font-medium">{new Date(selectedUser.expirationDate).toLocaleDateString()}</span>
+                <span className="text-red-400 font-medium">
+                  {selectedUser.membership_info?.end_date 
+                    ? new Date(selectedUser.membership_info.end_date).toLocaleDateString()
+                    : 'Expirado'}
+                </span>
               </div>
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-400">Nuevo vencimiento:</span>

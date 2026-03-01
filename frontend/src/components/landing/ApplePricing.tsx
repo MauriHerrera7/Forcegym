@@ -1,5 +1,9 @@
-import React from 'react'
+'use client'
+import React, { useState } from 'react'
 import Container from '@/components/Container'
+import { useAuthContext } from '@/providers/AuthProvider'
+import { useMembership } from '@/hooks/useMembership'
+import PlanModal from '@/components/PlanModal'
 
 const plans = [
   {
@@ -58,8 +62,12 @@ const plans = [
 ]
 
 const ApplePricing: React.FC = () => {
+  const { user } = useAuthContext();
+  const { activeMembership } = useMembership();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
-    <section className="relative py-24 md:py-40 overflow-hidden">
+    <section className="relative py-24 md:py-40 overflow-hidden" id="ofertas">
       <Container className="relative z-10">
         {/* Section Header */}
         <div className="text-center mb-24 md:mb-32">
@@ -107,6 +115,7 @@ const ApplePricing: React.FC = () => {
              }
 
              const colors = colorClasses[plan.color as keyof typeof colorClasses]
+             const isActive = activeMembership?.plan.name === plan.name;
 
              return (
                <div 
@@ -132,7 +141,7 @@ const ApplePricing: React.FC = () => {
                      <div className="text-white font-black text-5xl md:text-6xl tracking-tight mb-2">
                         {plan.price}
                      </div>
-                     <div className="text-zinc-400 font-semibold text-base uppercase tracking-wider">
+                     <div className="text-zinc-300 font-semibold text-base uppercase tracking-wider">
                         {plan.period}
                      </div>
                   </div>
@@ -157,13 +166,26 @@ const ApplePricing: React.FC = () => {
                   )}
 
                   {/* CTA Button */}
-                  <button className="relative w-full py-5 rounded-2xl font-black text-base md:text-lg uppercase tracking-wider transition-all duration-300 bg-white text-black hover:bg-[#DC143C] hover:text-white shadow-2xl active:scale-95 overflow-hidden group/btn">
-                    <span className="relative z-10">Comenzar ahora</span>
+                  <button 
+                    disabled={isActive || user?.role === 'ADMIN'}
+                    onClick={() => setIsModalOpen(true)}
+                    className={`relative w-full py-5 rounded-2xl font-black text-base md:text-lg uppercase tracking-wider transition-all duration-500 overflow-hidden group/btn 
+                      ${(isActive || user?.role === 'ADMIN')
+                        ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed border border-zinc-700' 
+                        : 'bg-white text-black hover:text-white shadow-2xl active:scale-95'
+                      }`}
+                  >
+                    <span className="relative z-10">
+                      {isActive ? 'Ya obtenido' : user?.role === 'ADMIN' ? 'Acceso Admin' : 'Comenzar ahora'}
+                    </span>
+                    {(!isActive && user?.role !== 'ADMIN') && <div className="absolute inset-0 bg-[#ff0400] translate-y-full group-hover/btn:translate-y-0 transition-transform duration-500" />}
                   </button>
                </div>
              )
            })}
         </div>
+
+        <PlanModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
 
         {/* Bottom CTA */}
         <div className="text-center max-w-4xl mx-auto">

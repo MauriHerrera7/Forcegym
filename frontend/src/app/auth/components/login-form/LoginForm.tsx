@@ -46,8 +46,12 @@ export default function LoginForm({ className = '' }: LoginFormProps) {
     setIsLoading(true);
     try {
       await login({ email, password });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login error:', error);
+      setErrors(prev => ({ 
+        ...prev, 
+        email: error?.message || 'Error al iniciar sesión. Verifica tus credenciales.' 
+      }));
     } finally {
       setIsLoading(false);
     }

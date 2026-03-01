@@ -6,19 +6,12 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Mock user data - replace with actual auth
-  const user = {
-    name: 'Admin Usuario',
-    email: 'admin@forcegym.com',
-    photo: undefined,
-  };
-
   return (
     <div className="flex min-h-screen bg-[#0A0A0A]">
       <Sidebar role="admin" />
       <div className="flex flex-1 flex-col">
-        <DashboardHeader user={user} />
-        <main className="flex-1 overflow-y-auto">
+        <DashboardHeader />
+        <main className="flex-1 overflow-y-auto p-4 md:p-8">
           {children}
         </main>
       </div>

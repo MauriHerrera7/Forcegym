@@ -5,15 +5,18 @@ import Image from 'next/image'
 import { QRCodeSVG } from 'qrcode.react'
 import DeleteAccountModal from '@/components/DeleteAccountModal'
 import QRModal from '@/components/QRModal'
-import { useAuth } from '@/hooks/useAuth'
+import { useAuthContext } from '@/providers/AuthProvider'
+import { useMembership } from '@/hooks/useMembership'
+import { useProgress } from '@/hooks/useProgress'
 
 interface UserData {
   id: string
-  name: string
+  first_name: string
+  last_name: string
   email: string
   image?: string
   membershipType: string
-  membershipStatus: 'active' | 'expired' | 'pending'
+  membershipStatus: 'active' | 'expired' | 'pending' | 'cancelled' | 'suspended'
   lastCheckIn?: string
   joinDate: string
   nextPayment?: string
@@ -21,10 +24,17 @@ interface UserData {
   weight: number
   objective: string
   activityLevel: string
+  stats?: {
+    weightChange: string | null
+    totalWorkouts: number
+    completedWorkouts: number
+    totalTime: number
+  }
 }
 
 interface EditableData {
-  name: string
+  first_name: string
+  last_name: string
   email: string
   height: string
   weight: string
@@ -41,9 +51,13 @@ export default function DashboardPage() {
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [imageFile, setImageFile] = useState<File | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const { user, deleteAccount, loading, updateProfile } = useAuth()
+  const { user, deleteAccount, loading: authLoading, updateProfile } = useAuthContext()
+  const { activeMembership, checkIns, loading: membershipLoading } = useMembership()
+  const { summary, loading: progressLoading } = useProgress()
+  
   const [editedData, setEditedData] = useState<EditableData>({
-    name: '',
+    first_name: '',
+    last_name: '',
     email: '',
     height: '',
     weight: '',
@@ -54,14 +68,15 @@ export default function DashboardPage() {
   useEffect(() => {
     if (user) {
       setEditedData({
-        name: user.name || '',
+        first_name: user.first_name || '',
+        last_name: user.last_name || '',
         email: user.email || '',
         height: user.height?.toString() || '',
         weight: user.weight?.toString() || '',
-        objective: user.objective || '',
-        activityLevel: user.activityLevel || ''
+        objective: user.profile?.fitness_goal || '',
+        activityLevel: (Array.isArray(user.profile?.preferred_training_days) ? user.profile?.preferred_training_days[0] : user.profile?.preferred_training_days) || 'Moderada'
       })
-      setImagePreview(user.image || null)
+      setImagePreview(user.profile_picture_url || user.profile_picture || null)
     }
   }, [user])
 
@@ -75,13 +90,11 @@ export default function DashboardPage() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      // Validar tipo de archivo
       if (!file.type.startsWith('image/')) {
         alert('Por favor selecciona un archivo de imagen válido')
         return
       }
       
-      // Validar tamaño (máximo 5MB)
       if (file.size > 5 * 1024 * 1024) {
         alert('La imagen no debe superar los 5MB')
         return
@@ -89,7 +102,6 @@ export default function DashboardPage() {
 
       setImageFile(file)
       
-      // Crear preview
       const reader = new FileReader()
       reader.onloadend = () => {
         setImagePreview(reader.result as string)
@@ -108,31 +120,18 @@ export default function DashboardPage() {
     try {
       setIsSaving(true)
       
-      // Si hay una nueva imagen, primero súbela
-      let imageUrl = imagePreview
-      if (imageFile) {
-        // Aquí debes implementar la lógica para subir la imagen
-        // Por ejemplo, usando Cloudinary, Firebase Storage, o tu propio backend
-        const formData = new FormData()
-        formData.append('image', imageFile)
-        
-        // Ejemplo de llamada a API (ajusta según tu backend)
-        // const response = await fetch('/api/upload-image', {
-        //   method: 'POST',
-        //   body: formData
-        // })
-        // const data = await response.json()
-        // imageUrl = data.imageUrl
-      }
-
+      // Note: Image upload logic should be handled here if needed.
+      // For now, we'll just update the other fields.
+      
       await updateProfile({
-        name: editedData.name,
-        email: editedData.email,
-        height: Number(editedData.height),
-        weight: Number(editedData.weight),
-        objective: editedData.objective,
-        activityLevel: editedData.activityLevel,
-        image: imageUrl || undefined
+        first_name: editedData.first_name,
+        last_name: editedData.last_name,
+        height: editedData.height,
+        weight: editedData.weight,
+        profile: {
+          fitness_goal: editedData.objective,
+          preferred_training_days: editedData.activityLevel ? [editedData.activityLevel] : []
+        }
       })
       
       setIsEditing(false)
@@ -158,25 +157,39 @@ export default function DashboardPage() {
     }
   }
 
+  const lastCheckIn = checkIns.length > 0 ? checkIns[0].checked_in_at : null;
+
   const userData: UserData | null = user
     ? {
         id: user.id,
-        name: user.name,
+        first_name: user.first_name || 'Usuario',
+        last_name: user.last_name || '',
         email: user.email,
-        image: user.image,
-        membershipType: user.membershipType || 'Premium',
-        membershipStatus: user.membershipStatus || 'active',
-        lastCheckIn: user.lastCheckIn,
-        joinDate: user.joinDate || new Date().toISOString(),
-        nextPayment: user.nextPayment,
-        height: user.height || 180,
-        weight: user.weight || 75,
-        objective: user.objective || 'Ganar masa muscular y mejorar resistencia',
-        activityLevel: user.activityLevel || 'Moderada'
+        image: user.profile_picture_url || user.profile_picture,
+        membershipType: activeMembership?.plan?.name || 'Sin membresía',
+        membershipStatus: (activeMembership?.status.toLowerCase() as any) || 'pending',
+        lastCheckIn: lastCheckIn || undefined,
+        joinDate: user.created_at || new Date().toISOString(),
+        nextPayment: activeMembership?.end_date,
+        height: Number(user.height) || 0,
+        weight: Number(user.weight) || 0,
+        objective: user.profile?.fitness_goal || 'No definido',
+        activityLevel: (Array.isArray(user.profile?.preferred_training_days) ? user.profile?.preferred_training_days[0] : user.profile?.preferred_training_days) || 'Moderada',
+        stats: summary ? {
+          weightChange: summary.weight_change,
+          totalWorkouts: summary.total_workouts,
+          completedWorkouts: summary.completed_workouts,
+          totalTime: summary.total_workout_time
+        } : undefined
       }
     : null
 
-  if (loading) {
+  const getInitials = () => {
+    if (!userData) return '';
+    return `${userData.first_name?.charAt(0) || ''}${userData.last_name?.charAt(0) || ''}`.toUpperCase() || 'U';
+  }
+
+  if (authLoading || membershipLoading || progressLoading) {
     return (
       <div className="min-h-screen bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
@@ -223,14 +236,14 @@ export default function DashboardPage() {
                   <div className="relative w-[100px] h-[100px] rounded-full ring-2 ring-gray-700 transition-all duration-300 group-hover:ring-red-500 overflow-hidden">
                     <Image
                       src={imagePreview}
-                      alt={userData.name}
+                      alt={`${userData.first_name} ${userData.last_name}`}
                       fill
                       className="object-cover"
                     />
                   </div>
                 ) : (
                   <div className="w-[100px] h-[100px] rounded-full bg-red-600 flex items-center justify-center text-3xl font-bold text-white ring-2 ring-gray-700 transition-all duration-300 group-hover:ring-red-500">
-                    {userData.name.charAt(0)}
+                    {getInitials()}
                   </div>
                 )}
                 
@@ -268,15 +281,26 @@ export default function DashboardPage() {
 
               <div className="text-center md:text-left">
                 {isEditing ? (
-                  <input
-                    type="text"
-                    value={editedData.name}
-                    onChange={handleInputChange}
-                    name="name"
-                    className="text-3xl font-bold text-white bg-gray-700/50 rounded px-2 py-1 w-full mb-2"
-                  />
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={editedData.first_name}
+                      onChange={handleInputChange}
+                      name="first_name"
+                      placeholder="Nombre"
+                      className="text-2xl font-bold text-white bg-gray-700/50 rounded px-2 py-1 w-full max-w-[150px] mb-2"
+                    />
+                    <input
+                      type="text"
+                      value={editedData.last_name}
+                      onChange={handleInputChange}
+                      name="last_name"
+                      placeholder="Apellido"
+                      className="text-2xl font-bold text-white bg-gray-700/50 rounded px-2 py-1 w-full max-w-[150px] mb-2"
+                    />
+                  </div>
                 ) : (
-                  <h1 className="text-3xl font-bold text-white">{userData.name}</h1>
+                  <h1 className="text-3xl font-bold text-white">{`${userData.first_name} ${userData.last_name}`}</h1>
                 )}
 
                 {isEditing ? (
@@ -336,7 +360,7 @@ export default function DashboardPage() {
             <h3 className="text-xl font-semibold text-white mb-6">Mi código QR</h3>
             <div className="flex justify-center bg-white rounded-xl overflow-hidden">
               <QRCodeSVG 
-                value={userData.id} 
+                value={userData.id.toString()} 
                 size={300} 
                 level="H"
                 includeMargin={false}
@@ -427,14 +451,15 @@ export default function DashboardPage() {
                     setImageFile(null)
                     if (user) {
                       setEditedData({
-                        name: user.name || '',
+                        first_name: user.first_name || '',
+                        last_name: user.last_name || '',
                         email: user.email || '',
                         height: user.height?.toString() || '',
                         weight: user.weight?.toString() || '',
-                        objective: user.objective || '',
-                        activityLevel: user.activityLevel || ''
+                        objective: user.profile?.fitness_goal || '',
+                        activityLevel: (Array.isArray(user.profile?.preferred_training_days) ? user.profile?.preferred_training_days[0] : user.profile?.preferred_training_days) || ''
                       })
-                      setImagePreview(user.image || null)
+                      setImagePreview(user.profile_picture_url || user.profile_picture || null)
                     }
                   }}
                   className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors duration-200"
@@ -452,6 +477,59 @@ export default function DashboardPage() {
                 </button>
               </div>
             )}
+          </div>
+          
+          {/* Estadísticas de progreso */}
+          <div className="bg-gray-800/50 rounded-2xl p-8 backdrop-blur-sm border border-gray-700 shadow-lg">
+            <h3 className="text-xl font-semibold text-white mb-6">Estadísticas de progreso</h3>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 bg-gray-700/30 rounded-lg">
+                <span className="text-gray-400 text-xs block mb-1">Entrenamientos</span>
+                <span className="text-2xl font-bold text-white">
+                  {userData.stats?.completedWorkouts || 0}
+                </span>
+                <span className="text-gray-500 text-[10px] block mt-1">
+                  de {userData.stats?.totalWorkouts || 0} iniciados
+                </span>
+              </div>
+              
+              <div className="p-4 bg-gray-700/30 rounded-lg">
+                <span className="text-gray-400 text-xs block mb-1">Cambio de Peso</span>
+                <div className="flex items-center gap-2">
+                  <span className={`text-2xl font-bold ${
+                    Number(userData.stats?.weightChange) < 0 ? 'text-green-400' : 'text-red-400'
+                  }`}>
+                    {userData.stats?.weightChange ? (Number(userData.stats.weightChange) > 0 ? '+' : '') : ''}
+                    {userData.stats?.weightChange || '0.00'}
+                  </span>
+                  <span className="text-gray-400 text-xs">kg</span>
+                </div>
+              </div>
+              
+              <div className="p-4 bg-gray-700/30 rounded-lg col-span-2">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <span className="text-gray-400 text-xs block mb-1">Tiempo total</span>
+                    <span className="text-2xl font-bold text-white">
+                      {userData.stats?.totalTime || 0}
+                    </span>
+                    <span className="text-gray-400 text-xs ml-1">min</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-gray-400 text-xs block mb-1">Promedio</span>
+                    <span className="text-white font-medium">
+                      {summary?.avg_workout_duration ? Math.round(Number(summary.avg_workout_duration)) : 0}
+                    </span>
+                    <span className="text-gray-400 text-xs ml-1">min</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <p className="text-gray-500 text-xs mt-6 italic">
+              * Datos calculados desde el inicio de tu entrenamiento.
+            </p>
           </div>
 
           {/* Objetivo */}
@@ -503,7 +581,7 @@ export default function DashboardPage() {
         <QRModal
           isOpen={isQRModalOpen}
           onClose={() => setIsQRModalOpen(false)}
-          userId={userData.id}
+          userId={userData.id.toString()}
         />
       </div>
     </div>

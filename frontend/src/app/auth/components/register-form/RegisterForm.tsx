@@ -1,102 +1,203 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { useAuthContext } from '@/providers/AuthProvider';
+import { Camera, Plus, User, Upload, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 
 interface RegisterFormProps {
   className?: string;
 }
 
 interface FormData {
-  name: string;
+  first_name: string;
+  last_name: string;
   email: string;
+  dni: string;
+  phone: string;
   password: string;
   confirmPassword: string;
   birthDate: string;
   weight: string;
   height: string;
-  objective: string;
-  activity: string;
 }
 
 interface FormErrors {
-  name?: string;
+  first_name?: string;
+  last_name?: string;
   email?: string;
+  dni?: string;
+  phone?: string;
   password?: string;
   confirmPassword?: string;
   birthDate?: string;
   weight?: string;
   height?: string;
-  objective?: string;
-  activity?: string;
+  photo?: string;
+  general?: string;
 }
 
 export default function RegisterForm({ className = '' }: RegisterFormProps) {
+  const { register, login } = useAuthContext();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [formData, setFormData] = useState<FormData>({
-    name: '',
+    first_name: '',
+    last_name: '',
     email: '',
+    dni: '',
+    phone: '',
     password: '',
     confirmPassword: '',
     birthDate: '',
     weight: '',
     height: '',
-    objective: '',
-    activity: 'moderada'
   });
 
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [errors, setErrors] = useState<FormErrors>({});
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      setErrors(prev => ({ ...prev, photo: 'La imagen no puede superar los 5MB' }));
+      return;
+    }
+
+    setPhotoFile(file);
+    setErrors(prev => ({ ...prev, photo: undefined }));
+    const reader = new FileReader();
+    reader.onloadend = () => setPhotoPreview(reader.result as string);
+    reader.readAsDataURL(file);
+  };
+
+  const validateField = (field: keyof FormData, value: string) => {
+    let error = '';
+
+    switch (field) {
+      case 'first_name':
+        if (!value.trim()) error = 'El nombre es requerido';
+        break;
+      case 'last_name':
+        if (!value.trim()) error = 'El apellido es requerido';
+        break;
+      case 'email': {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!value) error = 'El correo electrónico es requerido';
+        else if (!emailRegex.test(value)) error = 'Introduce un correo válido';
+        break;
+      }
+      case 'dni':
+        if (!value.trim()) error = 'El DNI es requerido';
+        else if (!/^\d+$/.test(value)) error = 'Solo números permitidos';
+        break;
+      case 'password':
+        if (!value) error = 'La contraseña es requerida';
+        else if (value.length < 6) error = 'Mínimo 6 caracteres';
+        
+        // Also re-validate confirmation if it exists
+        if (formData.confirmPassword && value !== formData.confirmPassword) {
+          setErrors(prev => ({ ...prev, confirmPassword: 'Las contraseñas no coinciden' }));
+        } else if (formData.confirmPassword && value === formData.confirmPassword) {
+          setErrors(prev => ({ ...prev, confirmPassword: undefined }));
+        }
+        break;
+      case 'confirmPassword':
+        if (value !== formData.password) error = 'Las contraseñas no coinciden';
+        break;
+      case 'birthDate':
+        if (!value) error = 'Requerido';
+        break;
+      default:
+        break;
+    }
+
+    setErrors(prev => ({ ...prev, [field]: error || undefined }));
+    return !error;
+  };
+
   const validateForm = (): boolean => {
-    const newErrors: FormErrors = {};
-
-    if (!formData.name.trim()) newErrors.name = 'El nombre es requerido';
+    const fields: (keyof FormData)[] = ['first_name', 'last_name', 'email', 'dni', 'password', 'confirmPassword', 'birthDate'];
+    let isValid = true;
     
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.email) {
-      newErrors.email = 'El correo electrónico es requerido';
-    } else if (!emailRegex.test(formData.email)) {
-      newErrors.email = 'Introduce un correo válido';
-    }
+    fields.forEach(field => {
+      if (!validateField(field, formData[field])) {
+        isValid = false;
+      }
+    });
 
-    if (!formData.password) {
-      newErrors.password = 'La contraseña es requerida';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Mínimo 6 caracteres';
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Las contraseñas no coinciden';
-    }
-
-    if (!formData.birthDate) newErrors.birthDate = 'Requerido';
-    if (!formData.weight) newErrors.weight = 'Requerido';
-    if (!formData.height) newErrors.height = 'Requerido';
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return isValid;
   };
 
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: undefined }));
-    }
+    validateField(field, value);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     if (!validateForm()) return;
 
     setIsLoading(true);
     try {
-      console.log('Registro con:', formData);
-      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulación
-      // logic handles redirect or success
-    } catch (error) {
-      console.error('Registration error:', error);
-      setError('Error al registrar. Inténtalo de nuevo.');
+      const formDataToSend = new FormData();
+      
+      // Basic info
+      formDataToSend.append('username', formData.email);
+      formDataToSend.append('email', formData.email);
+      formDataToSend.append('first_name', formData.first_name);
+      formDataToSend.append('last_name', formData.last_name);
+      formDataToSend.append('password', formData.password);
+      formDataToSend.append('password_confirm', formData.confirmPassword);
+      formDataToSend.append('dni', formData.dni);
+      
+      if (formData.phone) formDataToSend.append('phone', formData.phone);
+      formDataToSend.append('birthdate', formData.birthDate);
+      if (formData.weight) formDataToSend.append('weight', formData.weight);
+      if (formData.height) formDataToSend.append('height', formData.height);
+      
+      // Profile photo file
+      if (photoFile) {
+        formDataToSend.append('profile_picture', photoFile);
+      }
+
+      await register(formDataToSend);
+      setSuccess(true);
+      
+      // Auto-login after successful registration
+      try {
+        await login({ email: formData.email, password: formData.password });
+      } catch (loginErr: any) {
+        console.error('Auto-login error:', loginErr);
+        setError('Registro exitoso, pero hubo un problema al iniciar sesión automáticamente. Por favor, ingresa manualmente.');
+      }
+    } catch (err: any) {
+      console.error('Registration full error:', err);
+      const apiErrors = err.data || {};
+      
+      if (typeof apiErrors === 'object' && !Array.isArray(apiErrors)) {
+        const newFormErrors: FormErrors = {};
+        Object.keys(apiErrors).forEach(key => {
+          const msg = Array.isArray(apiErrors[key]) ? apiErrors[key][0] : apiErrors[key];
+          if (key === 'username' || key === 'email') newFormErrors.email = msg;
+          else if (key === 'password_confirm') newFormErrors.confirmPassword = msg;
+          else if (key === 'non_field_errors') setError(msg);
+          else (newFormErrors as any)[key] = msg;
+        });
+        if (Object.keys(newFormErrors).length > 0) {
+          setErrors(newFormErrors);
+        }
+      } else {
+        setError(err.message || 'Error al registrar. Verifica los datos e intenta de nuevo.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -105,33 +206,113 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
   return (
     <div className={`w-full max-w-lg mx-auto px-6 py-8 ${className}`}>
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Header compact */}
+        {/* Header */}
         <div className="text-center mb-6">
           <h2 className="text-3xl font-bold tracking-tight text-white mb-1">Crea tu cuenta</h2>
-          <p className="text-zinc-500 text-sm">Inicia tu transformación hoy</p>
+          <p className="text-zinc-400 text-sm">Inicia tu transformación hoy</p>
         </div>
 
         {error && (
-          <div className="bg-red-500/10 border border-red-500/50 text-red-500 p-3 rounded-lg text-xs animate-in fade-in slide-in-from-top-1">
-            {error}
+          <div className="bg-red-500/5 border border-red-500/20 text-red-500 p-4 rounded-2xl text-[11px] backdrop-blur-md animate-in fade-in slide-in-from-top-4 duration-500 flex items-center gap-3">
+            <AlertCircle className="w-4 h-4 flex-shrink-0" />
+            <p className="font-medium tracking-tight">{error}</p>
           </div>
         )}
 
+        {success && (
+          <div className="bg-green-500/5 border border-green-500/20 text-green-500 p-4 rounded-2xl text-[11px] backdrop-blur-md animate-in fade-in slide-in-from-top-4 duration-500 flex items-center gap-3">
+            <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+            <p className="font-medium tracking-tight italic">¡Reclutado con éxito! Iniciando sesión...</p>
+          </div>
+        )}
+
+        {/*
+          - [x] Fix profile image display in dashboards (Header & Profile Page)
+          - [/] Improve Profile Edit UX
+              - [ ] Implement `isDirty` check for Save button (Client & Admin)
+              - [ ] Create `/admin/profile` page
+              - [ ] Add Profile link to `DashboardHeader`
+        */}
+
+        {/* Profile Photo Upload Redesigned */}
+        <div className="flex flex-col items-center gap-4 mb-6">
+          <div className="relative group">
+            {/* Outer Glow Ring */}
+            <div className={`absolute -inset-1.5 bg-red-600 rounded-full blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200 ${photoPreview ? 'animate-pulse' : ''}`}></div>
+            
+            {/* Main Container */}
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="relative w-28 h-28 rounded-full overflow-hidden border-2 border-[#1a1a1a] bg-zinc-900/50 backdrop-blur-sm flex items-center justify-center transition-all duration-500 group-hover:border-red-600/50 group-hover:scale-[1.02] focus:outline-none"
+              title="Subir foto de perfil"
+            >
+              {photoPreview ? (
+                <Image src={photoPreview} alt="Vista previa" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
+              ) : (
+                <div className="text-zinc-500 group-hover:text-white transition-colors flex flex-col items-center">
+                  <Camera className="w-8 h-8 mb-1" />
+                  <span className="text-[10px] font-bold uppercase tracking-tighter">Subir Foto</span>
+                </div>
+              )}
+              
+              {/* Overlay on hover */}
+              <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
+                <div className="flex flex-col items-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                  <Plus className="w-6 h-6 text-white mb-1" />
+                  <span className="text-[10px] text-white font-bold uppercase tracking-widest">
+                    {photoPreview ? 'Cambiar' : 'Añadir'}
+                  </span>
+                </div>
+              </div>
+            </button>
+          </div>
+          
+          <div className="text-center">
+            <p className="text-[10px] text-zinc-400 uppercase tracking-[0.2em] font-medium leading-none">
+              Foto de Perfil <span className="text-zinc-400 italic opacity-50 ml-1">(Opcional)</span>
+            </p>
+            {errors.photo && <p className="text-red-500 text-[10px] mt-2 font-bold animate-pulse">{errors.photo}</p>}
+          </div>
+          
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handlePhotoChange}
+            className="hidden"
+          />
+        </div>
+
         {/* Basic Info Grid */}
         <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1.5 col-span-2 sm:col-span-1">
-            <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-500 ml-1">Nombre</label>
+          <div className="space-y-1.5 col-span-1">
+            <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-400 ml-1">Nombre</label>
             <input
               type="text"
-              value={formData.name}
-              onChange={(e) => handleInputChange('name', e.target.value)}
+              value={formData.first_name}
+              onChange={(e) => handleInputChange('first_name', e.target.value)}
               className={`w-full bg-black/40 text-white px-3 py-2.5 rounded-xl border text-sm transition-all duration-300 outline-none
-                ${errors.name ? 'border-red-500/50' : 'border-zinc-800 focus:border-white'}`}
-              placeholder="Juan Pérez"
+                ${errors.first_name ? 'border-red-500/50' : 'border-zinc-800 focus:border-white'}`}
+              placeholder="Juan"
             />
+            {errors.first_name && <p className="text-red-400 text-[10px] ml-1">{errors.first_name}</p>}
           </div>
 
-          <div className="space-y-1.5 col-span-2 sm:col-span-1">
+          <div className="space-y-1.5 col-span-1">
+            <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-500 ml-1">Apellido</label>
+            <input
+              type="text"
+              value={formData.last_name}
+              onChange={(e) => handleInputChange('last_name', e.target.value)}
+              className={`w-full bg-black/40 text-white px-3 py-2.5 rounded-xl border text-sm transition-all duration-300 outline-none
+                ${errors.last_name ? 'border-red-500/50' : 'border-zinc-800 focus:border-white'}`}
+              placeholder="Pérez"
+            />
+            {errors.last_name && <p className="text-red-400 text-[10px] ml-1">{errors.last_name}</p>}
+          </div>
+
+          <div className="space-y-1.5 col-span-2">
             <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-500 ml-1">Email</label>
             <input
               type="email"
@@ -141,9 +322,36 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
                 ${errors.email ? 'border-red-500/50' : 'border-zinc-800 focus:border-white'}`}
               placeholder="nombre@ejemplo.com"
             />
+            {errors.email && <p className="text-red-400 text-[10px] ml-1">{errors.email}</p>}
           </div>
 
-          <div className="space-y-1.5 col-span-2 sm:col-span-1">
+          <div className="space-y-1.5 col-span-1">
+            <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-500 ml-1">DNI</label>
+            <input
+              type="text"
+              value={formData.dni}
+              onChange={(e) => handleInputChange('dni', e.target.value)}
+              className={`w-full bg-black/40 text-white px-3 py-2.5 rounded-xl border text-sm transition-all duration-300 outline-none
+                ${errors.dni ? 'border-red-500/50' : 'border-zinc-800 focus:border-white'}`}
+              placeholder="12345678"
+            />
+            {errors.dni && <p className="text-red-400 text-[10px] ml-1">{errors.dni}</p>}
+          </div>
+
+          <div className="space-y-1.5 col-span-1">
+            <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-500 ml-1">Teléfono</label>
+            <input
+              type="tel"
+              value={formData.phone}
+              onChange={(e) => handleInputChange('phone', e.target.value)}
+              className={`w-full bg-black/40 text-white px-3 py-2.5 rounded-xl border text-sm transition-all duration-300 outline-none
+                ${errors.phone ? 'border-red-500/50' : 'border-zinc-800 focus:border-white'}`}
+              placeholder="+54 9 11..."
+            />
+            {errors.phone && <p className="text-red-400 text-[10px] ml-1">{errors.phone}</p>}
+          </div>
+
+          <div className="space-y-1.5 col-span-1">
             <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-500 ml-1">Contraseña</label>
             <input
               type="password"
@@ -153,9 +361,10 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
                 ${errors.password ? 'border-red-500/50' : 'border-zinc-800 focus:border-white'}`}
               placeholder="••••••••"
             />
+            {errors.password && <p className="text-red-400 text-[10px] ml-1">{errors.password}</p>}
           </div>
 
-          <div className="space-y-1.5 col-span-2 sm:col-span-1">
+          <div className="space-y-1.5 col-span-1">
             <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-500 ml-1">Confirmar</label>
             <input
               type="password"
@@ -165,11 +374,12 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
                 ${errors.confirmPassword ? 'border-red-500/50' : 'border-zinc-800 focus:border-white'}`}
               placeholder="••••••••"
             />
+            {errors.confirmPassword && <p className="text-red-400 text-[10px] ml-1">{errors.confirmPassword}</p>}
           </div>
         </div>
 
         {/* Physical Data Grid */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-3 mt-4">
           <div className="space-y-1.5">
             <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-500 ml-1 text-center block">Nacimiento</label>
             <input
@@ -187,8 +397,7 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
               type="number"
               value={formData.weight}
               onChange={(e) => handleInputChange('weight', e.target.value)}
-              className={`w-full bg-black/40 text-white px-2 py-2.5 rounded-xl border text-sm text-center transition-all duration-300 outline-none
-                ${errors.weight ? 'border-red-500/50' : 'border-zinc-800 focus:border-white'}`}
+              className="w-full bg-black/40 text-white px-2 py-2.5 rounded-xl border border-zinc-800 focus:border-white text-sm text-center transition-all duration-300 outline-none"
               placeholder="70"
             />
           </div>
@@ -199,42 +408,8 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
               type="number"
               value={formData.height}
               onChange={(e) => handleInputChange('height', e.target.value)}
-              className={`w-full bg-black/40 text-white px-2 py-2.5 rounded-xl border text-sm text-center transition-all duration-300 outline-none
-                ${errors.height ? 'border-red-500/50' : 'border-zinc-800 focus:border-white'}`}
+              className="w-full bg-black/40 text-white px-2 py-2.5 rounded-xl border border-zinc-800 focus:border-white text-sm text-center transition-all duration-300 outline-none"
               placeholder="175"
-            />
-          </div>
-        </div>
-
-        {/* Activity & Objective */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1.5 col-span-2">
-            <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-500 ml-1">Frecuencia de Actividad</label>
-            <div className="relative">
-              <select
-                value={formData.activity}
-                onChange={(e) => handleInputChange('activity', e.target.value)}
-                className="w-full bg-black text-white px-3 py-2.5 rounded-xl border border-zinc-800 focus:border-white text-sm transition-all duration-300 outline-none appearance-none cursor-pointer"
-              >
-                <option value="moderada">Moderada (1-3 días)</option>
-                <option value="activa">Activa (4-5 días)</option>
-                <option value="muy_activa">Muy activa (6+ días)</option>
-              </select>
-              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                <svg className="w-4 h-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-1.5 col-span-2">
-            <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-500 ml-1">Objetivo Fitness</label>
-            <textarea
-              value={formData.objective}
-              onChange={(e) => handleInputChange('objective', e.target.value)}
-              className="w-full bg-black/40 text-white px-3 py-2 rounded-xl border border-zinc-800 focus:border-white text-sm transition-all duration-300 outline-none resize-none h-14"
-              placeholder="¿Qué quieres lograr?"
             />
           </div>
         </div>
@@ -243,11 +418,24 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-white text-black hover:!bg-red-700 hover:!text-white py-3.5 rounded-full text-base font-bold transition-all duration-300 transform active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+            className={`w-full relative group overflow-hidden py-4 rounded-2xl text-base font-black transition-all duration-500 transform active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed
+              ${success ? 'bg-green-600 text-white' : 'bg-white text-black hover:bg-[#ff0400] hover:text-white'}`}
           >
-            {isLoading ? 'Creando cuenta...' : 'Comenzar Ahora'}
+            <span className="relative z-10 flex items-center justify-center gap-2 uppercase tracking-[0.2em] text-sm">
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  {photoFile ? 'Cifrando imagen...' : 'Forjando perfil...'}
+                </>
+              ) : success ? (
+                <>
+                  <CheckCircle2 className="w-5 h-5 animate-bounce" />
+                  Listo
+                </>
+              ) : 'Comenzar Ahora'}
+            </span>
           </button>
-          
+
           <p className="text-center text-xs text-zinc-500 mt-4">
             ¿Ya tienes cuenta?{' '}
             <Link href="/auth/login" className="text-white hover:underline font-bold transition-all">

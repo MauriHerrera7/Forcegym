@@ -1,32 +1,18 @@
 'use client'
 
 import { createContext, useContext, ReactNode } from 'react'
-import { useAuth } from '@/hooks/useAuth'
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  image?: string;
-  membershipType: string;
-  membershipStatus: 'active' | 'expired' | 'pending';
-  lastCheckIn?: string;
-  joinDate: string;
-  nextPayment?: string;
-  height: number;
-  weight: number;
-  objective: string;
-  activityLevel: string;
-  gender: 'male' | 'female';
-}
+import { useAuth, User } from '@/hooks/useAuth'
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   isAuthenticated: boolean;
   login: (credentials: { email: string; password: string }) => Promise<void>;
+  register: (userData: any) => Promise<any>;
   logout: () => Promise<void>;
   deleteAccount: () => Promise<void>;
+  fetchUser: () => Promise<void>;
+  updateProfile: (data: any) => Promise<any>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)

@@ -23,8 +23,8 @@ interface SidebarProps {
 const adminMenuItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/users', label: 'Usuarios', icon: Users },
+  { href: '/admin/payments', label: 'Pagos', icon: CreditCard },
   { href: '/admin/renewals', label: 'Renovaciones', icon: RefreshCw },
-  { href: '/admin/videos', label: 'Videos', icon: Video },
 ];
 
 const clientMenuItems = [
@@ -43,14 +43,16 @@ export function Sidebar({ role }: SidebarProps) {
     <div className="sticky top-0 flex h-screen w-64 flex-col bg-[#2D0A0A] border-r border-[#450A0A]/30">
       {/* Logo */}
       <div className="flex h-24 items-center justify-center px-4">
-        <Image
-          src="https://res.cloudinary.com/dry6dvzoj/image/upload/v1757729690/Forcegym_1_nxwdfw.png"
-          alt="ForceGym Logo"
-          width={180}
-          height={60}
-          className="h-auto w-auto"
-          priority
-        />
+        <Link href="/">
+          <Image
+            src="https://res.cloudinary.com/dry6dvzoj/image/upload/v1757729690/Forcegym_1_nxwdfw.png"
+            alt="ForceGym Logo"
+            width={180}
+            height={60}
+            className="h-auto w-auto hover:opacity-80 transition-opacity"
+            priority
+          />
+        </Link>
       </div>
 
       {/* Navigation */}

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Container from '@/components/Container'
 import Link from 'next/link'
+import { useAuthContext } from '@/providers/AuthProvider'
 
 interface Slide {
   id: number
@@ -35,6 +36,7 @@ const slides: Slide[] = [
 
 const HeroSection: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0)
+  const { user } = useAuthContext();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -42,6 +44,8 @@ const HeroSection: React.FC = () => {
     }, 6000)
     return () => clearInterval(interval)
   }, [])
+
+  const dashboardUrl = user?.role === 'ADMIN' ? '/admin' : '/client';
 
   return (
     <section className="relative h-[90vh] w-full overflow-hidden bg-black flex items-center">
@@ -109,10 +113,10 @@ const HeroSection: React.FC = () => {
           {/* CTAs */}
           <div className="fade-up delay-300 flex flex-wrap gap-6 items-center">
             <Link 
-              href="/auth/register" 
+              href={user ? dashboardUrl : "/auth/register"} 
               className="bg-red-600 text-white font-black px-12 py-5 text-xl uppercase italic tracking-tighter hover:bg-white hover:text-red-600 transition-all shadow-[0_20px_50px_rgba(220,38,38,0.3)]"
             >
-              EMPEZAR AHORA
+              {user ? 'IR AL DASHBOARD' : 'EMPEZAR AHORA'}
             </Link>
             <Link 
               href="#ofertas" 

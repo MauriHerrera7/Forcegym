@@ -35,7 +35,7 @@ const TechComplement: React.FC = () => {
                    <h4 className="text-white font-black text-xl md:text-2xl uppercase italic tracking-tighter">
                       {feat.title}
                    </h4>
-                   <p className="text-zinc-500 font-medium text-lg leading-relaxed italic border-l-2 border-zinc-800 pl-6">
+                   <p className="text-zinc-400 font-medium text-lg leading-relaxed italic border-l-2 border-zinc-800 pl-6">
                       {feat.desc}
                    </p>
                 </div>

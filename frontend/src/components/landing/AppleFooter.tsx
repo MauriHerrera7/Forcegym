@@ -15,7 +15,7 @@ const AppleFooter: React.FC = () => {
               <div className="w-8 h-8 bg-apple-red rounded-sm group-hover:rotate-90 transition-transform duration-700" />
               <span className="text-white font-black text-2xl italic tracking-tighter uppercase transition-colors group-hover:text-apple-red">FORCE<span className="text-white group-hover:text-apple-red transition-all">GYM</span></span>
             </Link>
-            <p className="text-zinc-600 text-[10px] font-bold uppercase tracking-[0.4em] leading-relaxed italic">
+            <p className="text-zinc-400 text-[10px] font-bold uppercase tracking-[0.4em] leading-relaxed italic">
               Donde la fuerza física se encuentra con el diseño de vanguardia.
             </p>
           </div>
@@ -51,11 +51,11 @@ const AppleFooter: React.FC = () => {
 
         {/* Bottom Banner */}
         <div className="border-t border-white/5 pt-12 flex flex-col md:flex-row justify-between items-center gap-8">
-           <div className="text-[10px] text-zinc-700 font-bold uppercase tracking-[0.6em]">
+           <div className="text-[10px] text-zinc-500 font-bold uppercase tracking-[0.6em]">
               © {currentYear} ForceGym Performance. All rights reserved.
            </div>
            <div className="h-px w-24 bg-gradient-to-r from-transparent via-apple-red to-transparent" />
-           <div className="text-[10px] text-zinc-700 font-bold uppercase tracking-[0.6em]">
+           <div className="text-[10px] text-zinc-500 font-bold uppercase tracking-[0.6em]">
               Designed in Puerto Madero
            </div>
         </div>

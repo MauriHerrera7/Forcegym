@@ -49,7 +49,7 @@ const Navbar: React.FC = () => {
           {/* Actions (right) - Flex-1 to push it to the right */}
           <div className="flex-1 md:flex items-center justify-end" style={{ gap: '20px' }}>
             {isAuthenticated ? (
-              <UserMenu userName={user?.name || 'Usuario'} userImage={user?.image} />
+              <UserMenu userName={`${user?.first_name || ''} ${user?.last_name || ''}`.trim() || 'Usuario'} userImage={user?.profile_picture_url || user?.profile_picture} />
             ) : (
               <>
                 <Link
@@ -146,7 +146,7 @@ const Navbar: React.FC = () => {
 
               {isAuthenticated ? (
                 <div className="mt-4 px-4">
-                  <UserMenu userName={user?.name || 'Usuario'} userImage={user?.image} />
+                  <UserMenu userName={`${user?.first_name || ''} ${user?.last_name || ''}`.trim() || 'Usuario'} userImage={user?.profile_picture_url || user?.profile_picture} />
                 </div>
               ) : (
                 <div style={{ paddingTop: '20px', gap: '16px', display: 'flex', flexDirection: 'column' }}>

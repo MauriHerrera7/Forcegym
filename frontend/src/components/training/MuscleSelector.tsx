@@ -154,7 +154,7 @@ export function MuscleSelector({ onMuscleClick }: MuscleSelectorProps) {
         <div className="flex gap-6 w-full justify-center">
           {/* Anterior */}
           <div className="flex flex-col items-center gap-2">
-            <span className="text-[10px] uppercase tracking-[0.3em] text-gray-500 font-semibold">
+            <span className="text-[10px] uppercase tracking-[0.3em] text-zinc-400 font-semibold">
               Anterior
             </span>
             <div className="bg-[#111111]/60 rounded-2xl border border-[#2a2a2a] p-5 flex items-center justify-center w-[270px] h-[540px]">
@@ -169,7 +169,7 @@ export function MuscleSelector({ onMuscleClick }: MuscleSelectorProps) {
 
           {/* Posterior */}
           <div className="flex flex-col items-center gap-2">
-            <span className="text-[10px] uppercase tracking-[0.3em] text-gray-500 font-semibold">
+            <span className="text-[10px] uppercase tracking-[0.3em] text-zinc-400 font-semibold">
               Posterior
             </span>
             <div className="bg-[#111111]/60 rounded-2xl border border-[#2a2a2a] p-5 flex items-center justify-center w-[270px] h-[540px]">
@@ -198,7 +198,7 @@ export function MuscleSelector({ onMuscleClick }: MuscleSelectorProps) {
           </p>
         </div>
 
-        <p className="text-gray-600 text-[10px] uppercase tracking-[0.3em] font-medium mt-1">
+        <p className="text-zinc-400 text-[10px] uppercase tracking-[0.3em] font-medium mt-1">
           Selecciona un grupo muscular
         </p>
       </div>

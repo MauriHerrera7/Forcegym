@@ -40,7 +40,7 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({
       </h2>
       
       {subtitle && (
-        <p className={`max-w-2xl text-lg font-medium tracking-wide leading-relaxed italic ${light ? 'text-zinc-600' : 'text-zinc-400'}`}>
+        <p className={`max-w-2xl text-lg font-medium tracking-wide leading-relaxed italic ${light ? 'text-zinc-900' : 'text-zinc-300'}`}>
           {subtitle}
         </p>
       )}

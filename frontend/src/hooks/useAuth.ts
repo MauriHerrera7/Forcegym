@@ -1,123 +1,225 @@
-'use client'
+"use client";
 
-import { useState, useEffect, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { fetchApi } from "@/lib/api";
 
-interface User {
-  id: string
-  name: string
-  email: string
-  image?: string
-  membershipType: string
-  membershipStatus: 'active' | 'expired' | 'pending'
-  lastCheckIn?: string
-  joinDate: string
-  nextPayment?: string
-  height: number
-  weight: number
-  objective: string
-  activityLevel: string
-  gender: 'male' | 'female'
+interface UserProfile {
+  bio?: string;
+  date_of_birth?: string;
+  fitness_goal?: string;
+  medical_conditions?: string;
+  emergency_contact_name?: string;
+  emergency_contact_phone?: string;
+  preferred_training_days?: string[];
+  notifications_enabled?: boolean;
+}
+
+export interface User {
+  id: string; // Updated to string for UUID
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  full_name?: string;
+  role: string;
+  role_display?: string;
+  dni: string;
+  phone?: string;
+  birthdate: string;
+  profile_picture?: string;
+  profile_picture_url?: string;
+  weight?: string | number;
+  height?: string | number;
+  bmi?: string | number;
+  is_active: boolean;
+  profile?: UserProfile;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export function useAuth() {
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
-  const router = useRouter()
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  const refreshToken = useCallback(async () => {
+    try {
+      const refresh = localStorage.getItem("refresh_token");
+      if (!refresh) throw new Error("No refresh token available");
+
+      const response = await fetchApi("/auth/token/refresh/", {
+        method: "POST",
+        body: JSON.stringify({ refresh }),
+      });
+
+      if (response && response.access) {
+        localStorage.setItem("access_token", response.access);
+        // If the backend rotates refresh tokens, update it
+        if (response.refresh) {
+          localStorage.setItem("refresh_token", response.refresh);
+        }
+        return response.access;
+      }
+      throw new Error("Could not refresh token");
+    } catch (error) {
+      console.error("Error al renovar el token:", error);
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      setUser(null);
+      throw error;
+    }
+  }, []);
+
+  const fetchUser = useCallback(async () => {
+    try {
+      const token = localStorage.getItem("access_token");
+      if (!token) {
+        setUser(null);
+        setLoading(false);
+        return;
+      }
+
+      // Obtener el perfil del usuario actual desde el backend
+      try {
+        const userData = await fetchApi("/users/me/");
+        setUser(userData);
+      } catch (error: any) {
+        // Si el error es 401, intentar refrescar el token
+        if (error && error.status === 401) {
+          console.warn("Token de acceso expirado, intentando renovar...");
+          try {
+            const newToken = await refreshToken();
+            if (newToken) {
+              // Reintentar obtener el usuario con el nuevo token
+              const userData = await fetchApi("/users/me/");
+              setUser(userData);
+              return;
+            }
+          } catch (refreshError) {
+            console.error(
+              "Error definitivo tras intento de refresh:",
+              refreshError,
+            );
+          }
+        }
+
+        // Si llegamos aquí es que falló todo o no era un 401 recuperable
+        if (error && (error.status === 401 || error.status === 403)) {
+          localStorage.removeItem("access_token");
+          localStorage.removeItem("refresh_token");
+          setUser(null);
+        }
+
+        console.error("Error al cargar el usuario:", error);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [refreshToken]);
 
   // Cargar usuario al iniciar
   useEffect(() => {
-    const loadUser = async () => {
+    fetchUser();
+  }, [fetchUser]);
+
+  const login = useCallback(
+    async (credentials: { email: string; password: string }) => {
       try {
-        // TODO: Implementar carga real del usuario desde el backend
-        const storedUser = localStorage.getItem('user')
-        if (storedUser) {
-          const parsedUser = JSON.parse(storedUser)
-          // Validar que el usuario tiene todos los campos requeridos
-          if (
-            parsedUser &&
-            typeof parsedUser.id === 'string' &&
-            typeof parsedUser.name === 'string' &&
-            typeof parsedUser.email === 'string' &&
-            typeof parsedUser.membershipType === 'string' &&
-            (parsedUser.membershipStatus === 'active' ||
-             parsedUser.membershipStatus === 'expired' ||
-             parsedUser.membershipStatus === 'pending') &&
-            typeof parsedUser.joinDate === 'string' &&
-            (parsedUser.gender === 'male' || parsedUser.gender === 'female')
-          ) {
-            setUser(parsedUser)
-          } else {
-            // Si los datos no son válidos, eliminarlos
-            localStorage.removeItem('user')
+        const response = await fetchApi("/auth/login/", {
+          method: "POST",
+          body: JSON.stringify(credentials),
+        });
+
+        if (response && response.access) {
+          localStorage.setItem("access_token", response.access);
+          if (response.refresh) {
+            localStorage.setItem("refresh_token", response.refresh);
           }
+
+          // El token ya está en localStorage, fetchApi lo recogerá automáticamente
+          // Obtener la info del usuario ahora que estamos autenticados
+          const userData = await fetchApi("/users/me/");
+          setUser(userData);
+          setLoading(false);
+
+          // Redirigir a la landing page después de iniciar sesión
+          router.push("/");
         }
       } catch (error) {
-        console.error('Error al cargar el usuario:', error)
-      } finally {
-        setLoading(false)
+        console.error("Error al iniciar sesión:", error);
+        throw error;
       }
-    }
+    },
+    [router],
+  );
 
-    loadUser()
-  }, [])
-
-  const login = useCallback(async (credentials: { email: string; password: string }) => {
+  const register = useCallback(async (userData: any) => {
     try {
-      // TODO: Implementar login real con el backend
-      const mockUser = {
-        id: '123456',
-        name: 'Usuario Ejemplo',
-        email: credentials.email,
-        membershipType: 'Premium',
-        membershipStatus: 'active' as const,
-        lastCheckIn: new Date('2023-09-21T15:30:00').toISOString(),
-        joinDate: new Date('2023-08-01').toISOString(),
-        nextPayment: new Date('2023-10-01').toISOString(),
-        height: 180,
-        weight: 75,
-        objective: 'Ganar masa muscular y mejorar resistencia',
-        activityLevel: 'Moderada',
-        gender: 'male' as const
-      }
-      
-      localStorage.setItem('user', JSON.stringify(mockUser))
-      setUser(mockUser)
-      router.push('/dashboard')
+      // Determine if we should send as FormData (for file uploads)
+      const body =
+        userData instanceof FormData ? userData : JSON.stringify(userData);
+
+      const response = await fetchApi("/users/register/", {
+        method: "POST",
+        body: body,
+      });
+
+      return response;
     } catch (error) {
-      console.error('Error al iniciar sesión:', error)
-      throw error
+      console.error("Error en el registro:", error);
+      throw error;
     }
-  }, [router])
+  }, []); // Remove 'login' dependency as it's not used here
+
+  const updateProfile = useCallback(async (data: any) => {
+    try {
+      const body = data instanceof FormData ? data : JSON.stringify(data);
+
+      const response = await fetchApi("/users/update_profile/", {
+        method: "PATCH",
+        body: body,
+      });
+      setUser(response);
+      return response;
+    } catch (error) {
+      console.error("Error al actualizar perfil:", error);
+      throw error;
+    }
+  }, []);
 
   const logout = useCallback(async () => {
     try {
-      // TODO: Implementar logout en el backend
-      localStorage.removeItem('user')
-      setUser(null)
-      router.push('/')
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      setUser(null);
+      router.push("/auth/login");
     } catch (error) {
-      console.error('Error al cerrar sesión:', error)
-      throw error
+      console.error("Error al cerrar sesión:", error);
+      throw error;
     }
-  }, [router])
+  }, [router]);
 
   const deleteAccount = useCallback(async () => {
     try {
-      // TODO: Implementar eliminación de cuenta en el backend
-      await logout()
+      // Esto requeriría un endpoint específico en el backend si deseamos borrarlo
+      // await fetchApi(`/users/${user?.id}/`, { method: 'DELETE' })
+      await logout();
     } catch (error) {
-      console.error('Error al eliminar la cuenta:', error)
-      throw error
+      console.error("Error al eliminar la cuenta:", error);
+      throw error;
     }
-  }, [logout])
+  }, [logout]);
 
   return {
     user,
     loading,
     login,
+    register,
+    updateProfile,
     logout,
     deleteAccount,
-    isAuthenticated: !!user
-  }
+    fetchUser,
+    isAuthenticated: !!user,
+  };
 }
