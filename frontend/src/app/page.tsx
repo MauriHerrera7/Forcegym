@@ -2,7 +2,6 @@
 
 import React from 'react'
 import AppleHero from '@/components/landing/AppleHero'
-import Manifesto from '@/components/landing/Manifesto'
 import SpaceExperience from '@/components/landing/SpaceExperience'
 import TechComplement from '@/components/landing/TechComplement'
 import ApplePricing from '@/components/landing/ApplePricing'
@@ -17,10 +16,7 @@ const LandingPage: React.FC = () => {
       {/* 1. Hero Cinemático - Impacto Inicial y Storytelling */}
       <AppleHero />
 
-      {/* 2. Manifesto - El Alma de la Marca */}
-      <Manifesto />
-
-      {/* 3. Experiencia del Espacio - El Gimnasio como Producto Hardware */}
+      {/* 2. Experiencia del Espacio - El Gimnasio como Producto Hardware */}
       <SpaceExperience />
 
       {/* 4. Tecnología como Complemento - Ecosistema Invisible */}

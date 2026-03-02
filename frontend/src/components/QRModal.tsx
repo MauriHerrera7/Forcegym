@@ -6,10 +6,10 @@ import { XMarkIcon } from '@heroicons/react/24/outline'
 interface QRModalProps {
   isOpen: boolean
   onClose: () => void
-  userId: string
+  qrCodeValue: string
 }
 
-export default function QRModal({ isOpen, onClose, userId }: QRModalProps) {
+export default function QRModal({ isOpen, onClose, qrCodeValue }: QRModalProps) {
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={onClose}>
@@ -50,7 +50,7 @@ export default function QRModal({ isOpen, onClose, userId }: QRModalProps) {
                   </button>
                 </div>
                 <div className="flex justify-center p-6 bg-white rounded-xl">
-                  <QRCodeSVG value={userId} size={350} level="H" includeMargin={false} marginSize={0} />
+                  <QRCodeSVG value={qrCodeValue} size={350} level="H" includeMargin={false} marginSize={0} />
                 </div>
                 <p className="mt-4 text-center text-sm text-gray-300">
                   Muestra este código al ingresar al gimnasio

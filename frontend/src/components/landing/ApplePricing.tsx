@@ -1,5 +1,6 @@
 'use client'
 import React, { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Container from '@/components/Container'
 import { useAuthContext } from '@/providers/AuthProvider'
 import { useMembership } from '@/hooks/useMembership'
@@ -65,6 +66,15 @@ const ApplePricing: React.FC = () => {
   const { user } = useAuthContext();
   const { activeMembership } = useMembership();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const router = useRouter();
+
+  const handlePlanClick = () => {
+    if (!user) {
+      router.push('/auth/login');
+    } else {
+      setIsModalOpen(true);
+    }
+  };
 
   return (
     <section className="relative py-24 md:py-40 overflow-hidden" id="ofertas">
@@ -168,7 +178,7 @@ const ApplePricing: React.FC = () => {
                   {/* CTA Button */}
                   <button 
                     disabled={isActive || user?.role === 'ADMIN'}
-                    onClick={() => setIsModalOpen(true)}
+                    onClick={handlePlanClick}
                     className={`relative w-full py-5 rounded-2xl font-black text-base md:text-lg uppercase tracking-wider transition-all duration-500 overflow-hidden group/btn 
                       ${(isActive || user?.role === 'ADMIN')
                         ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed border border-zinc-700' 

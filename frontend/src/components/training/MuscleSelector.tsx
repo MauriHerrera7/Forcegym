@@ -62,7 +62,7 @@ export function MuscleSelector({ onMuscleClick }: MuscleSelectorProps) {
     'espalda-superior': 'espalda',
     'espalda-inferior': 'espalda',
     'deltoides': 'hombros',
-    'trapecio': 'hombros',
+    'trapecio': 'espalda',
     'cuello': 'hombros',
   };
 
@@ -72,7 +72,7 @@ export function MuscleSelector({ onMuscleClick }: MuscleSelectorProps) {
     onMuscleClick(targetId);
   };
 
-  const NON_INTERACTIVE = new Set(['cabeza', 'pelo', 'cuello', 'mano', 'pie', 'tibial', 'tobillo', 'rodillas', 'antebrazos', 'abdominales', 'pantorrillas']);
+  const NON_INTERACTIVE = new Set(['cabeza', 'pelo', 'cuello', 'mano', 'pie', 'tibial', 'tibialis', 'tobillo', 'rodillas', 'antebrazos', 'abdominales', 'pantorrillas', 'calves', 'oblicuos']);
 
   const getMuscleName = (slug: string) => {
     const targetId = muscleMapping[slug] || slug;

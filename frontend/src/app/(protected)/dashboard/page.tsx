@@ -360,7 +360,7 @@ export default function DashboardPage() {
             <h3 className="text-xl font-semibold text-white mb-6">Mi código QR</h3>
             <div className="flex justify-center bg-white rounded-xl overflow-hidden">
               <QRCodeSVG 
-                value={userData.id.toString()} 
+                value={activeMembership?.qr_code_payload || userData.id.toString()} 
                 size={300} 
                 level="H"
                 includeMargin={false}
@@ -581,7 +581,7 @@ export default function DashboardPage() {
         <QRModal
           isOpen={isQRModalOpen}
           onClose={() => setIsQRModalOpen(false)}
-          userId={userData.id.toString()}
+          qrCodeValue={activeMembership?.qr_code_payload || userData.id.toString()}
         />
       </div>
     </div>

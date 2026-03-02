@@ -159,7 +159,7 @@ export const bodyFront: BodyPart[] = [
 
 	// Quadriceps
 	{
-		slug: "quadriceps",
+		slug: "cuadriceps",
 		color: defaultColor,
 		path: {
 			left: [

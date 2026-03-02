@@ -7,7 +7,7 @@ export default function LoginPage() {
       {/* Visual Side (Left) */}
       <div className="relative w-full lg:w-1/2 h-[40vh] lg:h-screen overflow-hidden">
         <Image
-          src="https://res.cloudinary.com/dry6dvzoj/image/upload/v1771376937/24_7_FITNESS_CI_YUAN_CC___24_7_Fitness___24_7_Fitness_Gym_in_Singapore_omader.jpg"
+          src="https://res.cloudinary.com/dry6dvzoj/image/upload/v1772469408/interior-de-gimnasio-moderno-y-elegante-con-ilumin_d71slo.jpg"
           alt="Force Gym Experience"
           fill
           className="object-cover"

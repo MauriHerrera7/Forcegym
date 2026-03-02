@@ -423,10 +423,7 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
           >
             <span className="relative z-10 flex items-center justify-center gap-2 uppercase tracking-[0.2em] text-sm">
               {isLoading ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  {photoFile ? 'Cifrando imagen...' : 'Forjando perfil...'}
-                </>
+                <Loader2 className="w-5 h-5 animate-spin" />
               ) : success ? (
                 <>
                   <CheckCircle2 className="w-5 h-5 animate-bounce" />

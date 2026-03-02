@@ -48,10 +48,36 @@ export default function LoginForm({ className = '' }: LoginFormProps) {
       await login({ email, password });
     } catch (error: any) {
       console.error('Login error:', error);
-      setErrors(prev => ({ 
-        ...prev, 
-        email: error?.message || 'Error al iniciar sesión. Verifica tus credenciales.' 
-      }));
+
+      // Try to give field-specific error messages based on API response
+      const detail = error?.data?.detail || error?.message || '';
+      const detailLower = detail.toLowerCase();
+
+      if (
+        detailLower.includes('password') ||
+        detailLower.includes('contraseña') ||
+        detailLower.includes('credentials') ||
+        detailLower.includes('credenciales') ||
+        detailLower.includes('incorrect')
+      ) {
+        setErrors({
+          password: 'Contraseña incorrecta. Verifica e intenta de nuevo.',
+        });
+      } else if (
+        detailLower.includes('no active') ||
+        detailLower.includes('not found') ||
+        detailLower.includes('email') ||
+        detailLower.includes('correo') ||
+        detailLower.includes('user')
+      ) {
+        setErrors({
+          email: 'No existe una cuenta con ese correo.',
+        });
+      } else {
+        setErrors({
+          password: 'Correo o contraseña incorrectos. Revisa tus datos.',
+        });
+      }
     } finally {
       setIsLoading(false);
     }

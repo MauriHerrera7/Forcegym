@@ -19,7 +19,7 @@ export type Slug =
   | "lower-back"
   | "neck"
   | "obliques"
-  | "quadriceps"
+  | "cuadriceps"
   | "tibialis"
   | "trapezius"
   | "triceps"

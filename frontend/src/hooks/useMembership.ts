@@ -19,6 +19,7 @@ export interface Membership {
   end_date: string
   status: 'PENDING' | 'ACTIVE' | 'EXPIRED' | 'CANCELLED' | 'SUSPENDED'
   qr_code?: string
+  qr_code_payload?: string
   auto_renew: boolean
   created_at: string
 }
