@@ -9,17 +9,17 @@ export const COLORS = {
 
 // Muscle Groups Data
 export const MUSCLE_GROUPS = [
-  { id: 'chest', name: 'Pecho', slug: 'pecho' },
-  { id: 'back', name: 'Espalda', slug: 'espalda' },
-  { id: 'shoulders', name: 'Hombros', slug: 'hombros' },
+  { id: 'pecho', name: 'Pecho', slug: 'pecho' },
+  { id: 'espalda', name: 'Espalda', slug: 'espalda' },
+  { id: 'hombros', name: 'Hombros', slug: 'hombros' },
   { id: 'biceps', name: 'Bíceps', slug: 'biceps' },
   { id: 'triceps', name: 'Tríceps', slug: 'triceps' },
-  { id: 'forearms', name: 'Antebrazos', slug: 'antebrazos' },
-  { id: 'abs', name: 'Abdominales', slug: 'abdominales' },
-  { id: 'quadriceps', name: 'Cuádriceps', slug: 'cuadriceps' },
-  { id: 'hamstrings', name: 'Isquiotibiales', slug: 'isquiotibiales' },
-  { id: 'calves', name: 'Pantorrillas', slug: 'pantorrillas' },
-  { id: 'glutes', name: 'Glúteos', slug: 'gluteos' },
+  { id: 'antebrazos', name: 'Antebrazos', slug: 'antebrazos' },
+  { id: 'abdominales', name: 'Abdominales', slug: 'abdominales' },
+  { id: 'cuadriceps', name: 'Cuádriceps', slug: 'cuadriceps' },
+  { id: 'isquiotibiales', name: 'Isquiotibiales', slug: 'isquiotibiales' },
+  { id: 'pantorrillas', name: 'Pantorrillas', slug: 'pantorrillas' },
+  { id: 'gluteos', name: 'Glúteos', slug: 'gluteos' },
 ] as const;
 
 // API Endpoints (adjust based on your backend)

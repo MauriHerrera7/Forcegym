@@ -4,7 +4,7 @@ import { defaultColor, defaultFaceColor, defaultHairColor } from "../../../../ut
 export const bodyFront: BodyPart[] = [
 	// Chest
 	{
-		slug: "chest",
+		slug: "pecho",
 		color: defaultColor,
 		path: {
 			left: [
@@ -18,7 +18,7 @@ export const bodyFront: BodyPart[] = [
 
 	// Obliques
 	{
-		slug: "obliques",
+		slug: "oblicuos",
 		color: defaultColor,
 		path: {
 			right: [
@@ -46,7 +46,7 @@ export const bodyFront: BodyPart[] = [
 
 	// abs
 	{
-		slug: "abs",
+		slug: "abdominales",
 		color: defaultColor,
 		path: {
 			left: [
@@ -94,7 +94,7 @@ export const bodyFront: BodyPart[] = [
 
 	// neck
 	{
-		slug: "neck",
+		slug: "cuello",
 		color: defaultColor,
 		path: {
 			common: [
@@ -113,7 +113,7 @@ export const bodyFront: BodyPart[] = [
 
 	// Trapezius
 	{
-		slug: "trapezius",
+		slug: "trapecio",
 		color: defaultColor,
 		path: {
 			left: [
@@ -127,7 +127,7 @@ export const bodyFront: BodyPart[] = [
 
 	// Deltoids
 	{
-		slug: "deltoids",
+		slug: "deltoides",
 		color: defaultColor,
 		path: {
 			left: [
@@ -141,7 +141,7 @@ export const bodyFront: BodyPart[] = [
 
 	// Adductors
 	{
-		slug: "adductors",
+		slug: "aductores",
 		color: defaultColor,
 		path: {
 			left: [
@@ -177,7 +177,7 @@ export const bodyFront: BodyPart[] = [
 
 	// Knees
 	{
-		slug: "knees",
+		slug: "rodillas",
 		color: defaultColor,
 		path: {
 			left: [
@@ -193,7 +193,7 @@ export const bodyFront: BodyPart[] = [
 
 	// Tibialis
 	{
-		slug: "tibialis",
+		slug: "tibial",
 		color: defaultColor,
 		path: {
 			left: [
@@ -223,7 +223,7 @@ export const bodyFront: BodyPart[] = [
 
 	// Forearm
 	{
-		slug: "forearm",
+		slug: "antebrazos",
 		color: defaultColor,
 		path: {
 			left: [
@@ -241,7 +241,7 @@ export const bodyFront: BodyPart[] = [
 
 	// Hand
 	{
-		slug: "hands",
+		slug: "mano",
 		color: defaultColor,
 		path: {
 			left: [
@@ -265,7 +265,7 @@ export const bodyFront: BodyPart[] = [
 
 	// Ankle
 	{
-		slug: "ankles",
+		slug: "tobillo",
 		color: defaultColor,
 		path: {
 			left: [
@@ -281,7 +281,7 @@ export const bodyFront: BodyPart[] = [
 
 	// Feet
 	{
-		slug: "feet",
+		slug: "pie",
 		color: defaultColor,
 		path: {
 			left: [
@@ -297,7 +297,7 @@ export const bodyFront: BodyPart[] = [
 
 	// Head
 	{
-		slug: "head",
+		slug: "cabeza",
 		color: defaultFaceColor,
 		path: {
 			common: [
@@ -308,7 +308,7 @@ export const bodyFront: BodyPart[] = [
 
 	// Hair
 	{
-		slug: "hair",
+		slug: "pelo",
 		color: defaultHairColor,
 		path: {
 			common: [

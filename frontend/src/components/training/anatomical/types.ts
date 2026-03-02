@@ -23,7 +23,30 @@ export type Slug =
   | "tibialis"
   | "trapezius"
   | "triceps"
-  | "upper-back";
+  | "upper-back"
+  | "pecho"
+  | "oblicuos"
+  | "abdominales"
+  | "cuello"
+  | "trapecio"
+  | "deltoides"
+  | "aductores"
+  | "rodillas"
+  | "antebrazos"
+  | "manos"
+  | "tobillos"
+  | "pies"
+  | "cabeza"
+  | "pelo"
+  | "espalda-superior"
+  | "espalda-inferior"
+  | "gluteos"
+  | "isquiotibiales"
+  | "pantorrillas"
+  | "mano"
+  | "pie"
+  | "tibial"
+  | "tobillo";
 
 export interface BodyPart {
   slug: Slug;

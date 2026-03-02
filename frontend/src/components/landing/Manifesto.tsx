@@ -14,7 +14,7 @@ const Manifesto: React.FC = () => {
            {/* Detailed Narrative Block */}
            <div className="grid md:grid-cols-2 gap-16 text-left border-t border-white/10 pt-20 fade-up delay-200">
               <p className="text-white text-xl md:text-3xl font-bold leading-tight italic uppercase tracking-tighter">
-                Diseñado para quienes entienden que la disciplina no es una opción, sino un estándar de vida.
+                &quot;Empujando los límites del potencial humano, un entrenamiento a la vez.&quot;
               </p>
               <div className="space-y-8">
                  <p className="text-red-600 text-lg md:text-xl font-medium leading-relaxed italic border-l-4 border-apple-red pl-8">

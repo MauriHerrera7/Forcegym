@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Play } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 
 interface MuscleDetailPageProps {
   params: {
@@ -78,26 +79,34 @@ export default function MuscleDetailPage({ params }: MuscleDetailPageProps) {
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Video Thumbnail */}
-              <div className="relative aspect-video overflow-hidden rounded-lg bg-gray-800">
-                <img
+              <div 
+                className="relative aspect-video overflow-hidden rounded-lg bg-gray-800 cursor-pointer group"
+                onClick={() => window.open(exercise.videoUrl, '_blank')}
+              >
+                <Image
                   src={exercise.thumbnailUrl}
                   alt={exercise.name}
-                  className="h-full w-full object-cover"
+                  fill
+                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
-                <div className="absolute inset-0 flex items-center justify-center bg-black/40 transition-opacity hover:bg-black/60">
-                  <button className="flex h-16 w-16 items-center justify-center rounded-full bg-primary text-white transition-transform hover:scale-110">
+                <div className="absolute inset-0 flex items-center justify-center bg-black/40 transition-opacity group-hover:bg-black/60">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/90 text-white transition-transform group-hover:scale-110 shadow-[0_0_20px_rgba(255,4,0,0.4)]">
                     <Play className="h-8 w-8" fill="white" />
-                  </button>
+                  </div>
                 </div>
               </div>
 
               {/* Description */}
-              <p className="text-gray-300">{exercise.description}</p>
+              <p className="text-gray-300 text-sm leading-relaxed">{exercise.description}</p>
 
               {/* Action Button */}
-              <Button className="w-full gap-2">
-                <Play className="h-4 w-4" />
-                Ver Video Completo
+              <Button 
+                className="w-full gap-2 bg-[#ff0400] hover:bg-[#d60400] text-white font-bold"
+                onClick={() => window.open(exercise.videoUrl, '_blank')}
+              >
+                <Play className="h-4 w-4" fill="white" />
+                Ver Video Instructivo
               </Button>
             </CardContent>
           </Card>

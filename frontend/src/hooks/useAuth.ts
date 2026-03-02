@@ -24,6 +24,7 @@ export interface User {
   full_name?: string;
   role: string;
   role_display?: string;
+  gender?: "male" | "female";
   dni: string;
   phone?: string;
   birthdate: string;
@@ -84,9 +85,10 @@ export function useAuth() {
       try {
         const userData = await fetchApi("/users/me/");
         setUser(userData);
-      } catch (error: any) {
+      } catch (error: unknown) {
+        const err = error as { status?: number };
         // Si el error es 401, intentar refrescar el token
-        if (error && error.status === 401) {
+        if (err && err.status === 401) {
           console.warn("Token de acceso expirado, intentando renovar...");
           try {
             const newToken = await refreshToken();
@@ -105,13 +107,13 @@ export function useAuth() {
         }
 
         // Si llegamos aquí es que falló todo o no era un 401 recuperable
-        if (error && (error.status === 401 || error.status === 403)) {
+        if (err && (err.status === 401 || err.status === 403)) {
           localStorage.removeItem("access_token");
           localStorage.removeItem("refresh_token");
           setUser(null);
         }
 
-        console.error("Error al cargar el usuario:", error);
+        console.error("Error al cargar el usuario:", err);
       }
     } finally {
       setLoading(false);
@@ -154,7 +156,7 @@ export function useAuth() {
     [router],
   );
 
-  const register = useCallback(async (userData: any) => {
+  const register = useCallback(async (userData: Record<string, unknown> | FormData) => {
     try {
       // Determine if we should send as FormData (for file uploads)
       const body =
@@ -172,7 +174,7 @@ export function useAuth() {
     }
   }, []); // Remove 'login' dependency as it's not used here
 
-  const updateProfile = useCallback(async (data: any) => {
+  const updateProfile = useCallback(async (data: Record<string, unknown> | FormData) => {
     try {
       const body = data instanceof FormData ? data : JSON.stringify(data);
 

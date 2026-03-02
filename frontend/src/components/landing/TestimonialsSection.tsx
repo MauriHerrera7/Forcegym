@@ -56,6 +56,7 @@ const TestimonialsSection: React.FC = () => {
                   <Image 
                     src={t.avatar} 
                     alt={t.name}
+                    data-quote={t.content} // Assuming 'testimonial.quote' refers to t.content
                     fill
                     className="object-cover grayscale group-hover:grayscale-0 transition-all"
                   />

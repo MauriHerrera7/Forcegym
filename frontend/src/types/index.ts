@@ -9,6 +9,7 @@ export interface User {
   height?: number;
   photo?: string;
   qrCode?: string;
+  gender?: 'male' | 'female';
 }
 
 export interface Membership {

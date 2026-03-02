@@ -9,6 +9,7 @@ import { bodyFemaleFront } from './anatomical/bodyFemaleFrontData';
 import { bodyFemaleBack } from './anatomical/bodyFemaleBackData';
 import { BodyPart } from './anatomical/types';
 import { useAuthContext } from '@/providers/AuthProvider';
+import { MUSCLE_GROUPS } from '@/lib/constants';
 
 interface MuscleSelectorProps {
   onMuscleClick: (muscleId: string) => void;
@@ -47,22 +48,22 @@ export function MuscleSelector({ onMuscleClick }: MuscleSelectorProps) {
   }, [handleMouseMove]);
 
   const muscleMapping: Record<string, string> = {
-    'chest': 'chest',
-    'abs': 'abs',
-    'obliques': 'abs',
+    'pecho': 'pecho',
+    'abdominales': 'abdominales',
+    'oblicuos': 'abdominales',
     'biceps': 'biceps',
     'triceps': 'triceps',
-    'forearm': 'forearms',
-    'quadriceps': 'quadriceps',
-    'adductors': 'quadriceps',
-    'calves': 'calves',
-    'hamstring': 'hamstrings',
-    'gluteal': 'glutes',
-    'upper-back': 'back',
-    'lower-back': 'back',
-    'deltoids': 'shoulders',
-    'trapezius': 'shoulders',
-    'neck': 'shoulders',
+    'antebrazos': 'antebrazos',
+    'cuadriceps': 'cuadriceps',
+    'aductores': 'cuadriceps',
+    'pantorrillas': 'pantorrillas',
+    'isquiotibiales': 'isquiotibiales',
+    'gluteos': 'gluteos',
+    'espalda-superior': 'espalda',
+    'espalda-inferior': 'espalda',
+    'deltoides': 'hombros',
+    'trapecio': 'hombros',
+    'cuello': 'hombros',
   };
 
   const handleMuscleClick = (muscle: BodyPart) => {
@@ -71,12 +72,13 @@ export function MuscleSelector({ onMuscleClick }: MuscleSelectorProps) {
     onMuscleClick(targetId);
   };
 
-  const NON_INTERACTIVE = new Set(['head', 'hair', 'neck', 'hands', 'hand', 'feet', 'foot', 'tibialis', 'knees']);
+  const NON_INTERACTIVE = new Set(['cabeza', 'pelo', 'cuello', 'mano', 'pie', 'tibial', 'tobillo', 'rodillas', 'antebrazos', 'abdominales', 'pantorrillas']);
 
-  const getMuscleName = (slug: string) =>
-    anatomicalData.front.find((m) => m.slug === slug)?.slug ||
-    anatomicalData.back.find((m) => m.slug === slug)?.slug ||
-    slug;
+  const getMuscleName = (slug: string) => {
+    const targetId = muscleMapping[slug] || slug;
+    const group = MUSCLE_GROUPS.find((g) => g.id === targetId);
+    return group ? group.name : slug;
+  };
 
   const renderPaths = (
     paths: string[],
