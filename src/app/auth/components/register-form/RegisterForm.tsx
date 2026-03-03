@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useAuthContext } from '@/providers/AuthProvider';
 import { Camera, Plus, User, Upload, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 
@@ -40,6 +41,7 @@ interface FormErrors {
 
 export default function RegisterForm({ className = '' }: RegisterFormProps) {
   const { register, login } = useAuthContext();
+  const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState<FormData>({
@@ -61,6 +63,7 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -174,9 +177,12 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
       
       // Auto-login after successful registration
       try {
+        setIsLoggingIn(true);
         await login({ email: formData.email, password: formData.password });
+        // login inside useAuth already redirects to '/', but we can be explicit or just let it happen
       } catch (loginErr: any) {
         console.error('Auto-login error:', loginErr);
+        setIsLoggingIn(false);
         setError('Registro exitoso, pero hubo un problema al iniciar sesión automáticamente. Por favor, ingresa manualmente.');
       }
     } catch (err: any) {
@@ -235,7 +241,7 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
         */}
 
         {/* Profile Photo Upload Redesigned */}
-        <div className="flex flex-col items-center gap-4 mb-6">
+        <div className="flex flex-col items-center gap-4 mb-8">
           <div className="relative group">
             {/* Outer Glow Ring */}
             <div className={`absolute -inset-1.5 bg-red-600 rounded-full blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200 ${photoPreview ? 'animate-pulse' : ''}`}></div>
@@ -424,6 +430,11 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
             <span className="relative z-10 flex items-center justify-center gap-2 uppercase tracking-[0.2em] text-sm">
               {isLoading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
+              ) : isLoggingIn ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Iniciando...
+                </>
               ) : success ? (
                 <>
                   <CheckCircle2 className="w-5 h-5 animate-bounce" />

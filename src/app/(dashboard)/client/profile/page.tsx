@@ -226,10 +226,10 @@ export default function ClientProfile() {
   const fullName = `${formData.first_name} ${formData.last_name}`.trim();
 
   return (
-    <div className="space-y-6 p-6">
-      <div>
-        <h1 className="text-3xl font-bold text-white">Mi Perfil</h1>
-        <p className="text-gray-400">Administra tu información personal</p>
+    <div className="space-y-6 p-4 sm:p-6">
+      <div className="text-center sm:text-left">
+        <h1 className="text-2xl sm:text-3xl font-bold text-white">Mi Perfil</h1>
+        <p className="text-gray-400 text-sm">Administra tu información personal</p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -258,7 +258,7 @@ export default function ClientProfile() {
               )}
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Photo Upload Redesigned - Dashboard Style */}
-                <div className="flex items-center gap-8 mb-8">
+                <div className="flex flex-col sm:flex-row items-center gap-8 mb-8 text-center sm:text-left">
                   <div className="relative group">
                     {/* Outer Glow Ring */}
                     <div className={`absolute -inset-1.5 bg-[#ff0400] rounded-full blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200 ${photoFile ? 'animate-pulse' : ''}`}></div>
@@ -298,12 +298,12 @@ export default function ClientProfile() {
                     </div>
                     <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter leading-none">{fullName || 'Guerrero'}</h3>
                     <p className="text-sm text-zinc-400 font-medium">{formData.email}</p>
-                    <div className="flex items-center gap-3 mt-3">
-                      <div className="bg-[#1a1a1a] border border-[#262626] rounded-lg px-3 py-1.5 text-center">
+                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 mt-3">
+                      <div className="bg-[#1a1a1a] border border-[#262626] rounded-lg px-3 py-1.5 text-center min-w-[70px]">
                         <p className="text-[9px] text-zinc-400 uppercase font-black tracking-widest">Peso</p>
                         <p className="text-sm text-white font-bold">{formData.weight ? `${formData.weight}kg` : '--'}</p>
                       </div>
-                      <div className="bg-[#1a1a1a] border border-[#262626] rounded-lg px-3 py-1.5 text-center">
+                      <div className="bg-[#1a1a1a] border border-[#262626] rounded-lg px-3 py-1.5 text-center min-w-[70px]">
                         <p className="text-[9px] text-zinc-400 uppercase font-black tracking-widest">Altura</p>
                         <p className="text-sm text-white font-bold">{formData.height ? `${formData.height}cm` : '--'}</p>
                       </div>

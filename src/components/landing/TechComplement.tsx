@@ -18,7 +18,7 @@ const TechComplement: React.FC = () => {
       <Container>
         <div className="text-center mb-32 space-y-6 fade-up">
            <span className="text-zinc-500 font-bold uppercase tracking-[0.5em] text-xs">EL COMPLEMENTO PERFECTO</span>
-           <h2 className="text-white font-black text-6xl md:text-8xl lg:text-9xl italic uppercase tracking-tighter leading-none">
+           <h2 className="text-white font-black text-4xl sm:text-6xl md:text-8xl lg:text-9xl italic uppercase tracking-tighter leading-none">
              TU <span className="text-apple-red">PROGRESO.</span> <br /> 
              SINCRONIZADO.
            </h2>
@@ -64,15 +64,15 @@ const TechComplement: React.FC = () => {
                     </div>
                     
                     {/* Floating Health Metric */}
-                    <div className="absolute top-1/4 -right-10 bg-white/5 backdrop-blur-xl border border-white/10 p-6 rounded-3xl shadow-2xl rotate-12">
-                       <span className="block text-[10px] font-black uppercase text-zinc-500 mb-1">Ritmo Cardiaco</span>
-                       <span className="text-white font-black text-3xl italic">142 BPM</span>
+                    <div className="absolute top-1/4 -right-4 sm:-right-10 bg-white/5 backdrop-blur-xl border border-white/10 p-4 sm:p-6 rounded-3xl shadow-2xl rotate-12 z-20">
+                       <span className="block text-[8px] sm:text-[10px] font-black uppercase text-zinc-500 mb-1">Ritmo Cardiaco</span>
+                       <span className="text-white font-black text-2xl sm:text-3xl italic">142 BPM</span>
                     </div>
 
                     {/* Floating Progress Metric */}
-                    <div className="absolute bottom-1/4 -left-10 bg-white/5 backdrop-blur-xl border border-white/10 p-6 rounded-3xl shadow-2xl -rotate-6">
-                       <span className="block text-[10px] font-black uppercase text-zinc-500 mb-1">Masa Muscular</span>
-                       <span className="text-white font-black text-3xl italic">+2.4 KG</span>
+                    <div className="absolute bottom-1/4 -left-4 sm:-left-10 bg-white/5 backdrop-blur-xl border border-white/10 p-4 sm:p-6 rounded-3xl shadow-2xl -rotate-6 z-20">
+                       <span className="block text-[8px] sm:text-[10px] font-black uppercase text-zinc-500 mb-1">Masa Muscular</span>
+                       <span className="text-white font-black text-2xl sm:text-3xl italic">+2.4 KG</span>
                     </div>
                  </div>
               </div>

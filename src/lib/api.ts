@@ -1,6 +1,6 @@
 export const fetchApi = async (endpoint: string, options: RequestInit = {}) => {
   const baseUrl =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
   const url = `${baseUrl}${endpoint}`;
 
   // Check if we have an access token in localStorage

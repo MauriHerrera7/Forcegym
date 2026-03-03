@@ -134,14 +134,14 @@ export default function AdminUsersPage() {
   };
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6 p-4 sm:p-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-white">Gestión de Usuarios {loading && <span className="text-sm font-normal text-gray-500 ml-2 italic">Cargando...</span>}</h1>
-          <p className="text-gray-400">Administra todos los usuarios del sistema</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="text-center sm:text-left">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">Gestión de Usuarios {loading && <span className="text-sm font-normal text-gray-500 ml-2 italic">Cargando...</span>}</h1>
+          <p className="text-gray-400 text-sm">Administra todos los usuarios del sistema</p>
         </div>
-        <Button className="gap-2 bg-[#ff0400] hover:bg-[#ff3936] text-white">
+        <Button className="w-full sm:w-auto gap-2 bg-[#ff0400] hover:bg-[#ff3936] text-white">
           <UserPlus className="h-4 w-4" />
           Nuevo Usuario
         </Button>

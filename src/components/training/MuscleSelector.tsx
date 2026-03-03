@@ -153,13 +153,13 @@ export function MuscleSelector({ onMuscleClick }: MuscleSelectorProps) {
         </div>
 
         {/* Side-by-side models */}
-        <div className="flex gap-6 w-full justify-center">
+        <div className="flex flex-col md:flex-row gap-6 w-full justify-center items-center md:items-stretch">
           {/* Anterior */}
-          <div className="flex flex-col items-center gap-2">
+          <div className="flex flex-col items-center gap-2 w-full max-w-[270px]">
             <span className="text-[10px] uppercase tracking-[0.3em] text-zinc-400 font-semibold">
               Anterior
             </span>
-            <div className="bg-[#111111]/60 rounded-2xl border border-[#2a2a2a] p-5 flex items-center justify-center w-[270px] h-[540px]">
+            <div className="bg-[#111111]/60 rounded-2xl border border-[#2a2a2a] p-5 flex items-center justify-center w-full aspect-[270/540]">
               <SvgWrapper side="front" gender={activeGender}>
                 {renderMuscles(anatomicalData.front)}
               </SvgWrapper>
@@ -167,14 +167,14 @@ export function MuscleSelector({ onMuscleClick }: MuscleSelectorProps) {
           </div>
 
           {/* Divider */}
-          <div className="w-px bg-[#2a2a2a] self-stretch my-8" />
+          <div className="hidden md:block w-px bg-[#2a2a2a] self-stretch my-8" />
 
           {/* Posterior */}
-          <div className="flex flex-col items-center gap-2">
+          <div className="flex flex-col items-center gap-2 w-full max-w-[270px]">
             <span className="text-[10px] uppercase tracking-[0.3em] text-zinc-400 font-semibold">
               Posterior
             </span>
-            <div className="bg-[#111111]/60 rounded-2xl border border-[#2a2a2a] p-5 flex items-center justify-center w-[270px] h-[540px]">
+            <div className="bg-[#111111]/60 rounded-2xl border border-[#2a2a2a] p-5 flex items-center justify-center w-full aspect-[270/540]">
               <SvgWrapper side="back" gender={activeGender}>
                 {renderMuscles(anatomicalData.back)}
               </SvgWrapper>

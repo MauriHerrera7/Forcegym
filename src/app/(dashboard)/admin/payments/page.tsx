@@ -83,17 +83,17 @@ export default function AdminPaymentsPage() {
   });
 
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-white">Historial de Pagos</h1>
-          <p className="text-gray-400">Ver y gestionar todas las transacciones del gimnasio</p>
+    <div className="space-y-6 p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="text-center sm:text-left">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">Historial de Pagos</h1>
+          <p className="text-gray-400 text-sm">Ver y gestionar todas las transacciones del gimnasio</p>
         </div>
         <Button 
           variant="outline" 
           onClick={fetchPayments} 
           disabled={loading}
-          className="border-[#404040] text-gray-400 hover:bg-[#404040] hover:text-white"
+          className="w-full sm:w-auto border-[#404040] text-gray-400 hover:bg-[#404040] hover:text-white"
         >
           {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Actualizar'}
         </Button>
@@ -101,9 +101,9 @@ export default function AdminPaymentsPage() {
 
       <Card className="bg-[#191919] border-[#404040]">
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <CardTitle className="text-white">Transacciones</CardTitle>
-            <div className="relative w-72">
+            <div className="relative w-full sm:w-72">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
                 placeholder="Buscar por usuario o ID..."

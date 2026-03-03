@@ -85,7 +85,7 @@ export default function PlanModal({ isOpen, onClose }: PlanModalProps) {
   const handlePurchase = async (planId: string) => {
     setPurchasing(planId)
     try {
-      const response = await fetchApi('/payments/payments/create_with_membership/', {
+      const response = await fetchApi('/payments/create_with_membership/', {
         method: 'POST',
         body: JSON.stringify({ plan_id: planId }),
       })
@@ -103,13 +103,13 @@ export default function PlanModal({ isOpen, onClose }: PlanModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl bg-[#0B0B0B] border-[#1F1F1F] text-white p-0 overflow-hidden">
-        <div className="p-8 md:p-12 overflow-y-auto max-h-[90vh]">
+      <DialogContent className="max-w-6xl bg-[#0B0B0B] border-[#1F1F1F] text-white p-0 overflow-hidden sm:rounded-3xl">
+        <div className="p-6 md:p-12 overflow-y-auto max-h-[90vh]">
           <DialogHeader className="mb-12 text-center">
-            <DialogTitle className="text-4xl md:text-6xl font-black tracking-tighter uppercase italic text-white">
+            <DialogTitle className="text-3xl md:text-6xl font-black tracking-tighter uppercase italic text-white">
               Eleva tu <span className="text-apple-red">Potencial.</span>
             </DialogTitle>
-            <DialogDescription className="text-zinc-400 text-lg max-w-2xl mx-auto mt-4">
+            <DialogDescription className="text-zinc-400 text-sm md:text-lg max-w-2xl mx-auto mt-4">
               Elegí el compromiso que mejor se adapte a tu transformación. 
               <span className="text-white block font-bold">Un solo pago. Acceso total.</span>
             </DialogDescription>

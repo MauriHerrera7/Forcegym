@@ -3,9 +3,9 @@ import RegisterForm from '../components/register-form/RegisterForm';
 
 export default function RegisterPage() {
   return (
-    <div className="h-screen bg-black flex flex-col lg:flex-row overflow-hidden">
+    <div className="min-h-screen bg-black flex flex-col lg:flex-row">
       {/* Visual Side (Left) */}
-      <div className="relative w-full lg:w-1/2 h-1/2 lg:h-full overflow-hidden">
+      <div className="relative w-full lg:w-1/2 h-[30vh] lg:h-screen overflow-hidden">
         <Image
           src="https://res.cloudinary.com/dry6dvzoj/image/upload/v1757706700/home6_ja69rw.png"
           alt="Technical Fitness Evolution"

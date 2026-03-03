@@ -11,7 +11,7 @@ const SpaceExperience: React.FC = () => {
           <span className="inline-block text-[#FF6B35] font-bold uppercase tracking-[0.3em] text-xs mb-4">
             NUESTRAS INSTALACIONES
           </span>
-          <h2 className="text-white font-black text-6xl md:text-6xl lg:text-7xl tracking-tight">
+          <h2 className="text-white font-black text-3xl sm:text-5xl md:text-6xl lg:text-7xl tracking-tight">
             Diseñado para tu{' '}
             <span className="text-red-600 bg-clip-text bg-gradient-to-r from-[#DC143C] to-[#FF6B35]">
               máximo rendimiento

@@ -29,15 +29,15 @@ const AppleTestimonials: React.FC = () => {
       <Container>
         <div className="flex flex-col gap-32">
            {testimonials.map((t, i) => (
-             <div key={i} className={`flex flex-col md:flex-row items-center gap-12 md:gap-24 fade-up ${i % 2 !== 0 ? 'md:flex-row-reverse text-right' : 'text-left'}`}>
+             <div key={i} className={`flex flex-col md:flex-row items-center gap-12 md:gap-24 fade-up ${i % 2 !== 0 ? 'md:flex-row-reverse text-center md:text-right' : 'text-center md:text-left'}`}>
                 <div className="relative w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden border-4 border-apple-red/20 shadow-2xl flex-shrink-0 grayscale hover:grayscale-0 transition-all duration-1000">
                    <Image src={t.image} alt={t.author} fill className="object-cover" />
                 </div>
-                <div className="space-y-6">
+                <div className="flex-1 space-y-6">
                    <p className="text-white text-3xl md:text-5xl lg:text-6xl font-black italic uppercase tracking-tighter leading-tight max-w-4xl">
                       {t.quote}
                    </p>
-                   <div className={`flex flex-col ${i % 2 !== 0 ? 'items-end' : 'items-start'}`}>
+                   <div className={`flex flex-col items-center ${i % 2 !== 0 ? 'md:items-end' : 'md:items-start'}`}>
                       <span className="text-apple-red font-black text-xl italic uppercase tracking-tighter">{t.author}</span>
                       <span className="text-zinc-600 font-bold uppercase tracking-widest text-[10px]">{t.role}</span>
                    </div>

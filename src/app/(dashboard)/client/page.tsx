@@ -100,25 +100,27 @@ export default function ClientDashboard() {
 
         <TabsContent value="overview" className="space-y-6 outline-none">
           {/* User Stats Cards */}
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             {userStats.map((stat, index) => {
               const Icon = stat.icon;
               return (
                 <Card key={stat.title} className="bg-[#191919] border-[#404040] overflow-hidden">
-                  <CardHeader className="pb-2">
+                  <CardHeader className="p-4 pb-2">
                     <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg font-medium text-gray-400">
+                      <CardTitle className="text-sm md:text-lg font-medium text-gray-400">
                         {stat.title}
                       </CardTitle>
                       <div className="p-2 rounded-lg" style={{ backgroundColor: `${stat.color}20` }}>
-                        <Icon className="h-6 w-6" style={{ color: stat.color }} />
+                        <Icon className="h-5 w-5 md:h-6 md:w-6" style={{ color: stat.color }} />
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent>
-                    <div className="text-4xl font-semibold text-white mb-2">{stat.value}</div>
-                    <p className="text-sm text-green-400">{stat.trend}</p>
-                    <p className="text-sm text-gray-500 mt-1">{stat.subtitle}</p>
+                  <CardContent className="p-4 pt-0">
+                    <div className="text-2xl md:text-4xl font-semibold text-white mb-1 md:mb-2">{stat.value}</div>
+                    <div className="flex items-center gap-2">
+                      <p className="text-xs md:text-sm text-green-400 font-medium">{stat.trend}</p>
+                      <p className="text-[10px] md:text-sm text-gray-500">{stat.subtitle}</p>
+                    </div>
                   </CardContent>
                 </Card>
               );
@@ -192,11 +194,11 @@ export default function ClientDashboard() {
                   </svg>
                   
                   {/* Month labels */}
-                  <div className="flex justify-between mt-4 text-sm text-gray-400">
+                  <div className="flex justify-between mt-4 text-[10px] md:text-sm text-gray-400">
                     {weightData.map((d, i) => (
                       <div key={i} className="flex flex-col items-center">
                         <span>{d.month}</span>
-                        <span className="text-xs text-white font-medium">{d.weight} kg</span>
+                        <span className="text-[8px] md:text-xs text-white font-medium">{d.weight} kg</span>
                       </div>
                     ))}
                   </div>
@@ -307,11 +309,11 @@ export default function ClientDashboard() {
               <CardContent>
                 <div className="space-y-4">
                   {attendanceData.map((day, i) => (
-                    <div key={i} className="flex items-center gap-4">
-                      <div className="w-12 text-sm text-gray-400">{day.day}</div>
+                    <div key={i} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 border-b border-[#404040]/30 sm:border-0 pb-4 sm:pb-0 last:border-0">
+                      <div className="w-full sm:w-12 text-sm text-gray-400 font-bold sm:font-normal uppercase sm:capitalize tracking-wider sm:tracking-normal">{day.day}</div>
                       <div className="flex-1">
                         {day.attended ? (
-                          <div className="relative h-8 bg-[#404040] rounded-lg overflow-hidden">
+                          <div className="relative h-6 sm:h-8 bg-[#404040] rounded-lg overflow-hidden">
                             <div
                               className="absolute h-full rounded-lg transition-all duration-500"
                               style={{
@@ -320,23 +322,23 @@ export default function ClientDashboard() {
                               }}
                             />
                             <div className="absolute inset-0 flex items-center justify-center">
-                              <span className="text-xs text-white font-medium">{day.intensity}% intensidad</span>
+                              <span className="text-[10px] sm:text-xs text-white font-medium">{day.intensity}% intensidad</span>
                             </div>
                           </div>
                         ) : (
-                          <div className="h-8 bg-[#404040]/30 rounded-lg flex items-center justify-center">
-                            <span className="text-xs text-gray-600">Descanso</span>
+                          <div className="h-6 sm:h-8 bg-[#404040]/30 rounded-lg flex items-center justify-center border border-dashed border-[#404040]">
+                            <span className="text-[10px] sm:text-xs text-gray-600">Descanso</span>
                           </div>
                         )}
                       </div>
-                      <div className="w-16 text-right">
+                      <div className="w-full sm:w-20 text-right">
                         {day.attended ? (
-                          <span className="text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-400">
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-green-500/20 text-green-400 border border-green-500/30">
                             ✓ Asistió
                           </span>
                         ) : (
-                          <span className="text-xs px-2 py-1 rounded-full bg-gray-500/20 text-gray-500">
-                            - Faltó
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-gray-500/20 text-gray-500 border border-gray-500/10">
+                            - Descanso
                           </span>
                         )}
                       </div>

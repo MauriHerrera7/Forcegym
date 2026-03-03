@@ -25,13 +25,13 @@ export const MUSCLE_GROUPS = [
 // API Endpoints (adjust based on your backend)
 export const API_ENDPOINTS = {
   auth: {
-    login: '/api/auth/login',
-    register: '/api/auth/register',
-    logout: '/api/auth/logout',
-    me: '/api/auth/me',
+    login: '/auth/login/',
+    register: '/auth/register/',
+    logout: '/auth/logout/',
+    me: '/auth/me/',
   },
-  users: '/api/users',
-  memberships: '/api/memberships',
-  training: '/api/training',
-  videos: '/api/videos',
+  users: '/users/',
+  memberships: '/memberships/',
+  training: '/training/',
+  videos: '/videos/',
 } as const;

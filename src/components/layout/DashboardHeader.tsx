@@ -11,9 +11,10 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { LogOut, User as UserIcon } from 'lucide-react';
+import { LogOut, User as UserIcon, Menu } from 'lucide-react';
 import Link from 'next/link';
 import { NotificationPanel } from './NotificationPanel';
+import { useSidebar } from '@/providers/SidebarProvider';
 
 interface DashboardHeaderProps {
   user?: {
@@ -25,6 +26,7 @@ interface DashboardHeaderProps {
 
 export function DashboardHeader({ user: propUser }: DashboardHeaderProps) {
   const { user: authUser, logout } = useAuthContext();
+  const { toggle } = useSidebar();
   const [imgError, setImgError] = React.useState(false);
 
   // Fallback map matching old or new user state
@@ -35,13 +37,21 @@ export function DashboardHeader({ user: propUser }: DashboardHeaderProps) {
   
   const getSafePhoto = () => {
     const raw = (authUser?.profile_picture_url || authUser?.profile_picture || propUser?.photo);
-    if (!raw || typeof raw !== 'string' || raw.length < 10) return undefined;
+    if (!raw || typeof raw !== 'string' || raw.length < 5) return undefined;
     
     const lower = raw.toLowerCase().trim();
-    if (!lower.startsWith('http')) return undefined;
     if (lower.includes('/null') || lower.includes('/undefined') || lower === 'null' || lower === 'undefined') return undefined;
     
-    return raw.trim();
+    if (raw.startsWith('http')) return raw.trim();
+    
+    // If it's a relative path, prepend API URL
+    if (raw.startsWith('/')) {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const cleanBase = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+      return `${cleanBase}${raw}`;
+    }
+    
+    return undefined;
   }
   
   const photo = getSafePhoto();

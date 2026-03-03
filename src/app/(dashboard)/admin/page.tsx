@@ -84,13 +84,13 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6 p-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter flex items-center gap-3">
+          <h1 className="text-3xl md:text-4xl font-black text-white italic uppercase tracking-tighter flex items-center gap-3">
             Dashboard Admin
             {isRefreshing && <Loader2 className="h-6 w-6 animate-spin text-[#ff0400]" />}
           </h1>
-          <p className="text-zinc-500 font-medium">
+          <p className="text-zinc-500 font-medium text-sm md:text-base">
             Panel de control y estadísticas reales del gimnasio
           </p>
         </div>
@@ -111,7 +111,7 @@ export default function AdminDashboard() {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-5xl font-semibold text-white mb-2">{metric.value}</div>
+                <div className="text-3xl md:text-5xl font-semibold text-white mb-2">{metric.value}</div>
                 <p className="text-sm text-green-400">{metric.trend}</p>
                 
                 {/* Mini Chart */}
@@ -378,12 +378,12 @@ export default function AdminDashboard() {
             {recentUsers.map((user, i) => (
               <div
                 key={i}
-                className="flex items-center justify-between p-4 rounded-xl bg-[#404040]/10 border border-[#404040]/20 hover:bg-[#404040]/20 hover:border-[#ff0400]/30 transition-all group"
+                className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl bg-[#404040]/10 border border-[#404040]/20 hover:bg-[#404040]/20 hover:border-[#ff0400]/30 transition-all group gap-4"
               >
                 <div className="flex items-center gap-4">
                   <div className="relative">
                     <div className="absolute -inset-1 bg-[#ff0400] rounded-full blur opacity-0 group-hover:opacity-20 transition duration-500"></div>
-                    <Avatar className="h-12 w-12 ring-2 ring-[#404040] group-hover:ring-[#ff0400]/50 transition-all">
+                    <Avatar className="h-10 w-10 md:h-12 md:w-12 ring-2 ring-[#404040] group-hover:ring-[#ff0400]/50 transition-all">
                       <AvatarImage src={user.profile_picture_url || user.profile_picture} />
                       <AvatarFallback className="bg-[#1a1a1a] text-[#ff0400] font-black italic">
                         {user.name.charAt(0)}
@@ -391,15 +391,15 @@ export default function AdminDashboard() {
                     </Avatar>
                   </div>
                   <div>
-                    <p className="font-black text-white italic uppercase tracking-tighter">{user.name}</p>
-                    <p className="text-xs text-zinc-500 font-medium">{user.email}</p>
+                    <p className="font-black text-white italic uppercase tracking-tighter text-sm md:text-base">{user.name}</p>
+                    <p className="text-[10px] md:text-xs text-zinc-500 font-medium break-all">{user.email}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-8">
-                  <div className="text-right">
-                    <p className="text-[10px] text-zinc-600 font-black uppercase tracking-widest mb-1 text-center">Estado</p>
+                <div className="flex items-center justify-between sm:justify-end gap-4 md:gap-8 border-t sm:border-t-0 border-[#404040]/30 pt-4 sm:pt-0">
+                  <div className="text-left sm:text-right">
+                    <p className="text-[9px] md:text-[10px] text-zinc-600 font-black uppercase tracking-widest mb-1 sm:text-center">Estado</p>
                     <span
-                      className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
+                      className={`px-2 md:px-3 py-1 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-widest ${
                         user.status === 'Activo'
                           ? 'bg-green-500/10 text-green-500 border border-green-500/20'
                           : 'bg-zinc-500/10 text-zinc-500 border border-zinc-500/20'
@@ -408,9 +408,9 @@ export default function AdminDashboard() {
                       {user.status}
                     </span>
                   </div>
-                  <div className="text-right border-l border-[#404040] pl-8">
-                    <p className="text-[10px] text-zinc-600 font-black uppercase tracking-widest mb-1">Registro</p>
-                    <span className="text-xs text-zinc-400 font-bold italic">{user.date}</span>
+                  <div className="text-right sm:border-l border-[#404040] sm:pl-8">
+                    <p className="text-[9px] md:text-[10px] text-zinc-600 font-black uppercase tracking-widest mb-1">Registro</p>
+                    <span className="text-[10px] md:text-xs text-zinc-400 font-bold italic">{user.date}</span>
                   </div>
                 </div>
               </div>

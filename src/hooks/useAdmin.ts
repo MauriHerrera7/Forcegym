@@ -148,7 +148,7 @@ export const useAdmin = () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchApi('/payments/payments/');
+      const data = await fetchApi('/payments/');
       return (data.results || data) as AdminPayment[];
     } catch (err: any) {
       setError(err.message || 'Error al obtener pagos');
@@ -162,7 +162,7 @@ export const useAdmin = () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchApi(`/payments/payments/${paymentId}/approve/`, {
+      const data = await fetchApi(`/payments/${paymentId}/approve/`, {
         method: 'POST',
       });
       return data;
@@ -178,7 +178,7 @@ export const useAdmin = () => {
     setLoading(true);
     setError(null);
     try {
-      await fetchApi(`/payments/payments/${paymentId}/`, {
+      await fetchApi(`/payments/${paymentId}/`, {
         method: 'DELETE',
       });
     } catch (err: any) {

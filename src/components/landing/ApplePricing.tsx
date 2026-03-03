@@ -80,8 +80,8 @@ const ApplePricing: React.FC = () => {
     <section className="relative py-24 md:py-40 overflow-hidden" id="ofertas">
       <Container className="relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-24 md:mb-32">
-          <h2 className="text-white font-black text-5xl md:text-7xl lg:text-8xl tracking-tight mb-8 leading-[0.95]">
+        <div className="text-center mb-16 md:mb-32">
+          <h2 className="text-white font-black text-3xl sm:text-5xl md:text-7xl lg:text-8xl tracking-tight mb-8 leading-[0.95]">
             Invierte en tu{' '}
             <span className="block mt-2 text-red-500 bg-clip-text bg-gradient-to-r from-[#DC143C] via-[#FF6B35] to-[#F59E0B] animate-gradient">
               transformación
@@ -148,7 +148,7 @@ const ApplePricing: React.FC = () => {
                   
                   {/* Price */}
                   <div className="relative mb-8">
-                     <div className="text-white font-black text-5xl md:text-6xl tracking-tight mb-2">
+                     <div className="text-white font-black text-4xl sm:text-5xl md:text-6xl tracking-tight mb-2">
                         {plan.price}
                      </div>
                      <div className="text-zinc-300 font-semibold text-base uppercase tracking-wider">

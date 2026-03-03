@@ -27,7 +27,7 @@ const AppleHero: React.FC = () => {
              Force Personal Performance
            </span>
            
-           <h1 className="text-white font-black text-6xl md:text-8xl lg:text-[11rem] leading-[0.85] tracking-tight uppercase italic transition-all duration-700">
+           <h1 className="text-white font-black text-4xl sm:text-6xl md:text-8xl lg:text-[11rem] leading-[0.85] tracking-tight uppercase italic transition-all duration-700">
              No es solo <br /> 
              <span className="text-apple-red">entrenamiento.</span>
            </h1>

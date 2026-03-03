@@ -8,13 +8,13 @@ const ActionCTA: React.FC = () => {
   const dashboardUrl = user?.role === 'ADMIN' ? '/admin' : '/client';
 
   return (
-    <section className="bg-apple-black py-64 overflow-hidden relative">
+    <section className="bg-apple-black py-32 sm:py-48 md:py-64 overflow-hidden relative">
       {/* Dynamic Background Element */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-full bg-apple-red/5 -skew-y-6 z-0" />
       
       <Container className="relative z-10 text-center">
         <div className="max-w-5xl mx-auto space-y-16 fade-up">
-           <h2 className="text-white font-black text-6xl md:text-9xl lg:text-[12rem] italic uppercase tracking-tighter leading-[0.8] mb-12 drop-shadow-2xl">
+           <h2 className="text-white font-black text-4xl sm:text-6xl md:text-9xl lg:text-[12rem] italic uppercase tracking-tighter leading-[0.8] mb-12 drop-shadow-2xl">
              TU FUTURO <br /> <span className="text-apple-red">ES HOY.</span>
            </h2>
            
@@ -25,7 +25,7 @@ const ActionCTA: React.FC = () => {
               
               <Link 
                 href={user ? dashboardUrl : "/auth/register"} 
-                className="group relative bg-white text-black px-20 py-8 text-3xl font-black italic uppercase tracking-tighter transition-all duration-500 hover:bg-[#DC143C] hover:text-white active:scale-95 overflow-hidden"
+                className="group relative bg-white text-black px-10 py-6 sm:px-20 sm:py-8 text-xl sm:text-3xl font-black italic uppercase tracking-tighter transition-all duration-500 hover:bg-[#DC143C] hover:text-white active:scale-95 overflow-hidden"
               >
                 <span className="relative z-10">{user ? 'IR AL DASHBOARD' : 'UNIRSE A LA ÉLITE'}</span>
                 <div className="absolute inset-0 bg-[#DC143C] translate-y-full group-hover:translate-y-0 transition-transform duration-500" />

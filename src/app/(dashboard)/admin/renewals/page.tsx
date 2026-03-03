@@ -89,7 +89,7 @@ export default function AdminRenewalsPage() {
       try {
         // En un sistema real, esto crearía o activaría una membresía
         // Por ahora simularemos la activación
-        await fetchApi(`/memberships/memberships/`, {
+        await fetchApi(`/memberships/`, {
           method: 'POST',
           body: JSON.stringify({
             userId: selectedUser.id,

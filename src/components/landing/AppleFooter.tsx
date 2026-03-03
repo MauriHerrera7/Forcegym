@@ -6,7 +6,7 @@ const AppleFooter: React.FC = () => {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="bg-[#5c0505] pt-32 pb-16 overflow-hidden relative border-t border-white/5">
+    <footer className="bg-[#5c0505] pt-20 pb-12 sm:pt-32 sm:pb-16 overflow-hidden relative border-t border-white/5">
       <Container>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-32">
           {/* Iconic Brand Tag */}
@@ -15,7 +15,7 @@ const AppleFooter: React.FC = () => {
               <img 
                 src="https://res.cloudinary.com/dry6dvzoj/image/upload/v1757729690/Forcegym_1_nxwdfw.png" 
                 alt="Force Gym Logo" 
-                className="h-28 w-auto brightness-0 invert transition-transform duration-500 group-hover:scale-105" 
+                className="h-20 sm:h-28 w-auto brightness-0 invert transition-transform duration-500 group-hover:scale-105" 
               />
             </Link>
             <p className="text-white/80 text-[10px] font-bold uppercase tracking-[0.4em] leading-relaxed italic">

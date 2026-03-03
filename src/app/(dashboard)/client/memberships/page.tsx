@@ -42,10 +42,10 @@ export default function ClientMembershipsPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto space-y-12 pb-12">
+    <div className="max-w-6xl mx-auto space-y-8 sm:space-y-12 p-4 sm:p-6 pb-12">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 overflow-hidden">
         <div className="space-y-2 animate-in slide-in-from-left duration-700">
-          <h1 className="text-4xl font-black italic uppercase tracking-tighter text-white">
+          <h1 className="text-3xl sm:text-4xl font-black italic uppercase tracking-tighter text-white">
             Tu <span className="text-apple-red">Membresía.</span>
           </h1>
           <p className="text-zinc-500 font-bold uppercase tracking-widest text-xs italic">
@@ -76,7 +76,7 @@ export default function ClientMembershipsPage() {
           <CardContent className="space-y-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div className="space-y-1">
-                <h3 className="text-5xl font-black text-white italic uppercase tracking-tighter">
+                <h3 className="text-3xl sm:text-5xl font-black text-white italic uppercase tracking-tighter">
                   {activeMembership.plan.name}
                 </h3>
                 <p className="text-zinc-400 font-medium">{activeMembership.plan.description}</p>

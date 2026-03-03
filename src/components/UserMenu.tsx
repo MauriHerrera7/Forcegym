@@ -36,16 +36,25 @@ export default function UserMenu({ userImage: propImage, userName: propName }: U
     }
   }
 
-  // Ensure photo is a valid URL string starting with http and not pointing to null/undefined values
+  // Ensure photo is a valid URL string starting with http or / and not pointing to null/undefined values
   const getSafePhoto = () => {
     const raw = (user?.profile_picture_url || user?.profile_picture || propImage);
-    if (!raw || typeof raw !== 'string' || raw.length < 10) return '';
+    if (!raw || typeof raw !== 'string' || raw.length < 5) return '';
     
     const lower = raw.toLowerCase().trim();
-    if (!lower.startsWith('http')) return '';
     if (lower.includes('/null') || lower.includes('/undefined') || lower === 'null' || lower === 'undefined') return '';
     
-    return raw.trim();
+    if (raw.startsWith('http')) return raw.trim();
+    
+    // If it's a relative path, prepend API URL
+    if (raw.startsWith('/')) {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      // Ensure we don't double slash
+      const cleanBase = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+      return `${cleanBase}${raw}`;
+    }
+    
+    return '';
   }
   
   const photo = getSafePhoto()
