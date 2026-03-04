@@ -61,8 +61,9 @@ export function Sidebar({ role }: SidebarProps) {
       {/* Sidebar */}
       <div
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex h-screen w-64 flex-col bg-[#2D0A0A] border-r border-[#450A0A]/30 transition-transform duration-300 md:static md:translate-x-0",
-          isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0",
+          "w-64 shrink-0 h-screen bg-[#2D0A0A] border-r border-[#450A0A]/30 flex flex-col transition-transform duration-300 z-50",
+          "fixed inset-y-0 left-0 md:sticky md:top-0 md:translate-x-0",
+          isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         {/* Logo & Close Button */}
