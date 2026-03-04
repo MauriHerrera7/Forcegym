@@ -1,3 +1,12 @@
+// Warn in production if the API URL is not configured
+if (process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_API_URL) {
+  console.warn(
+    '[api.ts] ⚠️ NEXT_PUBLIC_API_URL is not set! Falling back to http://localhost:8000. ' +
+    'This WILL cause all API calls to fail in production. ' +
+    'Set this variable in your Vercel/hosting dashboard and trigger a new build.'
+  );
+}
+
 export const fetchApi = async (endpoint: string, options: RequestInit = {}) => {
   const baseUrl =
     process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -42,6 +51,7 @@ export const fetchApi = async (endpoint: string, options: RequestInit = {}) => {
       data: data,
       url: url
     };
+    console.error(`[api.ts] ${options.method || 'GET'} ${url} → ${response.status}`, error.message);
     throw error;
   }
 

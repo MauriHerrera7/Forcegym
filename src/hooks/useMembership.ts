@@ -36,19 +36,38 @@ export function useMembership() {
   );
   const [checkIns, setCheckIns] = useState<CheckIn[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<{ status: number; message: string } | null>(null);
 
   const fetchMembershipData = useCallback(async () => {
+    // SSR guard: localStorage is not available on the server
+    if (typeof window === "undefined") return;
+
     try {
       const token = localStorage.getItem("access_token");
-      if (!token) return;
+      if (!token) {
+        setLoading(false);
+        return;
+      }
 
       // Fetch active membership
       try {
         const membership = await fetchApi("/memberships/active/");
         setActiveMembership(membership);
+        setError(null);
       } catch (err: any) {
-        if (err.status !== 404) {
-          console.error("Error loading active membership:", err);
+        console.error(
+          `[useMembership] /memberships/active/ → status=${err?.status}`,
+          err
+        );
+
+        if (err?.status === 401) {
+          // Token expired — clear stale credentials
+          localStorage.removeItem("access_token");
+          localStorage.removeItem("refresh_token");
+          setError({ status: 401, message: "Sesión expirada. Por favor, iniciá sesión nuevamente." });
+        } else if (err?.status !== 404) {
+          // 404 means no active membership — that's a valid state, not an error
+          setError({ status: err?.status ?? 500, message: err?.message ?? "Error al cargar la membresía." });
         }
         setActiveMembership(null);
       }
@@ -57,8 +76,11 @@ export function useMembership() {
       try {
         const checkinsData = await fetchApi("/memberships/checkins/");
         setCheckIns(checkinsData.results || checkinsData); // Handle DRF pagination if present
-      } catch (err) {
-        console.error("Error loading check-ins:", err);
+      } catch (err: any) {
+        console.error(
+          `[useMembership] /memberships/checkins/ → status=${err?.status}`,
+          err
+        );
       }
     } finally {
       setLoading(false);
@@ -73,6 +95,7 @@ export function useMembership() {
     activeMembership,
     checkIns,
     loading,
+    error,
     refreshMembership: fetchMembershipData,
   };
 }

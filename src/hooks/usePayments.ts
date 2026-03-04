@@ -21,11 +21,19 @@ export function usePayments() {
   const [loading, setLoading] = useState(true)
 
   const fetchPayments = useCallback(async () => {
+    // SSR guard: localStorage is not available on the server
+    if (typeof window === 'undefined') return;
+
     try {
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        setLoading(false);
+        return;
+      }
       const data = await fetchApi('/payments/my_payments/')
       setPayments(data.results || data)
-    } catch (error) {
-      console.error('Error fetching payments:', error)
+    } catch (error: any) {
+      console.error(`[usePayments] /payments/my_payments/ → status=${error?.status}`, error)
     } finally {
       setLoading(false)
     }

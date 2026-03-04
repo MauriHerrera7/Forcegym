@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -42,10 +42,16 @@ export function Sidebar({ role }: SidebarProps) {
   const { isOpen, close } = useSidebar();
   const menuItems = role === 'admin' ? adminMenuItems : clientMenuItems;
 
+  // Prevents hydration mismatch: SSR renders sidebar as closed, client syncs after mount
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
     <>
-      {/* Mobile Backdrop */}
-      {isOpen && (
+      {/* Mobile Backdrop — only rendered client-side to avoid SSR mismatch */}
+      {mounted && isOpen && (
         <div 
           className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
           onClick={close}
@@ -55,7 +61,8 @@ export function Sidebar({ role }: SidebarProps) {
       {/* Sidebar */}
       <div className={cn(
         "fixed inset-y-0 left-0 z-50 flex h-screen w-64 flex-col bg-[#2D0A0A] border-r border-[#450A0A]/30 transition-transform duration-300 lg:sticky lg:top-0 lg:translate-x-0",
-        isOpen ? "translate-x-0" : "-translate-x-full"
+        // Apply open state only after client mount to avoid SSR/CSR mismatch
+        mounted && isOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         {/* Logo & Close Button */}
         <div className="flex h-24 items-center justify-between px-6">
