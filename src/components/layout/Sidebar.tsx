@@ -42,7 +42,7 @@ export function Sidebar({ role }: SidebarProps) {
   const { isOpen, close } = useSidebar();
   const menuItems = role === "admin" ? adminMenuItems : clientMenuItems;
 
-  // Prevents hydration mismatch: SSR renders sidebar as closed, client syncs after mount
+  // Hydration protection to prevent production breaks/flickering
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);
@@ -50,7 +50,7 @@ export function Sidebar({ role }: SidebarProps) {
 
   return (
     <>
-      {/* Mobile Backdrop — only rendered client-side to avoid SSR mismatch */}
+      {/* Mobile Backdrop */}
       {mounted && isOpen && (
         <div
           className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden"
@@ -61,9 +61,8 @@ export function Sidebar({ role }: SidebarProps) {
       {/* Sidebar */}
       <div
         className={cn(
-          "w-64 shrink-0 h-screen bg-[#2D0A0A] border-r border-[#450A0A]/30 flex flex-col transition-transform duration-300 z-50",
-          "fixed inset-y-0 left-0 md:sticky md:top-0 md:translate-x-0",
-          isOpen ? "translate-x-0" : "-translate-x-full"
+          "fixed inset-y-0 left-0 z-50 flex h-screen w-64 flex-col bg-[#2D0A0A] border-r border-[#450A0A]/30 transition-transform duration-300 md:sticky md:top-0 md:translate-x-0 md:shrink-0",
+          isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         )}
       >
         {/* Logo & Close Button */}
@@ -101,7 +100,7 @@ export function Sidebar({ role }: SidebarProps) {
                   "flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200",
                   isActive
                     ? "bg-[#ff0400] text-white shadow-lg shadow-[#ff0400]/20"
-                    : "text-gray-400 hover:bg-[#404040] hover:text-white",
+                    : "text-gray-400 hover:bg-[#404040] hover:text-white"
                 )}
               >
                 <Icon className="h-5 w-5" />
