@@ -10,8 +10,13 @@ export default function ClientLayout({
   return (
     <SidebarProvider>
       <div className="flex min-h-screen bg-[#0A0A0A]">
-        <Sidebar role="client" />
-        <div className="flex flex-1 flex-col">
+        <div className="hidden md:block w-64 shrink-0">
+          <Sidebar role="client" />
+        </div>
+        <div className="md:hidden">
+          <Sidebar role="client" />
+        </div>
+        <div className="flex flex-1 flex-col overflow-hidden">
           <DashboardHeader />
           <main className="flex-1 overflow-y-auto p-4 md:p-8 text-white">
             {children}
