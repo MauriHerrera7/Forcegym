@@ -97,17 +97,6 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="bg-[#191919] border border-[#404040] p-1 h-auto">
-          <TabsTrigger 
-            value="overview" 
-            className="data-[state=active]:bg-[#ff0400] data-[state=active]:text-white text-gray-400 px-6 py-2 uppercase font-black italic tracking-tighter"
-          >
-            Resumen
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview" className="space-y-6 outline-none">
           {/* Metrics Grid with Charts */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {metrics.map((metric, index) => {
@@ -430,8 +419,6 @@ export default function AdminDashboard() {
           </div>
         </CardContent>
       </Card>
-    </TabsContent>
-  </Tabs>
 </div>
   );
 }

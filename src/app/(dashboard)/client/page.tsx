@@ -82,23 +82,7 @@ export default function ClientDashboard() {
         </div>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="bg-[#191919] border border-[#404040] p-1 h-auto">
-          <TabsTrigger 
-            value="overview" 
-            className="data-[state=active]:bg-[#ff0400] data-[state=active]:text-white text-gray-400 px-6 py-2"
-          >
-            Resumen
-          </TabsTrigger>
-          <TabsTrigger 
-            value="progress" 
-            className="data-[state=active]:bg-[#ff0400] data-[state=active]:text-white text-gray-400 px-6 py-2"
-          >
-            Progreso de Cargas
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview" className="space-y-6 outline-none">
+      <div className="space-y-6">
           {/* User Stats Cards */}
           <div className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             {userStats.map((stat, index) => {
@@ -383,12 +367,12 @@ export default function ClientDashboard() {
               </CardContent>
             </Card>
           </div>
-        </TabsContent>
+      </div>
 
-        <TabsContent value="progress" className="outline-none">
-          <ProgressTab />
-        </TabsContent>
-      </Tabs>
+      <div className="pt-10 border-t border-[#404040]">
+        <h2 className="text-2xl font-bold text-white mb-6">Progreso de Cargas</h2>
+        <ProgressTab />
+      </div>
     </div>
   );
 }

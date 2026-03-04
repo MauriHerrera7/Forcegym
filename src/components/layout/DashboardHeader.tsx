@@ -63,7 +63,7 @@ export function DashboardHeader({ user: propUser }: DashboardHeaderProps) {
       <div className="flex items-center gap-4">
         <button 
           onClick={toggle}
-          className="rounded-lg p-2 text-zinc-400 hover:bg-[#191919] hover:text-white lg:hidden transition-colors"
+          className="rounded-lg p-2 text-zinc-400 hover:bg-[#191919] hover:text-white md:hidden transition-colors"
           title="Abrir menú"
         >
           <Menu className="h-6 w-6" />

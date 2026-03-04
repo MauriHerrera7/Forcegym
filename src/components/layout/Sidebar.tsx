@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { usePathname } from 'next/navigation';
-import { cn } from '@/lib/utils';
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
   Users,
@@ -15,32 +15,32 @@ import {
   HelpCircle,
   RefreshCw,
   X,
-} from 'lucide-react';
-import { useSidebar } from '@/providers/SidebarProvider';
+} from "lucide-react";
+import { useSidebar } from "@/providers/SidebarProvider";
 
 interface SidebarProps {
-  role: 'admin' | 'client';
+  role: "admin" | "client";
 }
 
 const adminMenuItems = [
-  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/admin/users', label: 'Usuarios', icon: Users },
-  { href: '/admin/payments', label: 'Pagos', icon: CreditCard },
-  { href: '/admin/renewals', label: 'Renovaciones', icon: RefreshCw },
+  { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/users", label: "Usuarios", icon: Users },
+  { href: "/admin/payments", label: "Pagos", icon: CreditCard },
+  { href: "/admin/renewals", label: "Renovaciones", icon: RefreshCw },
 ];
 
 const clientMenuItems = [
-  { href: '/client', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/client/profile', label: 'Perfil', icon: User },
-  { href: '/client/training', label: 'Entrenamiento', icon: Dumbbell },
-  { href: '/client/memberships', label: 'Membresías', icon: CreditCard },
-  { href: '/client/support', label: 'Soporte', icon: HelpCircle },
+  { href: "/client", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/client/profile", label: "Perfil", icon: User },
+  { href: "/client/training", label: "Entrenamiento", icon: Dumbbell },
+  { href: "/client/memberships", label: "Membresías", icon: CreditCard },
+  { href: "/client/support", label: "Soporte", icon: HelpCircle },
 ];
 
 export function Sidebar({ role }: SidebarProps) {
   const pathname = usePathname();
   const { isOpen, close } = useSidebar();
-  const menuItems = role === 'admin' ? adminMenuItems : clientMenuItems;
+  const menuItems = role === "admin" ? adminMenuItems : clientMenuItems;
 
   // Prevents hydration mismatch: SSR renders sidebar as closed, client syncs after mount
   const [mounted, setMounted] = useState(false);
@@ -52,17 +52,19 @@ export function Sidebar({ role }: SidebarProps) {
     <>
       {/* Mobile Backdrop — only rendered client-side to avoid SSR mismatch */}
       {mounted && isOpen && (
-        <div 
-          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+        <div
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden"
           onClick={close}
         />
       )}
 
       {/* Sidebar */}
-      <div className={cn(
-        "fixed inset-y-0 left-0 z-50 flex h-screen w-64 flex-col bg-[#2D0A0A] border-r border-[#450A0A]/30 transition-transform duration-300 lg:sticky lg:top-0",
-        mounted && !isOpen ? "-translate-x-full lg:translate-x-0" : "translate-x-0"
-      )}>
+      <div
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 flex h-screen w-64 flex-col bg-[#2D0A0A] border-r border-[#450A0A]/30 transition-transform duration-300 md:sticky md:top-0 md:translate-x-0",
+          isOpen ? "translate-x-0" : "-translate-x-full",
+        )}
+      >
         {/* Logo & Close Button */}
         <div className="flex h-24 items-center justify-between px-6">
           <Link href="/" onClick={close}>
@@ -75,9 +77,9 @@ export function Sidebar({ role }: SidebarProps) {
               priority
             />
           </Link>
-          <button 
+          <button
             onClick={close}
-            className="rounded-lg p-2 text-gray-400 hover:bg-[#404040] hover:text-white lg:hidden"
+            className="rounded-lg p-2 text-gray-400 hover:bg-[#404040] hover:text-white md:hidden"
           >
             <X className="h-6 w-6" />
           </button>
@@ -95,10 +97,10 @@ export function Sidebar({ role }: SidebarProps) {
                 href={item.href}
                 onClick={close}
                 className={cn(
-                  'flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200',
+                  "flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200",
                   isActive
-                    ? 'bg-[#ff0400] text-white shadow-lg shadow-[#ff0400]/20'
-                    : 'text-gray-400 hover:bg-[#404040] hover:text-white'
+                    ? "bg-[#ff0400] text-white shadow-lg shadow-[#ff0400]/20"
+                    : "text-gray-400 hover:bg-[#404040] hover:text-white",
                 )}
               >
                 <Icon className="h-5 w-5" />
