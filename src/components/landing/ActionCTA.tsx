@@ -5,7 +5,7 @@ import { useAuthContext } from '@/providers/AuthProvider'
 
 const ActionCTA: React.FC = () => {
   const { user } = useAuthContext();
-  const dashboardUrl = user?.role === 'ADMIN' ? '/admin' : '/client';
+  const dashboardUrl = user?.role?.toUpperCase() === 'ADMIN' ? '/admin' : '/client';
 
   return (
     <section className="bg-apple-black py-32 sm:py-48 md:py-64 overflow-hidden relative">

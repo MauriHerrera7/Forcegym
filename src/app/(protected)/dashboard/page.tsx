@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { QRCodeSVG } from 'qrcode.react'
@@ -54,6 +55,15 @@ export default function DashboardPage() {
   const { user, deleteAccount, loading: authLoading, updateProfile } = useAuthContext()
   const { activeMembership, checkIns, loading: membershipLoading } = useMembership()
   const { summary, loading: progressLoading } = useProgress()
+  const router = useRouter()
+
+  // Redirect to correct dashboard based on role
+  useEffect(() => {
+    if (user && !authLoading) {
+      const role = user.role?.toUpperCase() === 'ADMIN' ? 'admin' : 'client';
+      router.replace(`/${role}`);
+    }
+  }, [user, authLoading, router]);
   
   const [editedData, setEditedData] = useState<EditableData>({
     first_name: '',

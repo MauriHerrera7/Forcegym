@@ -80,7 +80,7 @@ export default function UserMenu({ userImage: propImage, userName: propName }: U
     return 'U';
   };
   const initials = getInitials();
-  const role = user?.role === 'admin' ? 'admin' : 'client'
+  const role = user?.role?.toUpperCase() === 'ADMIN' ? 'admin' : 'client'
   const profileHref = `/${role}/profile`
 
   return (

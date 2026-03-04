@@ -69,11 +69,7 @@ const ApplePricing: React.FC = () => {
   const router = useRouter();
 
   const handlePlanClick = () => {
-    if (!user) {
-      router.push('/auth/login');
-    } else {
-      setIsModalOpen(true);
-    }
+    setIsModalOpen(true);
   };
 
   return (
@@ -177,18 +173,18 @@ const ApplePricing: React.FC = () => {
 
                   {/* CTA Button */}
                   <button 
-                    disabled={isActive || user?.role === 'ADMIN'}
+                    disabled={isActive || user?.role?.toUpperCase() === 'ADMIN'}
                     onClick={handlePlanClick}
                     className={`relative w-full py-5 rounded-2xl font-black text-base md:text-lg uppercase tracking-wider transition-all duration-500 overflow-hidden group/btn 
-                      ${(isActive || user?.role === 'ADMIN')
+                      ${(isActive || user?.role?.toUpperCase() === 'ADMIN')
                         ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed border border-zinc-700' 
-                        : 'bg-white text-black hover:text-white shadow-2xl active:scale-95'
+                         : 'bg-white text-black hover:text-white shadow-2xl active:scale-95'
                       }`}
                   >
                     <span className="relative z-10">
-                      {isActive ? 'Ya obtenido' : user?.role === 'ADMIN' ? 'Acceso Admin' : 'Comenzar ahora'}
+                      {isActive ? 'Ya obtenido' : user?.role?.toUpperCase() === 'ADMIN' ? 'Acceso Admin' : 'Comenzar ahora'}
                     </span>
-                    {(!isActive && user?.role !== 'ADMIN') && <div className="absolute inset-0 bg-[#ff0400] translate-y-full group-hover/btn:translate-y-0 transition-transform duration-500" />}
+                    {(!isActive && user?.role?.toUpperCase() !== 'ADMIN') && <div className="absolute inset-0 bg-[#ff0400] translate-y-full group-hover/btn:translate-y-0 transition-transform duration-500" />}
                   </button>
                </div>
              )

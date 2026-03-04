@@ -8,7 +8,7 @@ import UserMenu from './UserMenu'
 import { useAuthContext } from '@/providers/AuthProvider'
 
 const Navbar: React.FC = () => {
-  const { user, isAuthenticated } = useAuthContext()
+  const { user, isAuthenticated, logout } = useAuthContext()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const pathname = usePathname()
@@ -19,6 +19,10 @@ const Navbar: React.FC = () => {
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  // Mobile-specific user initials
+  const initials = user ? `${user.first_name?.[0] || ''}${user.last_name?.[0] || ''}`.toUpperCase() || 'U' : '';
+  const userRole = user?.role?.toUpperCase() === 'ADMIN' ? 'admin' : 'client';
 
   return (
     <nav
@@ -46,8 +50,8 @@ const Navbar: React.FC = () => {
             </Link>
           </div>
 
-          {/* Actions (right) - Flex-1 to push it to the right */}
-          <div className="flex-1 md:flex items-center justify-end" style={{ gap: '20px' }}>
+          {/* Actions (right) - Hide on mobile, show on md+ */}
+          <div className="hidden md:flex items-center justify-end" style={{ gap: '20px' }}>
             {isAuthenticated ? (
               <UserMenu userName={`${user?.first_name || ''} ${user?.last_name || ''}`.trim() || 'Usuario'} userImage={user?.profile_picture_url || user?.profile_picture} />
             ) : (
@@ -135,18 +139,48 @@ const Navbar: React.FC = () => {
             <div
               className="px-6 pt-6 pb-8 rounded-xl mt-4 backdrop-blur-lg"
               style={{
-                background: 'rgba(0, 0, 0, 0.9)',
+                background: 'rgba(0, 0, 0, 0.95)',
                 border: '1px solid rgba(239, 68, 68, 0.3)',
-                gap: '12px',
                 display: 'flex',
                 flexDirection: 'column',
-                boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)'
+                boxShadow: '0 20px 40px rgba(0, 0, 0, 0.5)'
               }}
             >
-
               {isAuthenticated ? (
-                <div className="mt-4 px-4">
-                  <UserMenu userName={`${user?.first_name || ''} ${user?.last_name || ''}`.trim() || 'Usuario'} userImage={user?.profile_picture_url || user?.profile_picture} />
+                <div className="flex flex-col gap-6">
+                  {/* Profile Summary */}
+                  <div className="flex items-center gap-4 py-4 border-b border-white/10">
+                    <div 
+                      className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white text-xl"
+                      style={{ backgroundColor: '#ef4444' }}
+                    >
+                      {initials}
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-white font-bold">{`${user?.first_name || ''} ${user?.last_name || ''}`}</span>
+                      <span className="text-gray-400 text-xs">{user?.email}</span>
+                    </div>
+                  </div>
+
+                  {/* Direct Mobile Links */}
+                  <div className="flex flex-col gap-4">
+                    <Link
+                      href={`/${userRole}/profile`}
+                      className="text-white font-medium hover:text-red-500 transition-colors py-2"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Mi Perfil
+                    </Link>
+                    <button
+                      onClick={() => {
+                        logout();
+                        setIsMenuOpen(false);
+                      }}
+                      className="text-red-500 font-bold hover:text-red-400 transition-colors text-left py-2"
+                    >
+                      Cerrar Sesión
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <div style={{ paddingTop: '20px', gap: '16px', display: 'flex', flexDirection: 'column' }}>

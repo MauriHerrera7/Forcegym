@@ -61,19 +61,35 @@ export default function PlanModal({ isOpen, onClose }: PlanModalProps) {
   const { activeMembership } = useMembership()
   const [plans, setPlans] = useState<MembershipPlan[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [purchasing, setPurchasing] = useState<string | null>(null)
 
   useEffect(() => {
     if (isOpen) {
       const fetchPlans = async () => {
+        setLoading(true)
+        setError(null)
         try {
           const data = await fetchApi('/memberships/plans/')
+          console.log('[PlanModal] API Response:', data)
+          
           // Solo mostrar los activos y ordenarlos por precio
-          const plansData = data.results || data
-          const activePlans = plansData.filter((p: any) => p.is_active).sort((a: any, b: any) => parseFloat(a.price) - parseFloat(b.price))
+          const plansData = data?.results || data
+          
+          if (!Array.isArray(plansData)) {
+            console.error('[PlanModal] Unexpected API format:', data)
+            setPlans([])
+            return
+          }
+
+          const activePlans = plansData
+            .filter((p: any) => p.is_active)
+            .sort((a: any, b: any) => parseFloat(a.price) - parseFloat(b.price))
+          
           setPlans(activePlans)
-        } catch (error) {
-          console.error('Error fetching plans:', error)
+        } catch (err: any) {
+          console.error('[PlanModal] Error fetching plans:', err)
+          setError(err.message || 'Error al cargar los planes')
         } finally {
           setLoading(false)
         }
@@ -116,8 +132,31 @@ export default function PlanModal({ isOpen, onClose }: PlanModalProps) {
           </DialogHeader>
 
           {loading ? (
-            <div className="flex h-64 items-center justify-center">
+            <div className="flex h-64 flex-col items-center justify-center gap-4">
               <Loader2 className="h-10 w-10 animate-spin text-apple-red" />
+              <p className="text-zinc-500 animate-pulse font-medium">Cargando planes técnicos...</p>
+            </div>
+          ) : error ? (
+            <div className="flex h-64 flex-col items-center justify-center text-center gap-4 px-4">
+              <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mb-2">
+                <span className="text-3xl">⚠️</span>
+              </div>
+              <h3 className="text-xl font-bold text-white">Error de conexión</h3>
+              <p className="text-zinc-400 max-w-md">{error}</p>
+              <Button 
+                onClick={() => onClose()} 
+                className="mt-4 bg-zinc-800 hover:bg-zinc-700 text-white"
+              >
+                Cerrar
+              </Button>
+            </div>
+          ) : plans.length === 0 ? (
+            <div className="flex h-64 flex-col items-center justify-center text-center gap-4 px-4">
+              <div className="w-16 h-16 rounded-full bg-apple-red/10 flex items-center justify-center mb-2">
+                <span className="text-3xl">🥋</span>
+              </div>
+              <h3 className="text-xl font-bold text-white">No hay planes disponibles</h3>
+              <p className="text-zinc-400 max-w-md">Estamos actualizando nuestra oferta para brindarte el mejor rendimiento. Vuelve pronto.</p>
             </div>
           ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">

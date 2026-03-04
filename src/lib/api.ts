@@ -8,8 +8,22 @@ if (process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_API_URL) {
 }
 
 export const fetchApi = async (endpoint: string, options: RequestInit = {}) => {
-  const baseUrl =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+  const getBaseUrl = () => {
+    if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
+    
+    // In production, if the environment variable is missing, try to infer it
+    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      // If we are on forcegym.online (frontend), assume api.forcegym.online (backend)
+      // or just use the current domain if it's a monolithic setup
+      if (window.location.hostname.includes('forcegym.online')) {
+        return 'https://api.forcegym.online';
+      }
+    }
+    
+    return "http://localhost:8000";
+  };
+
+  const baseUrl = getBaseUrl();
   const url = `${baseUrl}${endpoint}`;
 
   // Check if we have an access token in localStorage

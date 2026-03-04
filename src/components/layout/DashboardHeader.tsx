@@ -95,7 +95,7 @@ export function DashboardHeader({ user: propUser }: DashboardHeaderProps) {
           <DropdownMenuContent align="end" className="w-56 bg-[#404040] border-[#404040]">
             <DropdownMenuLabel className="text-gray-300 font-normal">Mi Cuenta</DropdownMenuLabel>
             <DropdownMenuSeparator className="bg-[#505050]" />
-            <Link href={authUser?.role?.toLowerCase() === 'admin' ? '/admin/profile' : '/client/profile'}>
+            <Link href={authUser?.role?.toUpperCase() === 'ADMIN' ? '/admin/profile' : '/client/profile'}>
               <DropdownMenuItem className="text-white focus:bg-[#505050] cursor-pointer">
                 <UserIcon className="mr-2 h-4 w-4" />
                 Mi Perfil

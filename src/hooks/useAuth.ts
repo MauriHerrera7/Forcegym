@@ -145,8 +145,13 @@ export function useAuth() {
           setUser(userData);
           setLoading(false);
 
-          // Redirigir a la landing page después de iniciar sesión
-          router.push("/");
+          // Redirigir al dashboard correspondiente según el rol
+          const userRole = userData.role?.toUpperCase();
+          if (userRole === 'ADMIN') {
+            router.push("/admin");
+          } else {
+            router.push("/client");
+          }
         }
       } catch (error) {
         console.error("Error al iniciar sesión:", error);

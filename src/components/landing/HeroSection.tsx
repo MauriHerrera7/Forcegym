@@ -45,7 +45,7 @@ const HeroSection: React.FC = () => {
     return () => clearInterval(interval)
   }, [])
 
-  const dashboardUrl = user?.role === 'ADMIN' ? '/admin' : '/client';
+  const dashboardUrl = user?.role?.toUpperCase() === 'ADMIN' ? '/admin' : '/client';
 
   return (
     <section className="relative h-[90vh] w-full overflow-hidden bg-black flex items-center">

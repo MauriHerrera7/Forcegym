@@ -49,7 +49,7 @@ export default function AdminUsersPage() {
     const fullName = `${user.full_name || ''} ${user.first_name || ''} ${user.last_name || ''} ${user.username || ''}`;
     const matchesSearch = fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          (user.email || '').toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesRole = filterRole === 'all' || user.role === filterRole;
+    const matchesRole = filterRole === 'all' || user.role?.toLowerCase() === filterRole.toLowerCase();
     const matchesStatus = filterStatus === 'all' || 
                          (filterStatus === 'active' ? user.is_active : !user.is_active);
     
@@ -75,8 +75,8 @@ export default function AdminUsersPage() {
     total: users.length,
     active: users.filter(u => u.is_active).length,
     inactive: users.filter(u => !u.is_active).length,
-    admins: users.filter(u => u.role?.toLowerCase() === 'admin').length,
-    clients: users.filter(u => u.role?.toLowerCase() === 'client').length,
+    admins: users.filter(u => u.role?.toUpperCase() === 'ADMIN').length,
+    clients: users.filter(u => u.role?.toUpperCase() === 'CLIENT').length,
   };
 
   const activePercentage = Math.round((stats.active / stats.total) * 100) || 0;
@@ -199,12 +199,12 @@ export default function AdminUsersPage() {
                     <td className="py-4 px-4">
                       <Badge
                         variant="outline"
-                        className={user.role?.toLowerCase() === 'admin' 
+                        className={user.role?.toUpperCase() === 'ADMIN' 
                           ? 'bg-orange-500/20 text-orange-400 border-orange-500/30'
                           : 'bg-blue-500/20 text-blue-400 border-blue-500/30'
                         }
                       >
-                        {user.role?.toLowerCase() === 'admin' ? '👑 Admin' : '👤 Cliente'}
+                        {user.role?.toUpperCase() === 'ADMIN' ? '👑 Admin' : '👤 Cliente'}
                       </Badge>
                     </td>
 
