@@ -15,6 +15,7 @@ import {
   HelpCircle,
   RefreshCw,
   X,
+  Menu,
 } from "lucide-react";
 import { useSidebar } from "@/providers/SidebarProvider";
 
@@ -61,12 +62,14 @@ export function Sidebar({ role }: SidebarProps) {
       {/* Sidebar */}
       <div
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex h-screen w-64 flex-col bg-[#2D0A0A] border-r border-[#450A0A]/30 transition-transform duration-300 md:sticky md:top-0 md:translate-x-0 md:shrink-0",
-          isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+          "fixed inset-y-0 left-0 z-50 flex h-screen flex-col bg-[#2D0A0A] border-r border-[#450A0A]/30 transition-all duration-300 md:sticky md:top-0 md:shrink-0 overflow-hidden",
+          isOpen 
+            ? "translate-x-0 w-64" 
+            : "-translate-x-full md:translate-x-0 md:w-0 md:border-none"
         )}
       >
-        {/* Logo & Close Button */}
-        <div className="flex h-24 items-center justify-between px-6">
+        {/* Logo & Toggle Button */}
+        <div className="flex h-24 items-center justify-between px-6 min-w-64">
           <Link href="/" onClick={close}>
             <Image
               src="https://res.cloudinary.com/dry6dvzoj/image/upload/v1757729690/Forcegym_1_nxwdfw.png"
@@ -79,14 +82,14 @@ export function Sidebar({ role }: SidebarProps) {
           </Link>
           <button
             onClick={close}
-            className="rounded-lg p-2 text-gray-400 hover:bg-[#404040] hover:text-white md:hidden"
+            className="rounded-lg p-2 text-gray-400 hover:bg-[#404040] hover:text-white"
           >
-            <X className="h-6 w-6" />
+            <Menu className="h-6 w-6" />
           </button>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 space-y-1 p-4 overflow-y-auto">
+        <nav className="flex-1 space-y-1 p-4 overflow-y-auto min-w-64">
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
