@@ -5,6 +5,7 @@ import { useAdmin, AdminUser } from '@/hooks/useAdmin';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, DollarSign, TrendingUp, Activity, UserPlus, Calendar, Loader2 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function AdminDashboard() {
   const { getGymMetrics, getRecentUsers, getMetricsHistory, loading } = useAdmin();
@@ -96,8 +97,19 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Metrics Grid with Charts */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <Tabs defaultValue="overview" className="space-y-6">
+        <TabsList className="bg-[#191919] border border-[#404040] p-1 h-auto">
+          <TabsTrigger 
+            value="overview" 
+            className="data-[state=active]:bg-[#ff0400] data-[state=active]:text-white text-gray-400 px-6 py-2 uppercase font-black italic tracking-tighter"
+          >
+            Resumen
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview" className="space-y-6 outline-none">
+          {/* Metrics Grid with Charts */}
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {metrics.map((metric, index) => {
           const Icon = metric.icon;
           return (
@@ -418,6 +430,8 @@ export default function AdminDashboard() {
           </div>
         </CardContent>
       </Card>
-    </div>
+    </TabsContent>
+  </Tabs>
+</div>
   );
 }

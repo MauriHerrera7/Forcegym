@@ -59,8 +59,16 @@ export function DashboardHeader({ user: propUser }: DashboardHeaderProps) {
   const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase() || 'U';
 
   return (
-    <header className="sticky top-0 z-40 flex h-16 items-center justify-between bg-[#0A0A0A] px-6">
-      <div />
+    <header className="sticky top-0 z-40 flex h-16 items-center justify-between bg-[#0A0A0A] px-6 border-b border-[#404040]/30">
+      <div className="flex items-center gap-4">
+        <button 
+          onClick={toggle}
+          className="rounded-lg p-2 text-zinc-400 hover:bg-[#191919] hover:text-white lg:hidden transition-colors"
+          title="Abrir menú"
+        >
+          <Menu className="h-6 w-6" />
+        </button>
+      </div>
 
       {/* Right side */}
       <div className="flex items-center gap-4">
