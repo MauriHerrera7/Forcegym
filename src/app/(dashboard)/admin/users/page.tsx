@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Search, UserPlus, Edit, Trash2 } from 'lucide-react';
+import { Search, Edit, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -141,10 +141,6 @@ export default function AdminUsersPage() {
           <h1 className="text-2xl sm:text-3xl font-bold text-white">Gestión de Usuarios {loading && <span className="text-sm font-normal text-gray-500 ml-2 italic">Cargando...</span>}</h1>
           <p className="text-gray-400 text-sm">Administra todos los usuarios del sistema</p>
         </div>
-        <Button className="w-full sm:w-auto gap-2 bg-[#ff0400] hover:bg-[#ff3936] text-white">
-          <UserPlus className="h-4 w-4" />
-          Nuevo Usuario
-        </Button>
       </div>
 
       {/* ... (rest of stats cards) */}
