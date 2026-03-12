@@ -103,7 +103,7 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
         break;
       case 'password':
         if (!value) error = 'La contraseña es requerida';
-        else if (value.length < 6) error = 'Mínimo 6 caracteres';
+        else if (value.length < 8) error = 'Mínimo 8 caracteres';
         
         // Also re-validate confirmation if it exists
         if (formData.confirmPassword && value !== formData.confirmPassword) {

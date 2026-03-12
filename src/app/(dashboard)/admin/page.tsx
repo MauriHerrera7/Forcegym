@@ -56,14 +56,14 @@ export default function AdminDashboard() {
     },
     {
       title: 'Miembros Activos',
-      value: metricsData?.active_members?.toString() || '0',
+      value: metricsData?.active_memberships?.toString() || '0',
       icon: TrendingUp,
-      trend: `${metricsData?.active_memberships || 0} membresías`,
+      trend: 'Membresías vigentes',
       color: 'from-purple-500 to-purple-600',
     },
     {
       title: 'Check-ins Hoy',
-      value: metricsData?.total_checkins?.toString() || '0',
+      value: metricsData?.today_checkins?.toString() || '0',
       icon: Activity,
       trend: 'Ingresos hoy',
       color: 'from-red-500 to-red-600',

@@ -73,7 +73,7 @@ const AppleFooter: React.FC = () => {
            </div>
            <div className="h-px w-24 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
            <div className="text-[10px] text-white/40 font-bold uppercase tracking-[0.6em]">
-              Designed in Puerto Madero
+              Designed in Mendoza
            </div>
         </div>
       </Container>
