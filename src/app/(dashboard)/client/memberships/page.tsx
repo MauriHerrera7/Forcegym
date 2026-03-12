@@ -77,13 +77,13 @@ export default function ClientMembershipsPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div className="space-y-1">
                 <h3 className="text-3xl sm:text-5xl font-black text-white italic uppercase tracking-tighter">
-                  {activeMembership.plan.name}
+                  {activeMembership?.plan?.name}
                 </h3>
-                <p className="text-zinc-400 font-medium">{activeMembership.plan.description}</p>
+                <p className="text-zinc-400 font-medium">{activeMembership?.plan?.description}</p>
               </div>
               <div className="bg-[#111] p-6 rounded-2xl border border-zinc-800/50 transition-colors group-hover:border-apple-red/30">
                 <div className="text-zinc-500 text-[10px] font-black uppercase tracking-widest mb-1">Precio Mensual</div>
-                <div className="text-4xl font-black text-white italic">${activeMembership.plan.price}</div>
+                <div className="text-4xl font-black text-white italic">${activeMembership?.plan?.price}</div>
               </div>
             </div>
 

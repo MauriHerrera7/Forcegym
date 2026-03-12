@@ -66,7 +66,6 @@ const ApplePricing: React.FC = () => {
   const { user } = useAuthContext();
   const { activeMembership } = useMembership();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const router = useRouter();
 
   const handlePlanClick = () => {
     setIsModalOpen(true);
@@ -121,7 +120,7 @@ const ApplePricing: React.FC = () => {
              }
 
              const colors = colorClasses[plan.color as keyof typeof colorClasses]
-             const isActive = activeMembership?.plan.name === plan.name;
+             const isActive = activeMembership?.plan?.name === plan.name;
 
              return (
                <div 

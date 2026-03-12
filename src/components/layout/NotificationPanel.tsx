@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Bell, AlertTriangle, CheckCircle, CreditCard, UserCircle, X, ChevronsRight } from 'lucide-react';
 import { useAuthContext } from '@/providers/AuthProvider';
 import { useMembership } from '@/hooks/useMembership';
@@ -22,6 +22,11 @@ export function NotificationPanel() {
   const { activeMembership } = useMembership();
   const [isOpen, setIsOpen] = useState(false);
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const dismiss = (id: string) => {
     setDismissed(prev => new Set(prev).add(id));
@@ -118,6 +123,14 @@ export function NotificationPanel() {
     info: 'border-blue-500/30 bg-blue-500/5',
     error: 'border-red-500/30 bg-red-500/5',
   };
+
+  if (!mounted) return (
+    <div className="relative">
+      <button className="relative rounded-full p-2 text-gray-400">
+        <Bell className="h-5 w-5" />
+      </button>
+    </div>
+  );
 
   return (
     <div className="relative">

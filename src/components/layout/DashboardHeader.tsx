@@ -42,7 +42,10 @@ export function DashboardHeader({ user: propUser }: DashboardHeaderProps) {
     const lower = raw.toLowerCase().trim();
     if (lower.includes('/null') || lower.includes('/undefined') || lower === 'null' || lower === 'undefined') return undefined;
     
-    if (raw.startsWith('http')) return raw.trim();
+    // Enforce https for all external URLs (Cloudinary, etc)
+    if (raw.startsWith('http')) {
+      return raw.trim().replace(/^http:\/\//i, 'https://');
+    }
     
     // If it's a relative path, prepend API URL
     if (raw.startsWith('/')) {

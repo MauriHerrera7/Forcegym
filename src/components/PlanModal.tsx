@@ -11,7 +11,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { fetchApi } from '@/lib/api'
 import { useMembership, MembershipPlan } from '@/hooks/useMembership'
-import { Check, Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 
 interface PlanModalProps {
   isOpen: boolean
@@ -200,9 +200,9 @@ export default function PlanModal({ isOpen, onClose }: PlanModalProps) {
 
                     <Button
                       onClick={() => handlePurchase(plan.id)}
-                      disabled={!!purchasing || activeMembership?.plan.id === plan.id}
+                      disabled={!!purchasing || activeMembership?.plan?.id === plan.id}
                       className={`relative z-10 w-full py-6 md:py-8 rounded-2xl font-black uppercase tracking-widest transition-all duration-500 overflow-hidden group/btn 
-                        ${purchasing === plan.id || activeMembership?.plan.id === plan.id
+                        ${purchasing === plan.id || activeMembership?.plan?.id === plan.id
                           ? 'bg-zinc-800 text-zinc-500' 
                           : 'bg-white text-black hover:text-white scale-100 active:scale-95 shadow-2xl'
                         }`}
@@ -210,13 +210,13 @@ export default function PlanModal({ isOpen, onClose }: PlanModalProps) {
                       <span className="relative z-10 flex items-center justify-center gap-2">
                         {purchasing === plan.id ? (
                           <Loader2 className="h-7 w-7 animate-spin" />
-                        ) : activeMembership?.plan.id === plan.id ? (
+                        ) : activeMembership?.plan?.id === plan.id ? (
                           'Ya obtenido'
                         ) : (
                           'Comenzar Ahora'
                         )}
                       </span>
-                      {!(activeMembership?.plan.id === plan.id) && (
+                      {!(activeMembership?.plan?.id === plan.id) && (
                         <div className="absolute inset-0 bg-[#ff0400] translate-y-full group-hover/btn:translate-y-0 transition-transform duration-500" />
                       )}
                     </Button>

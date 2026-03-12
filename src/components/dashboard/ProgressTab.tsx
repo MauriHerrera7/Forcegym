@@ -24,9 +24,11 @@ export function ProgressTab() {
   const [weight, setWeight] = useState('');
   const [reps, setReps] = useState('');
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [mounted, setMounted] = useState(false);
 
   // Load logs from localStorage
   useEffect(() => {
+    setMounted(true);
     const savedLogs = localStorage.getItem('forcegym_progress_logs');
     if (savedLogs) {
       setLogs(JSON.parse(savedLogs));
@@ -87,6 +89,8 @@ export function ProgressTab() {
     const key = date.toISOString().split('T')[0];
     return logs.some(log => log.date === key);
   };
+
+  if (!mounted) return <div className="grid gap-6 lg:grid-cols-2 opacity-50" />;
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
