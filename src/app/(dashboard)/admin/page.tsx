@@ -2,8 +2,12 @@
 
 import { useDashboardNavigation } from '@/providers/DashboardNavigationProvider';
 import AdminDashboardHome from '@/components/admin/views/AdminDashboardHome';
-import AdminUsersView from '@/components/admin/views/AdminUsersView';
-import AdminPaymentsView from '@/components/admin/views/AdminPaymentsView';
+
+// Import existing route page components
+import AdminUsersPage from './users/page';
+import AdminPaymentsPage from './payments/page';
+import AdminRenewalsPage from './renewals/page';
+import AdminProfile from './profile/page';
 
 export default function AdminDashboard() {
   const { currentView } = useDashboardNavigation();
@@ -13,16 +17,13 @@ export default function AdminDashboard() {
       case 'dashboard':
         return <AdminDashboardHome />;
       case 'users':
-        return <AdminUsersView />;
+        return <AdminUsersPage />;
       case 'payments':
-        return <AdminPaymentsView />;
+        return <AdminPaymentsPage />;
       case 'renewals':
-        return (
-          <div className="flex flex-col items-center justify-center h-full text-zinc-500 py-20">
-            <h2 className="text-2xl font-black italic uppercase italic tracking-widest mb-4">Módulo de Renovaciones</h2>
-            <p>Contenido en desarrollo...</p>
-          </div>
-        );
+        return <AdminRenewalsPage />;
+      case 'profile':
+        return <AdminProfile />;
       default:
         return <AdminDashboardHome />;
     }
