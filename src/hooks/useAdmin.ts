@@ -63,7 +63,9 @@ export const useAdmin = () => {
     setLoading(true);
     setError(null);
     try {
-      const query = params ? '?' + new URLSearchParams(params).toString() : '';
+      const queryParams = new URLSearchParams(params || {});
+      queryParams.set('_t', Date.now().toString()); // Cache breaker
+      const query = '?' + queryParams.toString();
       const data = await fetchApi(`/users/${query}`);
       return (data.results || data) as AdminUser[];
     } catch (err: any) {
@@ -189,10 +191,26 @@ export const useAdmin = () => {
     }
   }, []);
 
+  const deleteUser = useCallback(async (userId: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      await fetchApi(`/users/${userId}/`, {
+        method: 'DELETE',
+      });
+    } catch (err: any) {
+      setError(err.message || 'Error al eliminar usuario');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   return {
     loading,
     error,
     getUsers,
+    deleteUser,
     toggleUserStatus,
     getGymMetrics,
     getRecentUsers,

@@ -12,7 +12,7 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
 export default function AdminUsersPage() {
-  const { getUsers, toggleUserStatus, loading } = useAdmin();
+  const { getUsers, toggleUserStatus, deleteUser: deleteUserApi, loading } = useAdmin();
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterRole, setFilterRole] = useState<'all' | 'admin' | 'client'>('all');
@@ -37,10 +37,15 @@ export default function AdminUsersPage() {
     }
   };
 
-  const deleteUser = (userId: string) => {
-    if (confirm('¿Estás seguro de que quieres eliminar este usuario?')) {
-      // Por ahora solo mock delete si no hay endpoint
-      setUsers(users.filter(user => user.id !== userId));
+  const deleteUser = async (userId: string) => {
+    if (confirm('¿Estás seguro de que quieres eliminar este usuario permanentemente?')) {
+      try {
+        await deleteUserApi(userId);
+        // Refresh list
+        fetchUsers();
+      } catch (err) {
+        alert('Error al eliminar el usuario: ' + (err as any).message);
+      }
     }
   };
 
