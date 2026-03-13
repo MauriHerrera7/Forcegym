@@ -25,6 +25,7 @@
     "flowbite": "^3.1.2",
     "flowbite-react": "^0.12.9",
     "framer-motion": "^12.23.22",
+    "js-cookie": "^3.0.5",
     "lucide-react": "^0.545.0",
     "next": "15.5.9",
     "qrcode": "^1.5.4",
@@ -37,6 +38,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/js-cookie": "^3.0.6",
     "@types/node": "^20.19.35",
     "@types/qrcode": "^1.5.6",
     "@types/react": "^19.2.14",

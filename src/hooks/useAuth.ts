@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { fetchApi } from "@/lib/api";
+import Cookies from "js-cookie";
 
 interface UserProfile {
   bio?: string;
@@ -56,6 +57,7 @@ export function useAuth() {
 
       if (response && response.access) {
         localStorage.setItem("access_token", response.access);
+        Cookies.set("authenticated", "true", { expires: 7 });
         // If the backend rotates refresh tokens, update it
         if (response.refresh) {
           localStorage.setItem("refresh_token", response.refresh);
@@ -67,6 +69,8 @@ export function useAuth() {
       console.error("Error al renovar el token:", error);
       localStorage.removeItem("access_token");
       localStorage.removeItem("refresh_token");
+      Cookies.remove("authenticated");
+      Cookies.remove("auth_role");
       setUser(null);
       throw error;
     }
@@ -110,6 +114,8 @@ export function useAuth() {
         if (err && (err.status === 401 || err.status === 403)) {
           localStorage.removeItem("access_token");
           localStorage.removeItem("refresh_token");
+          Cookies.remove("authenticated");
+          Cookies.remove("auth_role");
           setUser(null);
         }
 
@@ -145,8 +151,12 @@ export function useAuth() {
           setUser(userData);
           setLoading(false);
 
-          // Redirigir al dashboard correspondiente según el rol
+          // Sincronizar cookies para el middleware
           const userRole = userData.role?.toUpperCase();
+          Cookies.set("authenticated", "true", { expires: 7 });
+          Cookies.set("auth_role", userRole, { expires: 7 });
+
+          // Redirigir al dashboard correspondiente según el rol
           if (userRole === 'ADMIN') {
             router.push("/admin");
           } else {
@@ -199,6 +209,8 @@ export function useAuth() {
     try {
       localStorage.removeItem("access_token");
       localStorage.removeItem("refresh_token");
+      Cookies.remove("authenticated");
+      Cookies.remove("auth_role");
       setUser(null);
       router.push("/auth/login");
     } catch (error) {

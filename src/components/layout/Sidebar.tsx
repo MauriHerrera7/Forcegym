@@ -19,37 +19,44 @@ import {
   ClipboardList,
 } from "lucide-react";
 import { useSidebar } from "@/providers/SidebarProvider";
+import { useDashboardNavigation } from "@/providers/DashboardNavigationProvider";
 
 interface SidebarProps {
   role: "admin" | "client";
 }
 
 const adminMenuItems = [
-  { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/admin/users", label: "Usuarios", icon: Users },
-  { href: "/admin/payments", label: "Pagos", icon: CreditCard },
-  { href: "/admin/renewals", label: "Renovaciones", icon: RefreshCw },
-];
+  { view: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { view: "users", label: "Usuarios", icon: Users },
+  { view: "payments", label: "Pagos", icon: CreditCard },
+  { view: "renewals", label: "Renovaciones", icon: RefreshCw },
+] as const;
 
 const clientMenuItems = [
-  { href: "/client", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/client/profile", label: "Perfil", icon: User },
-  { href: "/client/training", label: "Entrenamiento", icon: Dumbbell },
-  { href: "/client/routines", label: "Rutinas", icon: ClipboardList },
-  { href: "/client/memberships", label: "Membresías", icon: CreditCard },
-  { href: "/client/support", label: "Soporte", icon: HelpCircle },
-];
+  { view: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { view: "profile", label: "Perfil", icon: User },
+  { view: "training", label: "Entrenamiento", icon: Dumbbell },
+  { view: "routines", label: "Rutinas", icon: ClipboardList },
+  { view: "memberships", label: "Membresías", icon: CreditCard },
+  { view: "support", label: "Soporte", icon: HelpCircle },
+] as const;
 
 export function Sidebar({ role }: SidebarProps) {
   const pathname = usePathname();
   const { isOpen, close } = useSidebar();
+  const { currentView, setCurrentView } = useDashboardNavigation();
   const menuItems = role === "admin" ? adminMenuItems : clientMenuItems;
 
-  // Hydration protection to prevent production breaks/flickering
+  // Hydration protection
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const handleNavigate = (view: any) => {
+    setCurrentView(view);
+    close();
+  };
 
   return (
     <>
@@ -92,25 +99,24 @@ export function Sidebar({ role }: SidebarProps) {
 
         {/* Navigation */}
         <nav className="flex-1 space-y-1 p-4 overflow-y-auto min-w-64">
-          {menuItems.map((item) => {
+          {menuItems.map((item: any) => {
             const Icon = item.icon;
-            const isActive = pathname === item.href;
+            const isActive = currentView === item.view;
 
             return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={close}
+              <button
+                key={item.view}
+                onClick={() => handleNavigate(item.view)}
                 className={cn(
-                  "flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200",
+                  "flex items-center w-full gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 text-left",
                   isActive
-                    ? "bg-[#ff0400] text-white shadow-lg shadow-[#ff0400]/20"
+                    ? "bg-[#ff0400] text-white shadow-lg shadow-[#ff0400]/20 font-black italic uppercase tracking-tighter"
                     : "text-gray-400 hover:bg-[#404040] hover:text-white"
                 )}
               >
-                <Icon className="h-5 w-5" />
+                <Icon className={cn("h-5 w-5", isActive ? "text-white" : "text-gray-400 opacity-50")} />
                 {item.label}
-              </Link>
+              </button>
             );
           })}
         </nav>
