@@ -1,9 +1,35 @@
+'use client';
+
 import React from 'react'
 import Container from '@/components/Container'
 import Link from 'next/link'
+import { useAppNavigation } from '@/providers/AppNavigationProvider'
 
 const AppleFooter: React.FC = () => {
   const currentYear = new Date().getFullYear()
+  const { navigateTo } = useAppNavigation()
+
+  const handleNav = (href: string) => {
+    if (href === '/') {
+      navigateTo('landing');
+    } else if (href === '/client' || href.startsWith('/client')) {
+      navigateTo('client');
+    } else if (href === '/auth/login') {
+      navigateTo('login');
+    } else if (href === '/auth/register') {
+      navigateTo('register');
+    } else {
+      if (href.startsWith('/#')) {
+        const id = href.split('#')[1];
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      } else {
+         window.location.href = href;
+      }
+    }
+  };
 
   return (
     <footer className="bg-[#5c0505] pt-20 pb-12 sm:pt-32 sm:pb-16 overflow-hidden relative border-t border-white/5">
@@ -11,13 +37,16 @@ const AppleFooter: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-32">
           {/* Iconic Brand Tag */}
           <div className="md:col-span-1 flex flex-col gap-6">
-            <Link href="/" className="inline-block group">
+            <button 
+              onClick={() => navigateTo('landing')} 
+              className="inline-block group text-left outline-none bg-transparent border-none p-0 cursor-pointer"
+            >
               <img 
                 src="https://res.cloudinary.com/dry6dvzoj/image/upload/v1757729690/Forcegym_1_nxwdfw.png" 
                 alt="Force Gym Logo" 
                 className="h-20 sm:h-28 w-auto brightness-0 invert transition-transform duration-500 group-hover:scale-105" 
               />
-            </Link>
+            </button>
             <p className="text-white/80 text-[10px] font-bold uppercase tracking-[0.4em] leading-relaxed italic">
               Donde la fuerza física se encuentra con el diseño de vanguardia.
             </p>
@@ -29,11 +58,18 @@ const AppleFooter: React.FC = () => {
              <ul className="flex flex-col gap-4">
                 {[
                   { label: 'Membresías', href: '/#ofertas' },
-                  { label: 'Entrenamientos', href: '/client/training' },
+                  { label: 'Entrenamientos', href: '/client' },
                   { label: 'Dashboard', href: '/client' },
                   { label: 'Sedes', href: '/locations' }
                 ].map(link => (
-                  <li key={link.label}><Link href={link.href} className="text-white/60 hover:text-white transition-colors text-xs font-bold tracking-widest uppercase italic">{link.label}</Link></li>
+                  <li key={link.label}>
+                    <button 
+                      onClick={() => handleNav(link.href)} 
+                      className="text-white/60 hover:text-white transition-colors text-xs font-bold tracking-widest uppercase italic text-left outline-none bg-transparent border-none p-0 cursor-pointer"
+                    >
+                      {link.label}
+                    </button>
+                  </li>
                 ))}
              </ul>
           </div>
@@ -46,7 +82,18 @@ const AppleFooter: React.FC = () => {
                   { label: 'Privacidad', href: '/privacy' },
                   { label: 'Soporte', href: 'mailto:forcegymgym1@gmail.com' }
                 ].map(link => (
-                  <li key={link.label}><Link href={link.href} className="text-white/60 hover:text-white transition-colors text-xs font-bold tracking-widest uppercase italic">{link.label}</Link></li>
+                  <li key={link.label}>
+                    {link.href.startsWith('mailto:') ? (
+                      <a href={link.href} className="text-white/60 hover:text-white transition-colors text-xs font-bold tracking-widest uppercase italic">{link.label}</a>
+                    ) : (
+                      <button 
+                        onClick={() => handleNav(link.href)} 
+                        className="text-white/60 hover:text-white transition-colors text-xs font-bold tracking-widest uppercase italic text-left outline-none bg-transparent border-none p-0 cursor-pointer"
+                      >
+                        {link.label}
+                      </button>
+                    )}
+                  </li>
                 ))}
              </ul>
           </div>
@@ -60,7 +107,11 @@ const AppleFooter: React.FC = () => {
                   { label: 'Correo', href: 'mailto:mauriherrera457@gmail.com' },
                   { label: 'Portafolio', href: 'https://portafolio-web-nu-wheat.vercel.app' }
                 ].map(link => (
-                  <li key={link.label}><Link href={link.href} target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-white transition-colors text-xs font-bold tracking-widest uppercase italic">{link.label}</Link></li>
+                  <li key={link.label}>
+                    <Link href={link.href} target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-white transition-colors text-xs font-bold tracking-widest uppercase italic">
+                      {link.label}
+                    </Link>
+                  </li>
                 ))}
              </ul>
           </div>
@@ -78,7 +129,7 @@ const AppleFooter: React.FC = () => {
         </div>
       </Container>
     </footer>
-  )
-}
+  );
+};
 
-export default AppleFooter
+export default AppleFooter;

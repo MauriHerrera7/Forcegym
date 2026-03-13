@@ -12,9 +12,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { LogOut, User as UserIcon, Menu } from 'lucide-react';
-import Link from 'next/link';
 import { NotificationPanel } from './NotificationPanel';
 import { useSidebar } from '@/providers/SidebarProvider';
+import { useDashboardNavigation } from '@/providers/DashboardNavigationProvider';
 
 interface DashboardHeaderProps {
   user?: {
@@ -27,6 +27,7 @@ interface DashboardHeaderProps {
 export function DashboardHeader({ user: propUser }: DashboardHeaderProps) {
   const { user: authUser, logout } = useAuthContext();
   const { toggle } = useSidebar();
+  const { setCurrentView } = useDashboardNavigation();
   const [imgError, setImgError] = React.useState(false);
 
   // Fallback map matching old or new user state
@@ -106,12 +107,15 @@ export function DashboardHeader({ user: propUser }: DashboardHeaderProps) {
           <DropdownMenuContent align="end" className="w-56 bg-[#404040] border-[#404040]">
             <DropdownMenuLabel className="text-gray-300 font-normal">Mi Cuenta</DropdownMenuLabel>
             <DropdownMenuSeparator className="bg-[#505050]" />
-            <Link href={authUser?.role?.toUpperCase() === 'ADMIN' ? '/admin/profile' : '/client/profile'}>
-              <DropdownMenuItem className="text-white focus:bg-[#505050] cursor-pointer">
-                <UserIcon className="mr-2 h-4 w-4" />
-                Mi Perfil
-              </DropdownMenuItem>
-            </Link>
+            
+            <DropdownMenuItem 
+              className="text-white focus:bg-[#505050] cursor-pointer"
+              onClick={() => setCurrentView('profile')}
+            >
+              <UserIcon className="mr-2 h-4 w-4" />
+              Mi Perfil
+            </DropdownMenuItem>
+
             <DropdownMenuSeparator className="bg-[#505050]" />
             <DropdownMenuItem
               className="text-[#ff3936] focus:bg-[#191919] focus:text-[#ff0400] cursor-pointer"
@@ -126,4 +130,3 @@ export function DashboardHeader({ user: propUser }: DashboardHeaderProps) {
     </header>
   );
 }
-

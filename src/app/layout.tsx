@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Montserrat, Bebas_Neue, Permanent_Marker } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/providers/AuthProvider";
+import { AppNavigationProvider } from "@/providers/AppNavigationProvider";
 import ConditionalNavbar from "@/components/ConditionalNavbar";
 
 const montserrat = Montserrat({
@@ -38,8 +39,10 @@ export default function RootLayout({
         className={`${montserrat.variable} ${bebasNeue.variable} ${permanentMarker.variable} antialiased font-body`}
       >
         <AuthProvider>
-          <ConditionalNavbar />
-          {children}
+          <AppNavigationProvider>
+            <ConditionalNavbar />
+            {children}
+          </AppNavigationProvider>
         </AuthProvider>
       </body>
     </html>

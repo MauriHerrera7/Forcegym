@@ -1,10 +1,9 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { useAuthContext } from '@/providers/AuthProvider';
+import { useAppNavigation } from '@/providers/AppNavigationProvider';
 import { Camera, Plus, User, Upload, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 
 interface RegisterFormProps {
@@ -41,7 +40,7 @@ interface FormErrors {
 
 export default function RegisterForm({ className = '' }: RegisterFormProps) {
   const { register, login } = useAuthContext();
-  const router = useRouter();
+  const { navigateTo } = useAppNavigation();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState<FormData>({
@@ -105,7 +104,6 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
         if (!value) error = 'La contraseña es requerida';
         else if (value.length < 8) error = 'Mínimo 8 caracteres';
         
-        // Also re-validate confirmation if it exists
         if (formData.confirmPassword && value !== formData.confirmPassword) {
           setErrors(prev => ({ ...prev, confirmPassword: 'Las contraseñas no coinciden' }));
         } else if (formData.confirmPassword && value === formData.confirmPassword) {
@@ -152,8 +150,6 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
     setIsLoading(true);
     try {
       const formDataToSend = new FormData();
-      
-      // Basic info
       formDataToSend.append('username', formData.email);
       formDataToSend.append('email', formData.email);
       formDataToSend.append('first_name', formData.first_name);
@@ -167,7 +163,6 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
       if (formData.weight) formDataToSend.append('weight', formData.weight);
       if (formData.height) formDataToSend.append('height', formData.height);
       
-      // Profile photo file
       if (photoFile) {
         formDataToSend.append('profile_picture', photoFile);
       }
@@ -175,11 +170,10 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
       await register(formDataToSend);
       setSuccess(true);
       
-      // Auto-login after successful registration
       try {
         setIsLoggingIn(true);
         await login({ email: formData.email, password: formData.password });
-        // login inside useAuth already redirects to '/', but we can be explicit or just let it happen
+        navigateTo('client');
       } catch (loginErr: any) {
         console.error('Auto-login error:', loginErr);
         setIsLoggingIn(false);
@@ -232,21 +226,11 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
           </div>
         )}
 
-        {/*
-          - [x] Fix profile image display in dashboards (Header & Profile Page)
-          - [/] Improve Profile Edit UX
-              - [ ] Implement `isDirty` check for Save button (Client & Admin)
-              - [ ] Create `/admin/profile` page
-              - [ ] Add Profile link to `DashboardHeader`
-        */}
-
         {/* Profile Photo Upload Redesigned */}
         <div className="flex flex-col items-center gap-4 mb-8">
           <div className="relative group">
-            {/* Outer Glow Ring */}
             <div className={`absolute -inset-1.5 bg-red-600 rounded-full blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200 ${photoPreview ? 'animate-pulse' : ''}`}></div>
             
-            {/* Main Container */}
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
@@ -262,7 +246,6 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
                 </div>
               )}
               
-              {/* Overlay on hover */}
               <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
                 <div className="flex flex-col items-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                   <Plus className="w-6 h-6 text-white mb-1" />
@@ -384,7 +367,6 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
           </div>
         </div>
 
-        {/* Physical Data Grid */}
         <div className="grid grid-cols-3 gap-3 mt-4">
           <div className="space-y-1.5">
             <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-500 ml-1 text-center block">Nacimiento</label>
@@ -444,11 +426,15 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
             </span>
           </button>
 
-          <p className="text-center text-xs text-zinc-500 mt-4">
+          <p className="text-center text-xs text-zinc-500 mt-4 font-medium">
             ¿Ya tienes cuenta?{' '}
-            <Link href="/auth/login" className="text-white hover:underline font-bold transition-all">
+            <button 
+              type="button"
+              onClick={() => navigateTo('login')} 
+              className="text-white hover:underline font-bold transition-all bg-transparent border-none p-0 cursor-pointer"
+            >
               Inicia Sesión
-            </Link>
+            </button>
           </p>
         </div>
       </form>

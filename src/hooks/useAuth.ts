@@ -156,12 +156,14 @@ export function useAuth() {
           Cookies.set("authenticated", "true", { expires: 7 });
           Cookies.set("auth_role", userRole, { expires: 7 });
 
-          // Redirigir al dashboard correspondiente según el rol
+          // Redirigir al dashboard correspondiente según el rol (URL masking handles this now)
+          /*
           if (userRole === 'ADMIN') {
             router.push("/admin");
           } else {
             router.push("/client");
           }
+          */
         }
       } catch (error) {
         console.error("Error al iniciar sesión:", error);
@@ -212,7 +214,7 @@ export function useAuth() {
       Cookies.remove("authenticated");
       Cookies.remove("auth_role");
       setUser(null);
-      router.push("/auth/login");
+      // router.push("/auth/login");
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
       throw error;

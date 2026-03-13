@@ -2,10 +2,20 @@ import React from 'react'
 import Container from '@/components/Container'
 import Link from 'next/link'
 import { useAuthContext } from '@/providers/AuthProvider'
+import { useAppNavigation } from '@/providers/AppNavigationProvider'
 
 const ActionCTA: React.FC = () => {
   const { user } = useAuthContext();
-  const dashboardUrl = user?.role?.toUpperCase() === 'ADMIN' ? '/admin' : '/client';
+  const { navigateTo } = useAppNavigation();
+
+  const handleAction = () => {
+    if (user) {
+      const dashboardView = user.role?.toUpperCase() === 'ADMIN' ? 'admin' : 'client';
+      navigateTo(dashboardView);
+    } else {
+      navigateTo('register');
+    }
+  };
 
   return (
     <section className="bg-apple-black py-32 sm:py-48 md:py-64 overflow-hidden relative">
@@ -23,8 +33,8 @@ const ActionCTA: React.FC = () => {
                   La evolución no espera. Únete al club de entrenamiento más avanzado y redefine tus propios límites.
               </p>
               
-              <Link 
-                href={user ? dashboardUrl : "/auth/register"} 
+              <button 
+                onClick={handleAction}
                 className="group relative bg-white text-black px-10 py-6 sm:px-20 sm:py-8 text-xl sm:text-3xl font-black italic uppercase tracking-tighter transition-all duration-500 hover:bg-[#DC143C] hover:text-white active:scale-95 overflow-hidden"
               >
                 <span className="relative z-10">{user ? 'IR AL DASHBOARD' : 'UNIRSE A LA ÉLITE'}</span>
@@ -32,12 +42,12 @@ const ActionCTA: React.FC = () => {
                 <span className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-20">
                   {user ? 'IR AL DASHBOARD' : 'UNIRSE A LA ÉLITE'}
                 </span>
-              </Link>
+              </button>
            </div>
         </div>
       </Container>
     </section>
-  )
-}
+  );
+};
 
 export default ActionCTA

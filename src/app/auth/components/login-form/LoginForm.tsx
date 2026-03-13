@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { useAuthContext } from '@/providers/AuthProvider';
-import Link from 'next/link';
+import { useAppNavigation } from '@/providers/AppNavigationProvider';
+import { fetchApi } from '@/lib/api';
 
 interface LoginFormProps {
   className?: string;
@@ -15,6 +16,7 @@ interface FormErrors {
 
 export default function LoginForm({ className = '' }: LoginFormProps) {
   const { login } = useAuthContext();
+  const { navigateTo } = useAppNavigation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<FormErrors>({});
@@ -46,10 +48,17 @@ export default function LoginForm({ className = '' }: LoginFormProps) {
     setIsLoading(true);
     try {
       await login({ email, password });
+      
+      // Fetch user role to navigate correctly since automatic redirect is disabled
+      const userRes = await fetchApi("/users/me/");
+      if (userRes?.role?.toUpperCase() === 'ADMIN') {
+        navigateTo('admin');
+      } else {
+        navigateTo('client');
+      }
     } catch (error: any) {
       console.error('Login error:', error);
 
-      // Try to give field-specific error messages based on API response
       const detail = error?.data?.detail || error?.message || '';
       const detailLower = detail.toLowerCase();
 
@@ -136,12 +145,13 @@ export default function LoginForm({ className = '' }: LoginFormProps) {
               >
                 Contraseña
               </label>
-              <Link 
-                href="/auth/forgot-password" 
-                className="text-xs text-apple-orange hover:text-apple-orange/80 transition-colors"
+              <button 
+                type="button"
+                onClick={() => navigateTo('landing')}
+                className="text-xs text-apple-orange hover:text-apple-orange/80 transition-colors outline-none bg-transparent border-none p-0 cursor-pointer"
               >
                 ¿Olvidaste tu contraseña?
-              </Link>
+              </button>
             </div>
             <input
               type="password"
@@ -188,12 +198,13 @@ export default function LoginForm({ className = '' }: LoginFormProps) {
 
           <p className="text-center text-zinc-500 font-medium">
             ¿No tienes cuenta?{' '}
-            <Link 
-              href="/auth/register" 
-              className="text-white hover:text-apple-orange transition-colors"
+            <button 
+              type="button"
+              onClick={() => navigateTo('register')} 
+              className="text-white hover:text-apple-orange transition-colors outline-none bg-transparent border-none p-0 cursor-pointer font-bold"
             >
               Crea una ahora.
-            </Link>
+            </button>
           </p>
         </div>
       </form>

@@ -6,12 +6,13 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import UserMenu from './UserMenu'
 import { useAuthContext } from '@/providers/AuthProvider'
+import { useAppNavigation, AppView } from '@/providers/AppNavigationProvider'
 
 const Navbar: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuthContext()
+  const { navigateTo } = useAppNavigation()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const pathname = usePathname()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8)
@@ -22,7 +23,11 @@ const Navbar: React.FC = () => {
 
   // Mobile-specific user initials
   const initials = user ? `${user.first_name?.[0] || ''}${user.last_name?.[0] || ''}`.toUpperCase() || 'U' : '';
-  const userRole = user?.role?.toUpperCase() === 'ADMIN' ? 'admin' : 'client';
+
+  const handleNav = (view: AppView) => {
+    navigateTo(view);
+    setIsMenuOpen(false);
+  };
 
   return (
     <nav
@@ -37,7 +42,7 @@ const Navbar: React.FC = () => {
         <div className="flex items-center justify-between" style={{ height: '85px' }}>
           {/* Logo (left) */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center">
+            <button onClick={() => handleNav('landing')} className="flex items-center outline-none">
               <Image
                 src="https://res.cloudinary.com/dry6dvzoj/image/upload/v1757729690/Forcegym_1_nxwdfw.png"
                 alt="Forcegym"
@@ -47,7 +52,7 @@ const Navbar: React.FC = () => {
                 className="transition-all duration-500 hover:brightness-110"
                 style={{ height: '125px', width: 'auto', filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3))' }}
               />
-            </Link>
+            </button>
           </div>
 
           {/* Actions (right) - Hide on mobile, show on md+ */}
@@ -56,9 +61,9 @@ const Navbar: React.FC = () => {
               <UserMenu userName={`${user?.first_name || ''} ${user?.last_name || ''}`.trim() || 'Usuario'} userImage={user?.profile_picture_url || user?.profile_picture} />
             ) : (
               <>
-                <Link
-                  href="/auth/login"
-                  className="font-medium px-5 py-2 transition-all duration-300 rounded-md"
+                <button
+                  onClick={() => handleNav('login')}
+                  className="font-medium px-5 py-2 transition-all duration-300 rounded-md outline-none"
                   style={{
                     fontSize: '15px',
                     color: '#ffffff',
@@ -73,10 +78,10 @@ const Navbar: React.FC = () => {
                   }}
                 >
                   Iniciar Sesión
-                </Link>
-                <Link
-                  href="/auth/register"
-                  className="font-medium px-5 py-2 transition-all duration-300 rounded-md flex items-center gap-2"
+                </button>
+                <button
+                  onClick={() => handleNav('register')}
+                  className="font-medium px-5 py-2 transition-all duration-300 rounded-md flex items-center gap-2 outline-none"
                   style={{
                     fontSize: '15px',
                     background: '#ef4444',
@@ -96,7 +101,7 @@ const Navbar: React.FC = () => {
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
-                </Link>
+                </button>
               </>
             )}
           </div>
@@ -105,7 +110,7 @@ const Navbar: React.FC = () => {
           <div className="md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-3 transition-all duration-400 rounded-lg backdrop-blur-sm"
+              className="p-3 transition-all duration-400 rounded-lg backdrop-blur-sm outline-none"
               style={{
                 color: '#ffffff',
                 border: '2px solid rgba(255, 255, 255, 0.3)',
@@ -164,26 +169,26 @@ const Navbar: React.FC = () => {
 
                   {/* Direct Mobile Links */}
                   <div className="flex flex-col gap-4">
-                    <Link
-                      href={`/${userRole}`}
-                      className="text-white font-medium hover:text-red-500 transition-colors py-2"
-                      onClick={() => setIsMenuOpen(false)}
+                    <button
+                      onClick={() => handleNav(user?.role?.toUpperCase() === 'ADMIN' ? 'admin' : 'client')}
+                      className="text-white font-medium hover:text-red-500 transition-colors py-2 text-left outline-none"
                     >
                       Dashboard
-                    </Link>
-                    <Link
-                      href={`/${userRole}/profile`}
-                      className="text-white font-medium hover:text-red-500 transition-colors py-2"
-                      onClick={() => setIsMenuOpen(false)}
+                    </button>
+                    {/* If they want profile, we should handle it in Dashboard state, 
+                        or just send them to dashboard for now */}
+                    <button
+                      onClick={() => handleNav(user?.role?.toUpperCase() === 'ADMIN' ? 'admin' : 'client')}
+                      className="text-white font-medium hover:text-red-500 transition-colors py-2 text-left outline-none"
                     >
                       Mi Perfil
-                    </Link>
+                    </button>
                     <button
                       onClick={() => {
                         logout();
                         setIsMenuOpen(false);
                       }}
-                      className="text-red-500 font-bold hover:text-red-400 transition-colors text-left py-2"
+                      className="text-red-500 font-bold hover:text-red-400 transition-colors text-left py-2 outline-none"
                     >
                       Cerrar Sesión
                     </button>
@@ -191,9 +196,9 @@ const Navbar: React.FC = () => {
                 </div>
               ) : (
                 <div style={{ paddingTop: '20px', gap: '16px', display: 'flex', flexDirection: 'column' }}>
-                  <Link
-                    href="/auth/login"
-                    className="font-medium px-5 py-3 rounded-md transition-all duration-300 text-center"
+                  <button
+                    onClick={() => handleNav('login')}
+                    className="font-medium px-5 py-3 rounded-md transition-all duration-300 text-center outline-none"
                     style={{
                       color: '#ffffff',
                       fontSize: '16px',
@@ -206,13 +211,12 @@ const Navbar: React.FC = () => {
                     onMouseLeave={(e) => {
                       e.currentTarget.style.color = '#ffffff'
                     }}
-                    onClick={() => setIsMenuOpen(false)}
                   >
                     Iniciar Sesión
-                  </Link>
-                  <Link
-                    href="/auth/register"
-                    className="font-medium px-5 py-3 rounded-md transition-all duration-300 text-center flex items-center justify-center gap-2"
+                  </button>
+                  <button
+                    onClick={() => handleNav('register')}
+                    className="font-medium px-5 py-3 rounded-md transition-all duration-300 text-center flex items-center justify-center gap-2 outline-none"
                     style={{
                       fontSize: '16px',
                       background: '#ef4444',
@@ -227,13 +231,12 @@ const Navbar: React.FC = () => {
                       e.currentTarget.style.background = '#ef4444'
                       e.currentTarget.style.transform = 'translateY(0)'
                     }}
-                    onClick={() => setIsMenuOpen(false)}
                   >
                     Únete
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
-                  </Link>
+                  </button>
                 </div>
               )}
             </div>
@@ -241,7 +244,7 @@ const Navbar: React.FC = () => {
         )}
       </div>
     </nav>
-  )
-}
+  );
+};
 
 export default Navbar
