@@ -1,18 +1,20 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
-import Link from 'next/link'
+import React, { useEffect, useState, useRef } from 'react'
 import Image from 'next/image'
-import { usePathname } from 'next/navigation'
-import UserMenu from './UserMenu'
+import { useRouter } from 'next/navigation'
 import { useAuthContext } from '@/providers/AuthProvider'
 import { useAppNavigation, AppView } from '@/providers/AppNavigationProvider'
+import { Menu, X, LayoutDashboard, User, CreditCard, LogOut } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 const Navbar: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuthContext()
   const { navigateTo } = useAppNavigation()
+  const router = useRouter()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8)
@@ -21,12 +23,41 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+    if (isMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isMenuOpen]);
+
   // Mobile-specific user initials
   const initials = user ? `${user.first_name?.[0] || ''}${user.last_name?.[0] || ''}`.toUpperCase() || 'U' : '';
 
   const handleNav = (view: AppView) => {
     navigateTo(view);
     setIsMenuOpen(false);
+  };
+
+  const handleDashboardNav = (subView: string) => {
+    const role = user?.role?.toLowerCase() === 'admin' ? 'admin' : 'client';
+    // Use window.location for hard navigation to trigger provider re-init or router.push
+    router.push(`/${role}?v=${subView}`);
+    setIsMenuOpen(false);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      handleNav('landing');
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
   };
 
   return (
@@ -55,191 +86,101 @@ const Navbar: React.FC = () => {
             </button>
           </div>
 
-          {/* Actions (right) - Hide on mobile, show on md+ */}
-          <div className="hidden md:flex items-center justify-end" style={{ gap: '20px' }}>
-            {isAuthenticated ? (
-              <UserMenu userName={`${user?.first_name || ''} ${user?.last_name || ''}`.trim() || 'Usuario'} userImage={user?.profile_picture_url || user?.profile_picture} />
-            ) : (
-              <>
+          {/* Desktop Right End - Show hamburger if auth, else Join buttons */}
+          <div className="flex items-center" ref={menuRef}>
+            {!isAuthenticated ? (
+              <div className="hidden md:flex items-center gap-5">
                 <button
                   onClick={() => handleNav('login')}
-                  className="font-medium px-5 py-2 transition-all duration-300 rounded-md outline-none"
-                  style={{
-                    fontSize: '15px',
-                    color: '#ffffff',
-                    letterSpacing: '0.2px',
-                    background: 'transparent'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = '#ef4444'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = '#ffffff'
-                  }}
+                  className="font-medium px-5 py-2 transition-all duration-300 rounded-md text-white hover:text-red-500 text-[15px] outline-none"
                 >
                   Iniciar Sesión
                 </button>
                 <button
                   onClick={() => handleNav('register')}
-                  className="font-medium px-5 py-2 transition-all duration-300 rounded-md flex items-center gap-2 outline-none"
-                  style={{
-                    fontSize: '15px',
-                    background: '#ef4444',
-                    color: '#ffffff',
-                    letterSpacing: '0.2px'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = '#dc2626'
-                    e.currentTarget.style.transform = 'translateY(-1px)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = '#ef4444'
-                    e.currentTarget.style.transform = 'translateY(0)'
-                  }}
+                  className="font-medium px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl transition-all duration-300 transform hover:-translate-y-0.5 shadow-lg shadow-red-600/20 text-[15px] outline-none"
                 >
                   Únete
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
                 </button>
-              </>
-            )}
-          </div>
+              </div>
+            ) : null}
 
-          {/* Mobile menu button */}
-          <div className="md:hidden">
+            {/* Hamburger Button (Always visible if auth, or on mobile if not auth) */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-3 transition-all duration-400 rounded-lg backdrop-blur-sm outline-none"
-              style={{
-                color: '#ffffff',
-                border: '2px solid rgba(255, 255, 255, 0.3)',
-                background: 'rgba(0, 0, 0, 0.2)'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = '#ef4444'
-                e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'
-                e.currentTarget.style.transform = 'scale(1.05)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)'
-                e.currentTarget.style.background = 'rgba(0, 0, 0, 0.2)'
-                e.currentTarget.style.transform = 'scale(1)'
-              }}
+              className={cn(
+                "p-2.5 rounded-xl border-2 transition-all duration-300 outline-none ml-4",
+                isMenuOpen 
+                  ? "border-red-500 bg-red-500/10 text-white" 
+                  : "border-white/20 bg-black/20 text-white hover:border-red-500/50 hover:bg-red-500/5"
+              )}
             >
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                {isMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Unified Navigation Menu (Desktop/Mobile) */}
         {isMenuOpen && (
-          <div className="md:hidden">
-            <div
-              className="px-6 pt-6 pb-8 rounded-xl mt-4 backdrop-blur-lg"
-              style={{
-                background: 'rgba(0, 0, 0, 0.95)',
-                border: '1px solid rgba(239, 68, 68, 0.3)',
-                display: 'flex',
-                flexDirection: 'column',
-                boxShadow: '0 20px 40px rgba(0, 0, 0, 0.5)'
-              }}
-            >
-              {isAuthenticated ? (
-                <div className="flex flex-col gap-6">
-                  {/* Profile Summary */}
-                  <div className="flex items-center gap-4 py-4 border-b border-white/10">
-                    <div 
-                      className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-white text-xl"
-                      style={{ backgroundColor: '#ef4444' }}
-                    >
+          <div 
+            className="absolute right-4 top-[90px] w-64 md:w-72 bg-neutral-900/95 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300"
+          >
+            {isAuthenticated ? (
+              <div className="p-2 space-y-1">
+                {/* User Header */}
+                <div className="flex items-center gap-3 p-4 mb-2 bg-white/5 rounded-xl">
+                    <div className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center font-bold text-white shadow-lg shadow-red-600/20">
                       {initials}
                     </div>
-                    <div className="flex flex-col">
-                      <span className="text-white font-bold">{`${user?.first_name || ''} ${user?.last_name || ''}`}</span>
-                      <span className="text-gray-400 text-xs">{user?.email}</span>
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-sm font-bold text-white truncate">{user?.first_name} {user?.last_name}</span>
+                      <span className="text-[10px] text-gray-400 truncate uppercase tracking-widest">{user?.role}</span>
                     </div>
-                  </div>
+                </div>
 
-                  {/* Direct Mobile Links */}
-                  <div className="flex flex-col gap-4">
-                    <button
-                      onClick={() => handleNav(user?.role?.toUpperCase() === 'ADMIN' ? 'admin' : 'client')}
-                      className="text-white font-medium hover:text-red-500 transition-colors py-2 text-left outline-none"
-                    >
-                      Dashboard
-                    </button>
-                    {/* If they want profile, we should handle it in Dashboard state, 
-                        or just send them to dashboard for now */}
-                    <button
-                      onClick={() => handleNav(user?.role?.toUpperCase() === 'ADMIN' ? 'admin' : 'client')}
-                      className="text-white font-medium hover:text-red-500 transition-colors py-2 text-left outline-none"
-                    >
-                      Mi Perfil
-                    </button>
-                    <button
-                      onClick={() => {
-                        logout();
-                        setIsMenuOpen(false);
-                      }}
-                      className="text-red-500 font-bold hover:text-red-400 transition-colors text-left py-2 outline-none"
-                    >
-                      Cerrar Sesión
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div style={{ paddingTop: '20px', gap: '16px', display: 'flex', flexDirection: 'column' }}>
+                <MenuButton 
+                  onClick={() => handleDashboardNav('dashboard')} 
+                  icon={<LayoutDashboard size={18} />} 
+                  label="Dashboard" 
+                />
+                <MenuButton 
+                  onClick={() => handleDashboardNav('profile')} 
+                  icon={<User size={18} />} 
+                  label="Mi Perfil" 
+                />
+                <MenuButton 
+                  onClick={() => handleDashboardNav('memberships')} 
+                  icon={<CreditCard size={18} />} 
+                  label="Membresía" 
+                />
+                
+                <div className="my-2 border-t border-white/5 pt-2">
                   <button
-                    onClick={() => handleNav('login')}
-                    className="font-medium px-5 py-3 rounded-md transition-all duration-300 text-center outline-none"
-                    style={{
-                      color: '#ffffff',
-                      fontSize: '16px',
-                      letterSpacing: '0.2px',
-                      background: 'transparent'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.color = '#ef4444'
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.color = '#ffffff'
-                    }}
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-500/10 rounded-xl transition-all duration-200 group font-bold text-sm"
                   >
-                    Iniciar Sesión
-                  </button>
-                  <button
-                    onClick={() => handleNav('register')}
-                    className="font-medium px-5 py-3 rounded-md transition-all duration-300 text-center flex items-center justify-center gap-2 outline-none"
-                    style={{
-                      fontSize: '16px',
-                      background: '#ef4444',
-                      color: '#ffffff',
-                      letterSpacing: '0.2px'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = '#dc2626'
-                      e.currentTarget.style.transform = 'translateY(-1px)'
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = '#ef4444'
-                      e.currentTarget.style.transform = 'translateY(0)'
-                    }}
-                  >
-                    Únete
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
+                    <LogOut size={18} className="group-hover:rotate-12 transition-transform" />
+                    Cerrar Sesión
                   </button>
                 </div>
-              )}
-            </div>
+              </div>
+            ) : (
+              <div className="p-2 space-y-1 md:hidden">
+                {/* Mobile non-auth menu items */}
+                <button
+                   onClick={() => handleNav('login')}
+                   className="w-full text-left px-5 py-3 text-white hover:bg-white/5 rounded-xl transition-all text-sm font-medium"
+                >
+                  Iniciar Sesión
+                </button>
+                <button
+                   onClick={() => handleNav('register')}
+                   className="w-full text-center px-5 py-3 bg-red-600 text-white rounded-xl transition-all text-sm font-bold mt-2"
+                >
+                  Únete Ahora
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -247,4 +188,22 @@ const Navbar: React.FC = () => {
   );
 };
 
-export default Navbar
+interface MenuButtonProps {
+  label: string;
+  icon: React.ReactNode;
+  onClick: () => void;
+}
+
+const MenuButton = ({ label, icon, onClick }: MenuButtonProps) => (
+  <button
+    onClick={onClick}
+    className="w-full flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-all duration-200 group font-medium text-sm"
+  >
+    <div className="text-gray-500 group-hover:text-red-500 transition-colors">
+      {icon}
+    </div>
+    {label}
+  </button>
+);
+
+export default Navbar

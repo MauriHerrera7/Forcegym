@@ -283,7 +283,7 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
         {/* Basic Info Grid */}
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5 col-span-1">
-            <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-400 ml-1">Nombre</label>
+            <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-200 ml-1">Nombre</label>
             <input
               type="text"
               value={formData.first_name}
@@ -296,7 +296,7 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
           </div>
 
           <div className="space-y-1.5 col-span-1">
-            <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-500 ml-1">Apellido</label>
+            <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-200 ml-1">Apellido</label>
             <input
               type="text"
               value={formData.last_name}
@@ -310,7 +310,7 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
 
           {/* Gender Selector */}
           <div className="space-y-1.5 col-span-2">
-            <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-400 ml-1">Género *</label>
+            <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-200 ml-1">Género *</label>
             <div className="flex gap-3">
               <button
                 type="button"
@@ -343,7 +343,7 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
           </div>
 
           <div className="space-y-1.5 col-span-2">
-            <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-500 ml-1">Email</label>
+            <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-200 ml-1">Email</label>
             <input
               type="email"
               value={formData.email}
@@ -356,7 +356,7 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
           </div>
 
           <div className="space-y-1.5 col-span-1">
-            <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-500 ml-1">DNI</label>
+            <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-200 ml-1">DNI</label>
             <input
               type="text"
               value={formData.dni}
@@ -369,7 +369,7 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
           </div>
 
           <div className="space-y-1.5 col-span-1">
-            <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-500 ml-1">Teléfono</label>
+            <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-200 ml-1">Teléfono</label>
             <input
               type="tel"
               value={formData.phone}
@@ -382,7 +382,7 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
           </div>
 
           <div className="space-y-1.5 col-span-1">
-            <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-500 ml-1">Contraseña</label>
+            <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-200 ml-1">Contraseña</label>
             <input
               type="password"
               value={formData.password}
@@ -395,7 +395,7 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
           </div>
 
           <div className="space-y-1.5 col-span-1">
-            <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-500 ml-1">Confirmar</label>
+            <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-200 ml-1">Confirmar</label>
             <input
               type="password"
               value={formData.confirmPassword}
@@ -410,7 +410,7 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
 
         <div className="grid grid-cols-3 gap-3 mt-4">
           <div className="space-y-1.5">
-            <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-500 ml-1 text-center block">Nacimiento</label>
+            <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-200 ml-1 text-center block">Nacimiento</label>
             <input
               type="date"
               value={formData.birthDate}
@@ -421,7 +421,7 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-500 ml-1 text-center block">Peso (kg)</label>
+            <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-200 ml-1 text-center block">Peso (kg)</label>
             <input
               type="number"
               value={formData.weight}
@@ -432,7 +432,7 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-500 ml-1 text-center block">Altura (cm)</label>
+            <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-200 ml-1 text-center block">Altura (cm)</label>
             <input
               type="number"
               value={formData.height}

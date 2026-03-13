@@ -109,7 +109,7 @@ export default function LoginForm({ className = '' }: LoginFormProps) {
           <div className="space-y-2">
             <label 
               htmlFor="email" 
-              className="text-[12px] font-semibold text-zinc-500 uppercase tracking-widest ml-1"
+              className="text-[12px] font-semibold text-zinc-200 uppercase tracking-widest ml-1"
             >
               Correo Electrónico
             </label>
@@ -141,7 +141,7 @@ export default function LoginForm({ className = '' }: LoginFormProps) {
             <div className="flex justify-between items-end px-1">
               <label 
                 htmlFor="password" 
-                className="text-[12px] font-semibold text-zinc-500 uppercase tracking-widest"
+                className="text-[12px] font-semibold text-zinc-200 uppercase tracking-widest"
               >
                 Contraseña
               </label>

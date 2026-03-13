@@ -112,7 +112,7 @@ export function RoutineCreationForm() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm text-gray-400">Nombre de la Rutina</label>
+              <label className="text-sm text-zinc-200">Nombre de la Rutina</label>
               <Input 
                 required
                 placeholder="Ej: Empuje - Hipertrofia"
@@ -122,7 +122,7 @@ export function RoutineCreationForm() {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm text-gray-400">Descripción</label>
+              <label className="text-sm text-zinc-200">Descripción</label>
               <Textarea 
                 placeholder="Describe el objetivo de esta rutina..."
                 className="bg-[#101010] border-[#303030] text-white h-24"
@@ -132,7 +132,7 @@ export function RoutineCreationForm() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-sm text-gray-400">Dificultad</label>
+                <label className="text-sm text-zinc-200">Dificultad</label>
                 <Select 
                    value={formData.difficulty} 
                    onValueChange={(val) => setFormData({...formData, difficulty: val})}
@@ -148,7 +148,7 @@ export function RoutineCreationForm() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <label className="text-sm text-gray-400">Duración (min)</label>
+                <label className="text-sm text-zinc-200">Duración (min)</label>
                 <Input 
                   type="number"
                   className="bg-[#101010] border-[#303030] text-white"
@@ -218,7 +218,7 @@ export function RoutineCreationForm() {
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="space-y-1">
-                    <label className="text-[10px] uppercase text-gray-500 font-bold">Series</label>
+                    <label className="text-[10px] uppercase text-zinc-300 font-bold">Series</label>
                     <Input 
                       type="number"
                       className="h-8 bg-[#191919] border-[#404040] text-white text-sm"
@@ -227,7 +227,7 @@ export function RoutineCreationForm() {
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] uppercase text-gray-500 font-bold">Reps</label>
+                    <label className="text-[10px] uppercase text-zinc-300 font-bold">Reps</label>
                     <Input 
                       type="number"
                       placeholder="12"
@@ -237,7 +237,7 @@ export function RoutineCreationForm() {
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] uppercase text-gray-500 font-bold">Descanso (s)</label>
+                    <label className="text-[10px] uppercase text-zinc-300 font-bold">Descanso (s)</label>
                     <Input 
                       type="number"
                       className="h-8 bg-[#191919] border-[#404040] text-white text-sm"
@@ -246,7 +246,7 @@ export function RoutineCreationForm() {
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] uppercase text-gray-500 font-bold">Duración (s)</label>
+                    <label className="text-[10px] uppercase text-zinc-300 font-bold">Duración (s)</label>
                     <Input 
                       type="number"
                       placeholder="Opcional"

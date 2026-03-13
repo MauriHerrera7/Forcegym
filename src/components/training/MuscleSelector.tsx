@@ -126,31 +126,8 @@ export function MuscleSelector({ onMuscleClick }: MuscleSelectorProps) {
   return (
     <>
       <div className="flex flex-col items-center gap-6 w-full">
-        {/* Gender Toggle */}
-        <div className="flex p-1 bg-[#1a1a1a] rounded-xl border border-[#2a2a2a] gap-1">
-          <button
-            onClick={() => setActiveGender('male')}
-            className={cn(
-              "px-4 py-1.5 rounded-lg text-[10px] uppercase tracking-[0.2em] font-bold transition-all duration-200",
-              activeGender === 'male' 
-                ? "bg-[#ff0400] text-white shadow-[0_0_12px_rgba(255,4,0,0.3)]" 
-                : "text-gray-500 hover:text-gray-300 hover:bg-[#252525]"
-            )}
-          >
-            Hombre
-          </button>
-          <button
-            onClick={() => setActiveGender('female')}
-            className={cn(
-              "px-4 py-1.5 rounded-lg text-[10px] uppercase tracking-[0.2em] font-bold transition-all duration-200",
-              activeGender === 'female' 
-                ? "bg-[#ff0400] text-white shadow-[0_0_12px_rgba(255,4,0,0.3)]" 
-                : "text-gray-500 hover:text-gray-300 hover:bg-[#252525]"
-            )}
-          >
-            Mujer
-          </button>
-        </div>
+        {/* El género se determina automáticamente por el perfil del usuario */}
+
 
         {/* Side-by-side models */}
         <div className="flex flex-col md:flex-row gap-6 w-full justify-center items-center md:items-stretch">

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Search, Plus, Check, Info } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -34,7 +35,8 @@ export function ExerciseSelector({ onSelect, selectedIds }: ExerciseSelectorProp
         if (category) queryParams.append('category', category);
         
         const response = await fetchApi(`/training/exercises/?${queryParams.toString()}`);
-        setExercises(response);
+        // Handle paginated (DRF) or plain array responses
+        setExercises(Array.isArray(response) ? response : response.results || []);
       } catch (err) {
         console.error('Error fetching exercises', err);
       } finally {
@@ -69,7 +71,10 @@ export function ExerciseSelector({ onSelect, selectedIds }: ExerciseSelectorProp
           exercises.map((exercise) => (
             <Card 
               key={exercise.id} 
-              className={React.useMemo(() => `flex items-center gap-4 p-3 bg-[#191919] border-[#404040] transition-colors ${selectedIds.includes(exercise.id) ? 'border-red-500/50 bg-red-500/5' : 'hover:border-gray-500'}`, [selectedIds.includes(exercise.id)])}
+              className={cn(
+                "flex items-center gap-4 p-3 bg-[#191919] border-[#404040] transition-colors",
+                selectedIds.includes(exercise.id) ? 'border-red-500/50 bg-red-500/5' : 'hover:border-gray-500'
+              )}
             >
               <div className="h-12 w-12 rounded bg-gray-800 overflow-hidden flex-shrink-0">
                 {exercise.thumbnail_url ? (
