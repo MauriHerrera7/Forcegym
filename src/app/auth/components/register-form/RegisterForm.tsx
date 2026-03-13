@@ -21,6 +21,7 @@ interface FormData {
   birthDate: string;
   weight: string;
   height: string;
+  gender: 'MALE' | 'FEMALE' | '';
 }
 
 interface FormErrors {
@@ -34,6 +35,7 @@ interface FormErrors {
   birthDate?: string;
   weight?: string;
   height?: string;
+  gender?: string;
   photo?: string;
   general?: string;
 }
@@ -54,6 +56,7 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
     birthDate: '',
     weight: '',
     height: '',
+    gender: '',
   });
 
   const [photoFile, setPhotoFile] = useState<File | null>(null);
@@ -116,6 +119,9 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
       case 'birthDate':
         if (!value) error = 'Requerido';
         break;
+      case 'gender':
+        if (!value) error = 'Selecciona tu género';
+        break;
       default:
         break;
     }
@@ -125,7 +131,7 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
   };
 
   const validateForm = (): boolean => {
-    const fields: (keyof FormData)[] = ['first_name', 'last_name', 'email', 'dni', 'password', 'confirmPassword', 'birthDate'];
+    const fields: (keyof FormData)[] = ['first_name', 'last_name', 'email', 'dni', 'password', 'confirmPassword', 'birthDate', 'gender'];
     let isValid = true;
     
     fields.forEach(field => {
@@ -160,6 +166,7 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
       
       if (formData.phone) formDataToSend.append('phone', formData.phone);
       formDataToSend.append('birthdate', formData.birthDate);
+      formDataToSend.append('gender', formData.gender);
       if (formData.weight) formDataToSend.append('weight', formData.weight);
       if (formData.height) formDataToSend.append('height', formData.height);
       
@@ -299,6 +306,40 @@ export default function RegisterForm({ className = '' }: RegisterFormProps) {
               placeholder="Pérez"
             />
             {errors.last_name && <p className="text-red-400 text-[10px] ml-1">{errors.last_name}</p>}
+          </div>
+
+          {/* Gender Selector */}
+          <div className="space-y-1.5 col-span-2">
+            <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-400 ml-1">Género *</label>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => handleInputChange('gender', 'MALE')}
+                className={`flex-1 py-3 rounded-xl border text-sm font-bold uppercase tracking-wider transition-all duration-300 ${
+                  formData.gender === 'MALE'
+                    ? 'bg-[#ff0400]/10 border-[#ff0400] text-white shadow-[0_0_16px_rgba(255,4,0,0.15)]'
+                    : errors.gender
+                      ? 'bg-black/40 border-red-500/50 text-zinc-500 hover:border-zinc-600 hover:text-zinc-300'
+                      : 'bg-black/40 border-zinc-800 text-zinc-500 hover:border-zinc-600 hover:text-zinc-300'
+                }`}
+              >
+                 Hombre
+              </button>
+              <button
+                type="button"
+                onClick={() => handleInputChange('gender', 'FEMALE')}
+                className={`flex-1 py-3 rounded-xl border text-sm font-bold uppercase tracking-wider transition-all duration-300 ${
+                  formData.gender === 'FEMALE'
+                    ? 'bg-[#ff0400]/10 border-[#ff0400] text-white shadow-[0_0_16px_rgba(255,4,0,0.15)]'
+                    : errors.gender
+                      ? 'bg-black/40 border-red-500/50 text-zinc-500 hover:border-zinc-600 hover:text-zinc-300'
+                      : 'bg-black/40 border-zinc-800 text-zinc-500 hover:border-zinc-600 hover:text-zinc-300'
+                }`}
+              >
+                 Mujer
+              </button>
+            </div>
+            {errors.gender && <p className="text-red-400 text-[10px] ml-1">{errors.gender}</p>}
           </div>
 
           <div className="space-y-1.5 col-span-2">

@@ -17,14 +17,14 @@ interface MuscleSelectorProps {
 
 export function MuscleSelector({ onMuscleClick }: MuscleSelectorProps) {
   const { user } = useAuthContext();
-  const initialGender = user?.gender || 'male';
+  const initialGender = (user?.gender?.toLowerCase() === 'female') ? 'female' : 'male';
   
   const [activeGender, setActiveGender] = useState<'male' | 'female'>(initialGender);
 
   // Sync with auth user gender if it changes
   useEffect(() => {
     if (user?.gender) {
-      setActiveGender(user.gender);
+      setActiveGender(user.gender.toLowerCase() === 'female' ? 'female' : 'male');
     }
   }, [user?.gender]);
 
