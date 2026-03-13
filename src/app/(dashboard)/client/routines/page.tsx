@@ -28,7 +28,8 @@ export default function RoutinesPage() {
     const fetchRoutines = async () => {
       try {
         const response = await fetchApi('/training/routines/');
-        setRoutines(response);
+        // Handle paginated (DRF) or plain array responses
+        setRoutines(Array.isArray(response) ? response : response.results || []);
       } catch (err) {
         setError('Error al cargar las rutinas');
         console.error(err);
