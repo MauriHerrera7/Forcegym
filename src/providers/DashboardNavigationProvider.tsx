@@ -40,3 +40,8 @@ export function useDashboardNavigation() {
   }
   return context;
 }
+
+/** Safe version that returns null when outside the provider (no throw) */
+export function useDashboardNavigationSafe() {
+  return useContext(DashboardNavigationContext) ?? null;
+}

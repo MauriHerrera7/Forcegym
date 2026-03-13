@@ -2,12 +2,14 @@
 
 import { useDashboardNavigation } from '@/providers/DashboardNavigationProvider';
 import { useAuthContext } from '@/providers/AuthProvider';
+import { useClientDashboard } from '@/hooks/useClientDashboard';
 import { MembershipStatus } from '@/components/dashboard/MembershipStatus';
 import ClientDashboardHome from '@/components/client/views/ClientDashboardHome';
 
 export default function ClientDashboard() {
-  const { user, loading: authLoading } = useAuthContext();
+  const { user } = useAuthContext();
   const { currentView } = useDashboardNavigation();
+  const { data, loading } = useClientDashboard();
 
   const renderView = () => {
     switch (currentView) {
@@ -17,10 +19,9 @@ export default function ClientDashboard() {
         return (
           <div className="max-w-4xl mx-auto py-8 px-4">
              <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter mb-8 border-b border-[#333] pb-4">Mi Perfil</h2>
-             {/* Profile display logic */}
              <div className="bg-[#191919] border border-[#333] rounded-2xl p-8 space-y-6">
                 <div className="flex items-center gap-6">
-                   <div className="w-24 h-24 rounded-full bg-apple-red flex items-center justify-center text-4xl font-bold">
+                   <div className="w-24 h-24 rounded-full bg-apple-red flex items-center justify-center text-4xl font-bold text-white">
                       {user?.first_name?.[0]}{user?.last_name?.[0]}
                    </div>
                    <div>
@@ -48,10 +49,24 @@ export default function ClientDashboard() {
             <MembershipStatus membership={data?.membership || null} alert={data?.membership_status_alert || false} loading={loading} />
           </div>
         );
+      case 'training':
+        return (
+          <div className="flex flex-col items-center justify-center h-full text-zinc-500 py-20">
+            <h2 className="text-2xl font-black italic uppercase tracking-widest mb-4">Entrenamiento</h2>
+            <p>Contenido en desarrollo...</p>
+          </div>
+        );
+      case 'routines':
+        return (
+          <div className="flex flex-col items-center justify-center h-full text-zinc-500 py-20">
+            <h2 className="text-2xl font-black italic uppercase tracking-widest mb-4">Mis Rutinas</h2>
+            <p>Contenido en desarrollo...</p>
+          </div>
+        );
       case 'support':
         return (
           <div className="flex flex-col items-center justify-center h-full text-zinc-500 py-20">
-            <h2 className="text-2xl font-black italic uppercase italic tracking-widest mb-4">Soporte</h2>
+            <h2 className="text-2xl font-black italic uppercase tracking-widest mb-4">Soporte</h2>
             <p>Contenido en desarrollo...</p>
           </div>
         );
