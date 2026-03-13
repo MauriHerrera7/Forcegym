@@ -165,6 +165,13 @@ const Navbar: React.FC = () => {
                   {/* Direct Mobile Links */}
                   <div className="flex flex-col gap-4">
                     <Link
+                      href={`/${userRole}`}
+                      className="text-white font-medium hover:text-red-500 transition-colors py-2"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Dashboard
+                    </Link>
+                    <Link
                       href={`/${userRole}/profile`}
                       className="text-white font-medium hover:text-red-500 transition-colors py-2"
                       onClick={() => setIsMenuOpen(false)}

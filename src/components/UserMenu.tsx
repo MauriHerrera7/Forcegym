@@ -138,6 +138,13 @@ export default function UserMenu({ userImage: propImage, userName: propName }: U
           </div>
 
           <Link
+            href={`/${role}`}
+            className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors duration-200"
+            onClick={() => setIsOpen(false)}
+          >
+            Dashboard
+          </Link>
+          <Link
             href={profileHref}
             className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors duration-200"
             onClick={() => setIsOpen(false)}

@@ -16,6 +16,7 @@ import {
   RefreshCw,
   X,
   Menu,
+  ClipboardList,
 } from "lucide-react";
 import { useSidebar } from "@/providers/SidebarProvider";
 
@@ -34,6 +35,7 @@ const clientMenuItems = [
   { href: "/client", label: "Dashboard", icon: LayoutDashboard },
   { href: "/client/profile", label: "Perfil", icon: User },
   { href: "/client/training", label: "Entrenamiento", icon: Dumbbell },
+  { href: "/client/routines", label: "Rutinas", icon: ClipboardList },
   { href: "/client/memberships", label: "Membresías", icon: CreditCard },
   { href: "/client/support", label: "Soporte", icon: HelpCircle },
 ];

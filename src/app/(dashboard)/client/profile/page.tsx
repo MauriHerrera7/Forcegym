@@ -57,7 +57,8 @@ export default function ClientProfile() {
     const generateQR = async () => {
       try {
         const userId = user?.id || 'UNKNOWN';
-        const qrData = `FORCEGYM-${userId}`;
+        const baseUrl = window.location.origin;
+        const qrData = `${baseUrl}/admin/verify/${userId}`;
         
         // Small QR for card
         if (canvasRef.current && user?.id) {
@@ -99,7 +100,8 @@ export default function ClientProfile() {
       const generateLargeQR = async () => {
         try {
           const userId = user.id;
-          const qrData = `FORCEGYM-${userId}`;
+          const baseUrl = window.location.origin;
+          const qrData = `${baseUrl}/admin/verify/${userId}`;
           
           await QRCode.toCanvas(modalCanvasRef.current!, qrData, {
             width: 600,
@@ -493,7 +495,7 @@ export default function ClientProfile() {
           <div className="flex flex-col items-center gap-8 p-10 bg-[#191919]">
             <div className="rounded-2xl bg-white p-6 shadow-[0_0_50px_rgba(255,4,0,0.15)] flex items-center justify-center">
               <QRCodeSVG 
-                value={`FORCEGYM-${user.id}`} 
+                value={`${window.location.origin}/admin/verify/${user.id}`} 
                 size={280}
                 level="H"
                 includeMargin={true}
