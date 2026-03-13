@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { useSidebar } from "@/providers/SidebarProvider";
 import { useDashboardNavigation } from "@/providers/DashboardNavigationProvider";
+import { useAppNavigation } from "@/providers/AppNavigationProvider";
 
 interface SidebarProps {
   role: "admin" | "client";
@@ -45,6 +46,7 @@ export function Sidebar({ role }: SidebarProps) {
   const pathname = usePathname();
   const { isOpen, close } = useSidebar();
   const { currentView, setCurrentView } = useDashboardNavigation();
+  const { navigateTo } = useAppNavigation();
   const menuItems = role === "admin" ? adminMenuItems : clientMenuItems;
 
   // Hydration protection
@@ -55,6 +57,11 @@ export function Sidebar({ role }: SidebarProps) {
 
   const handleNavigate = (view: any) => {
     setCurrentView(view);
+    close();
+  };
+
+  const handleLogoClick = () => {
+    navigateTo('landing');
     close();
   };
 
@@ -79,7 +86,7 @@ export function Sidebar({ role }: SidebarProps) {
       >
         {/* Logo & Toggle Button */}
         <div className="flex h-24 items-center justify-between px-6 min-w-64">
-          <Link href="/" onClick={close}>
+          <button onClick={handleLogoClick} className="outline-none">
             <Image
               src="https://res.cloudinary.com/dry6dvzoj/image/upload/v1757729690/Forcegym_1_nxwdfw.png"
               alt="ForceGym Logo"
@@ -88,7 +95,7 @@ export function Sidebar({ role }: SidebarProps) {
               className="h-auto w-auto hover:opacity-80 transition-opacity"
               priority
             />
-          </Link>
+          </button>
           <button
             onClick={close}
             className="rounded-lg p-2 text-gray-400 hover:bg-[#404040] hover:text-white"

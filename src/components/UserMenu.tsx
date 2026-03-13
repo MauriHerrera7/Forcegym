@@ -28,6 +28,33 @@ export default function UserMenu({ userImage: propImage, userName: propName }: U
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
+  // Placeholder for navigateTo, setIsMenuOpen, setCurrentView if they are not defined elsewhere
+  // Assuming these are part of a larger context or navigation system.
+  // For this edit, we'll define them as simple console logs or no-ops if not provided.
+  // In a real app, you'd import/define these properly.
+  const navigateTo = (path: string) => { console.log(`Navigating to: /${path}`); };
+  const setIsMenuOpen = (state: boolean) => { console.log(`Set menu open: ${state}`); };
+  const setCurrentView = (view: string) => { console.log(`Set current view: ${view}`); };
+
+  const handleNav = (view: string) => { // Changed AppView to string for simplicity, assuming it's a path segment
+    navigateTo(view);
+    setIsMenuOpen(false); // Assuming setIsMenuOpen controls a different menu, not this one
+  };
+
+  const handleDashboardClick = () => {
+    const rolePath = user?.role?.toUpperCase() === 'ADMIN' ? 'admin' : 'client';
+    navigateTo(`${rolePath}/dashboard`); // Assuming navigateTo takes a full path
+    setCurrentView('dashboard');
+    setIsOpen(false); // Close this user menu
+  };
+
+  const handleProfileClick = () => {
+    const rolePath = user?.role?.toUpperCase() === 'ADMIN' ? 'admin' : 'client';
+    navigateTo(`${rolePath}/profile`); // Assuming navigateTo takes a full path
+    setCurrentView('profile');
+    setIsOpen(false); // Close this user menu
+  };
+
   const handleLogout = async () => {
     try {
       await logout()
@@ -137,20 +164,18 @@ export default function UserMenu({ userImage: propImage, userName: propName }: U
             </div>
           </div>
 
-          <Link
-            href={`/${role}`}
-            className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors duration-200"
-            onClick={() => setIsOpen(false)}
+          <button
+            onClick={handleDashboardClick}
+            className="w-full text-left block px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors duration-200 outline-none"
           >
             Dashboard
-          </Link>
-          <Link
-            href={profileHref}
-            className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors duration-200"
-            onClick={() => setIsOpen(false)}
+          </button>
+          <button
+            onClick={handleProfileClick}
+            className="w-full text-left block px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors duration-200 outline-none"
           >
             Mi Perfil
-          </Link>
+          </button>
           <button
             onClick={() => {
               handleLogout()
