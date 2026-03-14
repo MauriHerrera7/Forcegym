@@ -2,12 +2,19 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Save, X, Dumbbell, Clock, Settings2, Trash2, GripVertical } from 'lucide-react';
+import { Save, X, Plus, Dumbbell, Clock, Settings2, Trash2, GripVertical } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogFooter 
+} from '@/components/ui/dialog';
 import { ExerciseSelector } from './ExerciseSelector';
 import { fetchApi } from '@/lib/api';
 
@@ -34,6 +41,11 @@ export function RoutineCreationForm() {
     rest_between_sets_seconds: 60,
   });
   const [selectedExercises, setSelectedExercises] = useState<SelectedExercise[]>([]);
+  const [isSelectorOpen, setIsSelectorOpen] = useState(false);
+
+  const handleClearSelection = () => {
+    setSelectedExercises([]);
+  };
 
   const handleExerciseSelect = (exercise: any) => {
     if (selectedExercises.find(e => e.exercise_id === exercise.id)) {
@@ -66,6 +78,18 @@ export function RoutineCreationForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Basic validations
+    if (!formData.name.trim()) {
+      alert('Por favor, ingresa el nombre de la rutina');
+      return;
+    }
+
+    if (!formData.description.trim()) {
+      alert('Por favor, ingresa una descripción para la rutina');
+      return;
+    }
+
     if (selectedExercises.length === 0) {
       alert('Debes agregar al menos un ejercicio');
       return;
@@ -108,11 +132,13 @@ export function RoutineCreationForm() {
       <div className="lg:col-span-1 space-y-6">
         <Card className="bg-[#191919] border-[#404040]">
           <CardHeader>
-            <CardTitle className="text-white">General Information</CardTitle>
+            <CardTitle className="text-white font-medium uppercase text-lg">General Information</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm text-zinc-200">Nombre de la Rutina</label>
+              <label className="text-sm text-zinc-200">
+                Nombre de la Rutina <span className="text-red-500">*</span>
+              </label>
               <Input 
                 required
                 placeholder="Ej: Empuje - Hipertrofia"
@@ -122,33 +148,19 @@ export function RoutineCreationForm() {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm text-zinc-200">Descripción</label>
+              <label className="text-sm text-zinc-200">
+                Descripción <span className="text-red-500">*</span>
+              </label>
               <Textarea 
                 placeholder="Describe el objetivo de esta rutina..."
-                className="bg-[#101010] border-[#303030] text-white h-24"
+                className="bg-[#101010] border-[#303030] text-white h-24 resize-none"
                 value={formData.description}
                 onChange={(e) => setFormData({...formData, description: e.target.value})}
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <div className="space-y-2">
-                <label className="text-sm text-zinc-200">Dificultad</label>
-                <Select 
-                   value={formData.difficulty} 
-                   onValueChange={(val) => setFormData({...formData, difficulty: val})}
-                >
-                  <SelectTrigger className="bg-[#101010] border-[#303030] text-white">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="bg-[#191919] border-[#404040] text-white">
-                    <SelectItem value="BEGINNER">Principiante</SelectItem>
-                    <SelectItem value="INTERMEDIATE">Intermedio</SelectItem>
-                    <SelectItem value="ADVANCED">Avanzado</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm text-zinc-200">Duración (min)</label>
+                <label className="text-sm text-zinc-200">Duración Estimada (min)</label>
                 <Input 
                   type="number"
                   className="bg-[#101010] border-[#303030] text-white"
@@ -157,20 +169,57 @@ export function RoutineCreationForm() {
                 />
               </div>
             </div>
+
+            <div className="pt-4 border-t border-[#303030]">
+              <Button 
+                type="button" 
+                className="w-full bg-red-600 hover:bg-red-700 text-white gap-2 font-bold py-6 group"
+                onClick={() => setIsSelectorOpen(true)}
+              >
+                <Plus className="h-5 w-5 transition-transform group-hover:rotate-90" />
+                Seleccionar Ejercicios
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-[#191919] border-[#404040]">
-          <CardHeader>
-            <CardTitle className="text-white">Seleccionar Ejercicios</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ExerciseSelector 
-              onSelect={handleExerciseSelect}
-              selectedIds={selectedExercises.map(e => e.exercise_id)}
-            />
-          </CardContent>
-        </Card>
+        {/* Modal Seleccionador */}
+        <Dialog open={isSelectorOpen} onOpenChange={setIsSelectorOpen}>
+          <DialogContent className="max-w-4xl bg-[#1a1a1a] border-[#303030] text-white p-0 overflow-hidden">
+            <DialogHeader className="p-6 pb-0">
+              <DialogTitle className="text-xl font-medium uppercase tracking-tight text-white flex items-center gap-3">
+                <Dumbbell className="h-6 w-6 text-red-600" />
+                Catálogo de Ejercicios
+              </DialogTitle>
+            </DialogHeader>
+            
+            <div className="p-6 pt-2">
+              <ExerciseSelector 
+                onSelect={handleExerciseSelect}
+                selectedIds={selectedExercises.map(e => e.exercise_id)}
+              />
+            </div>
+
+            <DialogFooter className="bg-[#101010] p-6 flex flex-row items-center justify-between border-t border-[#303030] sm:justify-between">
+              <Button 
+                type="button" 
+                variant="ghost" 
+                className="text-gray-500 hover:text-white hover:bg-white/5 gap-2"
+                onClick={handleClearSelection}
+              >
+                <X className="h-4 w-4" />
+                Limpiar Selección
+              </Button>
+              <Button 
+                type="button" 
+                className="bg-red-600 hover:bg-red-700 text-white px-8 font-bold"
+                onClick={() => setIsSelectorOpen(false)}
+              >
+                Confirmar ({selectedExercises.length})
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {/* Right Column: Exercise Configuration */}
@@ -178,7 +227,7 @@ export function RoutineCreationForm() {
         <Card className="bg-[#191919] border-[#404040] min-h-[600px]">
           <CardHeader className="flex flex-row items-center justify-between border-b border-[#303030] pb-4">
             <div>
-              <CardTitle className="text-white flex items-center gap-2">
+              <CardTitle className="text-white font-medium uppercase text-lg flex items-center gap-2">
                 <Dumbbell className="h-5 w-5 text-red-500" />
                 Plan de Entrenamiento
               </CardTitle>
@@ -200,10 +249,10 @@ export function RoutineCreationForm() {
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="bg-red-500/10 text-red-500 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">
+                    <div className="bg-red-500/10 text-red-500 w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium">
                       {index + 1}
                     </div>
-                    <h4 className="text-white font-bold">{exercise.name}</h4>
+                    <h4 className="text-white font-medium">{exercise.name}</h4>
                   </div>
                   <Button 
                     type="button" 
@@ -218,7 +267,7 @@ export function RoutineCreationForm() {
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="space-y-1">
-                    <label className="text-[10px] uppercase text-zinc-300 font-bold">Series</label>
+                    <label className="text-[10px] uppercase text-zinc-300 font-medium">Series</label>
                     <Input 
                       type="number"
                       className="h-8 bg-[#191919] border-[#404040] text-white text-sm"
@@ -227,7 +276,7 @@ export function RoutineCreationForm() {
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] uppercase text-zinc-300 font-bold">Reps</label>
+                    <label className="text-[10px] uppercase text-zinc-300 font-medium">Reps</label>
                     <Input 
                       type="number"
                       placeholder="12"
@@ -237,7 +286,7 @@ export function RoutineCreationForm() {
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] uppercase text-zinc-300 font-bold">Descanso (s)</label>
+                    <label className="text-[10px] uppercase text-zinc-300 font-medium">Descanso (s)</label>
                     <Input 
                       type="number"
                       className="h-8 bg-[#191919] border-[#404040] text-white text-sm"
@@ -246,7 +295,7 @@ export function RoutineCreationForm() {
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] uppercase text-zinc-300 font-bold">Duración (s)</label>
+                    <label className="text-[10px] uppercase text-zinc-300 font-medium">Duración (s)</label>
                     <Input 
                       type="number"
                       placeholder="Opcional"

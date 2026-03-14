@@ -7,6 +7,7 @@ import { useAuthContext } from '@/providers/AuthProvider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
   CheckCircle2, 
   XCircle, 
@@ -88,17 +89,17 @@ export default function AdminVerifyPage() {
   if (error || !data) {
     return (
       <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4 text-center">
-        <div className="bg-red-500/10 border border-red-500/20 p-8 rounded-3xl max-w-md">
-          <AlertTriangle className="h-16 w-16 text-red-500 mx-auto mb-4" />
+        <Alert variant="destructive" className="bg-red-500/10 border-red-500/20 p-8 rounded-3xl max-w-md [&>svg]:text-red-500">
+          <AlertTriangle className="h-16 w-16 mx-auto mb-4 relative" />
           <h1 className="text-2xl font-black text-white italic uppercase mb-2">ERROR DE VERIFICACIÓN</h1>
-          <p className="text-gray-400 mb-6">{error || 'No se pudo obtener la información del usuario.'}</p>
+          <AlertDescription className="text-gray-400 mb-6">{error || 'No se pudo obtener la información del usuario.'}</AlertDescription>
           <Button 
             onClick={() => router.back()}
             className="bg-white text-black hover:bg-zinc-200 font-black uppercase tracking-widest px-8"
           >
             Volver
           </Button>
-        </div>
+        </Alert>
       </div>
     );
   }

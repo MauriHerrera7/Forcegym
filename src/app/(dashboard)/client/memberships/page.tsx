@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useMembership } from '@/hooks/useMembership'
 import { usePayments } from '@/hooks/usePayments'
 import { Loader2, Calendar, CreditCard, CheckCircle2, AlertCircle, Clock, ShoppingCart } from 'lucide-react'
@@ -152,35 +153,66 @@ export default function ClientMembershipsPage() {
         <Card className="bg-[#0D0D0D] border-zinc-900 overflow-hidden shadow-xl">
           <CardContent className="p-0">
             {payments.length > 0 ? (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="border-b border-zinc-800">
-                      <th className="px-6 py-4 text-[10px] font-black text-zinc-500 uppercase tracking-widest">Fecha</th>
-                      <th className="px-6 py-4 text-[10px] font-black text-zinc-500 uppercase tracking-widest">Concepto</th>
-                      <th className="px-6 py-4 text-[10px] font-black text-zinc-500 uppercase tracking-widest">Monto</th>
-                      <th className="px-6 py-4 text-[10px] font-black text-zinc-500 uppercase tracking-widest">Estado</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {payments.map((payment) => (
-                      <tr key={payment.id} className="border-b border-zinc-900 hover:bg-white/[0.02] transition-colors">
-                        <td className="px-6 py-5 text-sm font-bold text-white">
-                          {format(new Date(payment.created_at), "dd/MM/yyyy", { locale: es })}
-                        </td>
-                        <td className="px-6 py-5 text-sm text-zinc-400">
-                           {payment.membership?.plan?.name || 'Membresía'}
-                        </td>
-                        <td className="px-6 py-5 text-sm font-black text-white">
-                          ${payment.amount}
-                        </td>
-                        <td className="px-6 py-5">
-                          {getStatusBadge(payment.status)}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="w-full">
+                {/* Mobile View (Cards) */}
+                <div className="grid grid-cols-1 gap-4 p-4 md:hidden">
+                  {payments.map((payment) => (
+                    <div key={payment.id} className="bg-zinc-900/40 p-5 rounded-xl border border-white/5 space-y-3">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">Concepto</p>
+                          <p className="text-sm font-bold text-white uppercase italic">{payment.membership?.plan?.name || 'Membresía'}</p>
+                        </div>
+                        {getStatusBadge(payment.status)}
+                      </div>
+                      
+                      <div className="flex justify-between items-end pt-3 border-t border-zinc-800">
+                        <div>
+                          <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">Fecha</p>
+                          <p className="text-sm font-bold text-white whitespace-nowrap">
+                            {format(new Date(payment.created_at), "dd/MM/yyyy", { locale: es })}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">Monto</p>
+                          <p className="text-lg font-black text-apple-red italic">${payment.amount}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Desktop View (Table) */}
+                <div className="hidden md:block w-full">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="border-zinc-800">
+                        <TableHead className="px-6 py-4 text-[10px] font-black text-zinc-500 uppercase tracking-widest whitespace-nowrap">Fecha</TableHead>
+                        <TableHead className="px-6 py-4 text-[10px] font-black text-zinc-500 uppercase tracking-widest whitespace-nowrap">Concepto</TableHead>
+                        <TableHead className="px-6 py-4 text-[10px] font-black text-zinc-500 uppercase tracking-widest whitespace-nowrap">Monto</TableHead>
+                        <TableHead className="px-6 py-4 text-[10px] font-black text-zinc-500 uppercase tracking-widest whitespace-nowrap">Estado</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {payments.map((payment) => (
+                        <TableRow key={payment.id} className="border-zinc-900 hover:bg-white/[0.02] transition-colors">
+                          <TableCell className="px-6 py-5 text-sm font-bold text-white whitespace-nowrap">
+                            {format(new Date(payment.created_at), "dd/MM/yyyy", { locale: es })}
+                          </TableCell>
+                          <TableCell className="px-6 py-5 text-sm text-zinc-400 whitespace-nowrap">
+                             {payment.membership?.plan?.name || 'Membresía'}
+                          </TableCell>
+                          <TableCell className="px-6 py-5 text-sm font-black text-white whitespace-nowrap">
+                            ${payment.amount}
+                          </TableCell>
+                          <TableCell className="px-6 py-5 whitespace-nowrap">
+                            {getStatusBadge(payment.status)}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               </div>
             ) : (
               <div className="p-12 text-center text-zinc-600 italic font-bold">

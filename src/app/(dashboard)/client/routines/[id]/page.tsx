@@ -56,20 +56,24 @@ export default function RoutineDetailPage() {
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 print:hidden">
-        <div className="flex items-center gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 items-center gap-4 print:hidden border-b border-[#303030] pb-6">
+        <div className="flex justify-start">
           <Link href="/client/routines">
-            <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
+            <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white transition-colors px-0">
               <ChevronLeft className="h-4 w-4 mr-1" />
               Volver
             </Button>
           </Link>
-          <h1 className="text-2xl font-bold text-white">Visualizar Rutina</h1>
         </div>
-        <div className="flex gap-2">
+        
+        <div className="text-center order-first md:order-none">
+          <h1 className="text-2xl font-medium text-white uppercase tracking-tight">Visualizar Rutina</h1>
+        </div>
+
+        <div className="flex justify-end gap-2">
           <Button 
             onClick={handlePrint}
-            className="bg-gray-800 hover:bg-gray-700 text-white gap-2"
+            className="bg-red-600 hover:bg-red-700 text-white gap-2 transition-all shadow-lg shadow-red-600/20"
           >
             <Printer className="h-4 w-4" />
             Imprimir / PDF

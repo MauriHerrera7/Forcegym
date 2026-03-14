@@ -74,58 +74,31 @@ export function DashboardHeader({ user: propUser }: DashboardHeaderProps) {
         </button>
       </div>
 
-      {/* Right side */}
       <div className="flex items-center gap-4">
         {/* Notifications */}
         <NotificationPanel />
 
-        {/* User Menu */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button className="flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-[#404040]">
-              <Avatar className="h-10 w-10 ring-2 ring-[#404040]">
-                {photo && !imgError ? (
-                  <AvatarImage 
-                    src={photo} 
-                    alt={fullName} 
-                    onError={() => setImgError(true)} 
-                  />
-                ) : null}
-                <AvatarFallback 
-                  className="text-white font-bold flex items-center justify-center"
-                  style={{ backgroundColor: '#ff0800' }}
-                >
-                  {initials}
-                </AvatarFallback>
-              </Avatar>
-              <div className="hidden text-left md:block">
-                <p className="text-sm font-medium text-white">{fullName}</p>
-                <p className="text-xs text-gray-400">{email}</p>
-              </div>
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56 bg-[#404040] border-[#404040]">
-            <DropdownMenuLabel className="text-gray-300 font-normal">Mi Cuenta</DropdownMenuLabel>
-            <DropdownMenuSeparator className="bg-[#505050]" />
-            
-            <DropdownMenuItem 
-              className="text-white focus:bg-[#505050] cursor-pointer"
-              onClick={() => setCurrentView('profile')}
+        {/* User Info (Non-interactive) */}
+        <div className="flex items-center gap-3 rounded-lg p-2">
+          <Avatar className="h-10 w-10 ring-2 ring-[#404040]">
+            {photo && !imgError ? (
+              <AvatarImage 
+                src={photo} 
+                alt={fullName} 
+                onError={() => setImgError(true)} 
+              />
+            ) : null}
+            <AvatarFallback 
+              className="text-white font-bold flex items-center justify-center"
+              style={{ backgroundColor: '#ff0800' }}
             >
-              <UserIcon className="mr-2 h-4 w-4" />
-              Mi Perfil
-            </DropdownMenuItem>
-
-            <DropdownMenuSeparator className="bg-[#505050]" />
-            <DropdownMenuItem
-              className="text-[#ff3936] focus:bg-[#191919] focus:text-[#ff0400] cursor-pointer"
-              onClick={() => logout()}
-            >
-              <LogOut className="mr-2 h-4 w-4" />
-              Cerrar Sesión
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              {initials}
+            </AvatarFallback>
+          </Avatar>
+          <div className="hidden text-left md:block">
+            <p className="text-sm font-medium text-white">{fullName}</p>
+          </div>
+        </div>
       </div>
     </header>
   );

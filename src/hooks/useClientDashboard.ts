@@ -26,6 +26,7 @@ export interface DashboardData {
   }[]
   weight_goal_type: 'LOSE' | 'GAIN' | 'MAINTAIN'
   weekly_routine: {
+    id: string
     name: string
     scheduled_days: string[]
     exercises_count: number
@@ -72,6 +73,19 @@ export function useClientDashboard() {
     }
   }
 
+  const logWeight = async (weight: number, date: string) => {
+    try {
+      await fetchApi('/progress/weight-logs/', {
+        method: 'POST',
+        body: JSON.stringify({ weight, date })
+      })
+      await fetchDashboardData() // Refresh
+    } catch (err: any) {
+      console.error('Error logging weight:', err)
+      throw err
+    }
+  }
+
   useEffect(() => {
     fetchDashboardData()
   }, [fetchDashboardData])
@@ -81,6 +95,7 @@ export function useClientDashboard() {
     loading,
     error,
     toggleAttendance,
+    logWeight,
     refreshDashboard: fetchDashboardData
   }
 }

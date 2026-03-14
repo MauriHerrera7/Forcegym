@@ -84,6 +84,7 @@
     line-height: 1.6;
     color: #000000;
     background-color: #ffffff;
+    overflow-x: hidden;
   }
 
   /* Typography Hierarchy for Gym */

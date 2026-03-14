@@ -25,11 +25,23 @@ export function NotificationPanel() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    const savedDismissed = localStorage.getItem('dismissed_notifications');
+    if (savedDismissed) {
+      try {
+        setDismissed(new Set(JSON.parse(savedDismissed)));
+      } catch (e) {
+        console.error('Error parsing dismissed notifications', e);
+      }
+    }
     setMounted(true);
   }, []);
 
   const dismiss = (id: string) => {
-    setDismissed(prev => new Set(prev).add(id));
+    setDismissed(prev => {
+      const next = new Set(prev).add(id);
+      localStorage.setItem('dismissed_notifications', JSON.stringify(Array.from(next)));
+      return next;
+    });
   };
 
   // Build smart notifications based on real user data

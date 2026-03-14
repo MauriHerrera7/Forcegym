@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
@@ -17,10 +17,12 @@ import {
   X,
   Menu,
   ClipboardList,
+  LogOut,
 } from "lucide-react";
 import { useSidebar } from "@/providers/SidebarProvider";
 import { useDashboardNavigation } from "@/providers/DashboardNavigationProvider";
 import { useAppNavigation } from "@/providers/AppNavigationProvider";
+import { useAuthContext } from "@/providers/AuthProvider";
 
 interface SidebarProps {
   role: "admin" | "client";
@@ -44,9 +46,11 @@ const clientMenuItems = [
 
 export function Sidebar({ role }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const { isOpen, close } = useSidebar();
   const { currentView, setCurrentView } = useDashboardNavigation();
   const { navigateTo } = useAppNavigation();
+  const { logout } = useAuthContext();
   const menuItems = role === "admin" ? adminMenuItems : clientMenuItems;
 
   // Hydration protection
@@ -57,11 +61,20 @@ export function Sidebar({ role }: SidebarProps) {
 
   const handleNavigate = (view: any) => {
     setCurrentView(view);
+    
+    // If we are on a sub-route (like /client/routines/id), 
+    // we need to go back to the base route for the state-based nav to work
+    const basePath = role === 'admin' ? '/admin' : '/client';
+    if (pathname !== basePath) {
+      router.push(basePath);
+    }
+    
     close();
   };
 
   const handleLogoClick = () => {
     navigateTo('landing');
+    router.push('/');
     close();
   };
 
@@ -81,7 +94,7 @@ export function Sidebar({ role }: SidebarProps) {
           "fixed inset-y-0 left-0 z-50 flex h-screen flex-col bg-[#2D0A0A] border-r border-[#450A0A]/30 transition-all duration-300 md:sticky md:top-0 md:shrink-0 overflow-hidden",
           isOpen 
             ? "translate-x-0 w-64" 
-            : "-translate-x-full md:translate-x-0 md:w-0 md:border-none"
+            : "-translate-x-full w-0 md:translate-x-0 md:w-0 md:border-none"
         )}
       >
         {/* Logo & Toggle Button */}
@@ -127,6 +140,20 @@ export function Sidebar({ role }: SidebarProps) {
             );
           })}
         </nav>
+
+        {/* Footer / Logout */}
+        <div className="p-4 border-t border-[#450A0A]/30 min-w-64">
+          <button
+            onClick={() => {
+              logout();
+              close();
+            }}
+            className="flex items-center w-full gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 text-gray-400 hover:bg-red-500/10 hover:text-red-500"
+          >
+            <LogOut className="h-5 w-5" />
+            Cerrar Sesión
+          </button>
+        </div>
       </div>
     </>
   );

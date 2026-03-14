@@ -7,7 +7,8 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
-import { Pencil, Save, X, Camera, Plus, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Pencil, Save, X, Camera, Plus, Loader2, CheckCircle2, AlertCircle, QrCode } from 'lucide-react';
 import QRCode from 'qrcode';
 import { QRCodeSVG } from 'qrcode.react';
 import { useAuthContext } from '@/providers/AuthProvider';
@@ -242,21 +243,32 @@ export default function ClientProfile() {
               <CardTitle className="text-white">Información Personal</CardTitle>
             </CardHeader>
             <CardContent>
+              {/* Mobile QR Button */}
+              <div className="lg:hidden mb-6">
+                <Button 
+                  type="button"
+                  onClick={() => setIsQRModalOpen(true)}
+                  className="w-full bg-[#ff0400]/10 border border-[#ff0400]/20 text-[#ff0400] hover:bg-[#ff0400]/20 gap-3 h-14 font-black uppercase tracking-[0.2em] italic rounded-2xl shadow-lg shadow-red-600/5 transition-all duration-300"
+                >
+                  <QrCode className="h-6 w-6" />
+                  Tu QR de Acceso
+                </Button>
+              </div>
+
               {notification && (
-                <div className={`mb-8 p-4 rounded-2xl flex items-center gap-4 animate-in fade-in slide-in-from-top-4 duration-500 backdrop-blur-md border ${
-                  notification.type === 'success' 
-                    ? 'bg-green-500/5 border-green-500/20 text-green-500' 
-                    : 'bg-red-500/5 border-red-500/20 text-red-500'
-                }`}>
-                  <div className={`p-2 rounded-full ${notification.type === 'success' ? 'bg-green-500/10' : 'bg-red-500/10'}`}>
-                    {notification.type === 'success' ? (
-                      <CheckCircle2 className="h-5 w-5 flex-shrink-0" />
-                    ) : (
-                      <AlertCircle className="h-5 w-5 flex-shrink-0" />
-                    )}
-                  </div>
-                  <p className="text-sm font-bold tracking-tight">{notification.message}</p>
-                </div>
+                <Alert 
+                  variant={notification.type === 'success' ? 'default' : 'destructive'} 
+                  className={`mb-8 animate-in fade-in slide-in-from-top-4 duration-500 backdrop-blur-md ${
+                    notification.type === 'success' ? 'bg-green-500/10 border-green-500/20 text-green-500 [&>svg]:text-green-500' : 'bg-red-500/10 border-red-500/20 text-red-500 [&>svg]:text-red-500'
+                  }`}
+                >
+                  {notification.type === 'success' ? (
+                    <CheckCircle2 className="h-4 w-4" />
+                  ) : (
+                    <AlertCircle className="h-4 w-4" />
+                  )}
+                  <AlertDescription className="font-bold tracking-tight ml-2">{notification.message}</AlertDescription>
+                </Alert>
               )}
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Photo Upload Redesigned - Dashboard Style */}
@@ -395,7 +407,7 @@ export default function ClientProfile() {
 
                   <div className="space-y-2">
                     <Label htmlFor="weight" className="text-gray-300">
-                      Peso (kg) - Opcional
+                      Peso (kg)
                     </Label>
                     <Input
                       id="weight"
@@ -412,7 +424,7 @@ export default function ClientProfile() {
 
                   <div className="space-y-2">
                     <Label htmlFor="height" className="text-gray-300">
-                      Altura (cm) - Opcional
+                      Altura (cm)
                     </Label>
                     <Input
                       id="height"

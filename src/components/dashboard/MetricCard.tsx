@@ -29,10 +29,10 @@ export function MetricCard({
   }
 
   return (
-    <Card className="bg-[#191919] border-[#404040] overflow-hidden">
+    <Card className="bg-[#191919] border-[#404040] overflow-hidden w-full">
       <CardHeader className="p-4 pb-2">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-medium text-gray-400">
+        <div className="flex items-center justify-between gap-2">
+          <CardTitle className="text-sm font-medium text-gray-400 truncate">
             {title}
           </CardTitle>
           <div className="p-2 rounded-lg" style={{ backgroundColor: `${color}20` }}>

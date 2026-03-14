@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Search, RefreshCw, AlertCircle, CheckCircle, Calendar } from 'lucide-react';
 import { fetchApi } from '@/lib/api';
 import {
@@ -120,8 +121,8 @@ export default function AdminRenewalsPage() {
   };
 
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 p-2 sm:p-6 w-full overflow-hidden">
+      <div className="flex items-center justify-between px-2 sm:px-0">
         <div>
           <h1 className="text-3xl font-bold text-white">Renovaciones</h1>
           <p className="text-gray-400">Gestiona las membresías por vencer o vencidas</p>
@@ -168,39 +169,107 @@ export default function AdminRenewalsPage() {
       {/* Main Table Card */}
       <Card className="bg-[#191919] border-[#404040]">
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <CardTitle className="text-white">Usuarios {loading && <span className="text-sm font-normal text-gray-500 italic ml-2">Actualizando...</span>}</CardTitle>
-            <div className="relative w-64">
+            <div className="relative w-full sm:w-64">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
                 placeholder="Buscar usuario..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-[#191919] border-[#404040] text-white focus:border-[#ff0400]"
+                className="pl-10 bg-[#191919] border-[#404040] text-white focus:border-[#ff0400] w-full"
               />
             </div>
           </div>
         </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-[#404040]">
-                  <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Usuario</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Membresía</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Estado</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Vencimiento</th>
-                  <th className="text-right py-3 px-4 text-sm font-medium text-gray-400">Acción</th>
-                </tr>
-              </thead>
-              <tbody>
+        <CardContent className="p-4 sm:p-6">
+          {/* Mobile View (Cards) */}
+          <div className="grid grid-cols-1 gap-4 md:hidden">
+            {filteredUsers.map((user) => {
+              const status = getMembershipStatus(user.membership_info?.end_date);
+              const days = getDaysRemaining(user.membership_info?.end_date);
+              
+              return (
+                <div key={user.id} className="bg-[#202020] p-4 rounded-xl border border-[#404040] space-y-4">
+                  {/* Header: User & Status */}
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-3">
+                      <Avatar className="h-10 w-10 ring-2 ring-[#404040]">
+                        <AvatarImage src={user.profile_picture_url || user.profile_picture} alt={user.first_name || user.username} />
+                        <AvatarFallback className="bg-[#ff0400] text-white font-semibold">
+                          {user.first_name?.[0] || user.username?.[0] || 'U'}
+                          {user.last_name?.[0] || ''}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="font-medium text-white text-sm">
+                          {user.full_name || (user.first_name || user.last_name ? 
+                            `${user.first_name || ''} ${user.last_name || ''}`.trim() 
+                            : user.username || 'Usuario')}
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          {user.membership_info?.plan_name || 'Sin plan'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="shrink-0 text-right flex flex-col items-end gap-1">
+                      {getStatusBadge(status, days)}
+                      <div className="flex items-center gap-1 text-[10px] text-gray-400 mt-1">
+                        <Calendar className="h-3 w-3" />
+                        {user.membership_info?.end_date 
+                          ? new Date(user.membership_info.end_date).toLocaleDateString('es-ES')
+                          : 'N/A'}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Footer: Actions */}
+                  <div className="flex justify-end pt-3 border-t border-[#404040]/50">
+                    <Button
+                      size="sm"
+                      className={`${
+                        status === 'active' 
+                          ? 'bg-gray-700 text-gray-400 cursor-not-allowed hover:bg-gray-700' 
+                          : 'bg-[#ff0400] hover:bg-[#ff3936] text-white flex-1'
+                      } gap-2`}
+                      onClick={() => status !== 'active' && handleRenewClick(user)}
+                      disabled={status === 'active' || loading}
+                    >
+                      <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+                      {status === 'active' ? 'Al día' : 'Renovar'}
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+            
+            {filteredUsers.length === 0 && (
+              <div className="text-center py-8">
+                <p className="text-gray-400 text-sm italic">No se encontraron renovaciones pendientes.</p>
+              </div>
+            )}
+          </div>
+
+          {/* Desktop View (Table) */}
+          <div className="hidden md:block w-full">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-[#404040]">
+                  <TableHead className="text-gray-400 whitespace-nowrap py-3">Usuario</TableHead>
+                  <TableHead className="text-gray-400 whitespace-nowrap py-3">Membresía</TableHead>
+                  <TableHead className="text-gray-400 whitespace-nowrap py-3">Estado</TableHead>
+                  <TableHead className="text-gray-400 whitespace-nowrap py-3">Vencimiento</TableHead>
+                  <TableHead className="text-gray-400 text-right py-3">Acción</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {filteredUsers.map((user) => {
                   const status = getMembershipStatus(user.membership_info?.end_date);
                   const days = getDaysRemaining(user.membership_info?.end_date);
                   
                   return (
-                    <tr key={user.id} className="border-b border-[#404040]/50 hover:bg-[#404040]/20 transition-colors">
-                      <td className="py-4 px-4">
+                    <TableRow key={user.id} className="border-[#404040]/50 hover:bg-[#404040]/20 transition-colors">
+                      <TableCell className="py-4 whitespace-nowrap">
                         <div className="flex items-center gap-3">
                           <Avatar className="h-10 w-10 ring-2 ring-[#404040]">
                             <AvatarImage src={user.profile_picture_url || user.profile_picture} alt={user.first_name || user.username} />
@@ -217,24 +286,24 @@ export default function AdminRenewalsPage() {
                             </p>
                           </div>
                         </div>
-                      </td>
-                      <td className="py-4 px-4">
+                      </TableCell>
+                      <TableCell className="py-4 whitespace-nowrap">
                         <Badge variant="outline" className="border-[#404040] text-gray-300">
                           {user.membership_info?.plan_name || 'Sin plan'}
                         </Badge>
-                      </td>
-                      <td className="py-4 px-4">
+                      </TableCell>
+                      <TableCell className="py-4 whitespace-nowrap">
                         {getStatusBadge(status, days)}
-                      </td>
-                      <td className="py-4 px-4">
+                      </TableCell>
+                      <TableCell className="py-4 whitespace-nowrap">
                         <div className="flex items-center gap-2 text-sm text-gray-300">
                           <Calendar className="h-4 w-4 text-gray-500" />
                           {user.membership_info?.end_date 
                             ? new Date(user.membership_info.end_date).toLocaleDateString('es-ES')
                             : 'N/A'}
                         </div>
-                      </td>
-                      <td className="py-4 px-4 text-right">
+                      </TableCell>
+                      <TableCell className="py-4 text-right">
                         <Button
                           size="sm"
                           className={`${
@@ -248,12 +317,12 @@ export default function AdminRenewalsPage() {
                           <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
                           {status === 'active' ? 'Al día' : 'Renovar'}
                         </Button>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   );
                 })}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         </CardContent>
       </Card>

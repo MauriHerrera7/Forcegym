@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuthContext } from '@/providers/AuthProvider';
 import { CheckCircle, Loader2, Send, AlertCircle } from 'lucide-react';
 
@@ -127,10 +128,10 @@ export default function ClientSupportPage() {
             </div>
 
             {error && (
-              <div className="flex items-center gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm animate-in slide-in-from-top-1">
+              <Alert variant="destructive" className="bg-red-500/10 animate-in slide-in-from-top-1">
                 <AlertCircle className="h-4 w-4" />
-                {error}
-              </div>
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
             )}
 
             <Button 

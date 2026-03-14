@@ -86,9 +86,8 @@ const Navbar: React.FC = () => {
             </button>
           </div>
 
-          {/* Desktop Right End - Show hamburger if auth, else Join buttons */}
-          <div className="flex items-center" ref={menuRef}>
-            {!isAuthenticated ? (
+            {/* Desktop Right End - Show Join buttons if not auth */}
+            {!isAuthenticated && (
               <div className="hidden md:flex items-center gap-5">
                 <button
                   onClick={() => handleNav('login')}
@@ -103,90 +102,90 @@ const Navbar: React.FC = () => {
                   Únete
                 </button>
               </div>
-            ) : null}
+            )}
 
-            {/* Hamburger Button (Always visible if auth, or on mobile if not auth) */}
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className={cn(
-                "p-2.5 rounded-xl border-2 transition-all duration-300 outline-none ml-4",
-                isMenuOpen 
-                  ? "border-red-500 bg-red-500/10 text-white" 
-                  : "border-white/20 bg-black/20 text-white hover:border-red-500/50 hover:bg-red-500/5"
+            {/* Hamburger Button & Menu */}
+            <div className={cn("flex items-center", !isAuthenticated && "md:hidden")}>
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className={cn(
+                  "p-2.5 rounded-xl border-2 transition-all duration-300 outline-none ml-4",
+                  isMenuOpen 
+                    ? "border-red-500 bg-red-500/10 text-white" 
+                    : "border-white/20 bg-black/20 text-white hover:border-red-500/50 hover:bg-red-500/5"
+                )}
+              >
+                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
+
+              {/* Unified Navigation Menu */}
+              {isMenuOpen && (
+                <div 
+                  className="absolute right-0 top-full mt-4 w-64 md:w-72 bg-neutral-900/95 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300"
+                >
+                  {isAuthenticated ? (
+                    <div className="p-2 space-y-1">
+                      {/* User Header */}
+                      <div className="flex items-center gap-3 p-4 mb-2 bg-white/5 rounded-xl">
+                          <div className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center font-bold text-white shadow-lg shadow-red-600/20">
+                            {initials}
+                          </div>
+                          <div className="flex flex-col min-w-0">
+                            <span className="text-sm font-bold text-white truncate">{user?.first_name} {user?.last_name}</span>
+                            <span className="text-[10px] text-gray-400 truncate uppercase tracking-widest">{user?.role}</span>
+                          </div>
+                      </div>
+
+                      <MenuButton 
+                        onClick={() => handleDashboardNav('dashboard')} 
+                        icon={<LayoutDashboard size={18} />} 
+                        label="Dashboard" 
+                      />
+                      <MenuButton 
+                        onClick={() => handleDashboardNav('profile')} 
+                        icon={<User size={18} />} 
+                        label="Mi Perfil" 
+                      />
+                      <MenuButton 
+                        onClick={() => handleDashboardNav('memberships')} 
+                        icon={<CreditCard size={18} />} 
+                        label="Membresía" 
+                      />
+                      
+                      <div className="my-2 border-t border-white/5 pt-2">
+                        <button
+                          onClick={handleLogout}
+                          className="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-500/10 rounded-xl transition-all duration-200 group font-bold text-sm"
+                        >
+                          <LogOut size={18} className="group-hover:rotate-12 transition-transform" />
+                          Cerrar Sesión
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="p-2 space-y-1">
+                      <button
+                         onClick={() => handleNav('login')}
+                         className="w-full text-left px-5 py-3 text-white hover:bg-white/5 rounded-xl transition-all text-sm font-medium"
+                      >
+                        Iniciar Sesión
+                      </button>
+                      <button
+                         onClick={() => handleNav('register')}
+                         className="w-full text-center px-6 py-3 bg-red-600 text-white rounded-xl transition-all text-sm font-bold mt-2 shadow-lg shadow-red-600/20"
+                      >
+                        Únete Ahora
+                      </button>
+                    </div>
+                  )}
+                </div>
               )}
-            >
-              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+            </div>
           </div>
         </div>
-
-        {/* Unified Navigation Menu (Desktop/Mobile) */}
-        {isMenuOpen && (
-          <div 
-            className="absolute right-4 top-[90px] w-64 md:w-72 bg-neutral-900/95 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300"
-          >
-            {isAuthenticated ? (
-              <div className="p-2 space-y-1">
-                {/* User Header */}
-                <div className="flex items-center gap-3 p-4 mb-2 bg-white/5 rounded-xl">
-                    <div className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center font-bold text-white shadow-lg shadow-red-600/20">
-                      {initials}
-                    </div>
-                    <div className="flex flex-col min-w-0">
-                      <span className="text-sm font-bold text-white truncate">{user?.first_name} {user?.last_name}</span>
-                      <span className="text-[10px] text-gray-400 truncate uppercase tracking-widest">{user?.role}</span>
-                    </div>
-                </div>
-
-                <MenuButton 
-                  onClick={() => handleDashboardNav('dashboard')} 
-                  icon={<LayoutDashboard size={18} />} 
-                  label="Dashboard" 
-                />
-                <MenuButton 
-                  onClick={() => handleDashboardNav('profile')} 
-                  icon={<User size={18} />} 
-                  label="Mi Perfil" 
-                />
-                <MenuButton 
-                  onClick={() => handleDashboardNav('memberships')} 
-                  icon={<CreditCard size={18} />} 
-                  label="Membresía" 
-                />
-                
-                <div className="my-2 border-t border-white/5 pt-2">
-                  <button
-                    onClick={handleLogout}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-500/10 rounded-xl transition-all duration-200 group font-bold text-sm"
-                  >
-                    <LogOut size={18} className="group-hover:rotate-12 transition-transform" />
-                    Cerrar Sesión
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="p-2 space-y-1 md:hidden">
-                {/* Mobile non-auth menu items */}
-                <button
-                   onClick={() => handleNav('login')}
-                   className="w-full text-left px-5 py-3 text-white hover:bg-white/5 rounded-xl transition-all text-sm font-medium"
-                >
-                  Iniciar Sesión
-                </button>
-                <button
-                   onClick={() => handleNav('register')}
-                   className="w-full text-center px-5 py-3 bg-red-600 text-white rounded-xl transition-all text-sm font-bold mt-2"
-                >
-                  Únete Ahora
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-    </nav>
-  );
-};
+      </nav>
+    );
+  };
 
 interface MenuButtonProps {
   label: string;

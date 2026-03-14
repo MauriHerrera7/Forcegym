@@ -106,15 +106,15 @@ export default function AdminDashboardHome() {
         <CardContent>
            <div className="space-y-4">
               {recentUsersData.slice(0, 5).map((user, i) => (
-                <div key={i} className="flex items-center justify-between p-4 rounded-2xl bg-black/20 border border-[#333]">
-                   <div className="flex items-center gap-4">
-                      <Avatar className="h-10 w-10 border border-[#333]">
+                <div key={i} className="flex items-center justify-between gap-4 p-4 rounded-2xl bg-black/20 border border-[#333]">
+                   <div className="flex items-center gap-4 min-w-0">
+                      <Avatar className="h-10 w-10 border border-[#333] shrink-0">
                         <AvatarImage src={user.profile_picture_url} />
                         <AvatarFallback className="bg-zinc-800 text-zinc-500">{user.username[0]}</AvatarFallback>
                       </Avatar>
-                      <div>
-                        <p className="font-black text-white italic uppercase tracking-tight text-sm">{user.username}</p>
-                        <p className="text-[10px] text-zinc-600">{user.email}</p>
+                      <div className="min-w-0">
+                        <p className="font-black text-white italic uppercase tracking-tight text-sm truncate">{user.username}</p>
+                        <p className="text-[10px] text-zinc-600 truncate">{user.email}</p>
                       </div>
                    </div>
                    <Badge variant="outline" className="border-green-500/20 text-green-500 uppercase text-[10px]">Activo</Badge>

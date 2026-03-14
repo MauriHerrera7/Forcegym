@@ -1,16 +1,39 @@
 'use client';
 
-import { Dumbbell, Flame, Clock, Calendar, Target, TrendingDown, TrendingUp, Scale } from 'lucide-react';
-import { ProgressTab } from '@/components/dashboard/ProgressTab';
+import React from 'react';
+
+import { Dumbbell, Flame, Clock, Calendar, Target, TrendingDown, TrendingUp, Scale, AlertTriangle, X, CheckCircle2 } from 'lucide-react';
+import { UnifiedCalendar } from '@/components/dashboard/UnifiedCalendar';
 import { useClientDashboard } from '@/hooks/useClientDashboard';
 import { MetricCard } from '@/components/dashboard/MetricCard';
-import { AttendanceCalendar } from '@/components/dashboard/AttendanceCalendar';
 import { WeightProgressChart } from '@/components/dashboard/WeightProgressChart';
 import { RoutineOverview } from '@/components/dashboard/RoutineOverview';
 import { MembershipStatus } from '@/components/dashboard/MembershipStatus';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useAuthContext } from '@/providers/AuthProvider';
 
 export default function ClientDashboardHome() {
-  const { data, loading, error, toggleAttendance } = useClientDashboard();
+  const { user } = useAuthContext();
+  const { data, loading, error, toggleAttendance, logWeight } = useClientDashboard();
+  const [isAlertDismissed, setIsAlertDismissed] = React.useState(false);
+
+  React.useEffect(() => {
+    if (user?.id) {
+      const now = new Date();
+      const monthKey = `weight_alert_dismissed_${user.id}_${now.getFullYear()}_${now.getMonth()}`;
+      const isDismissed = localStorage.getItem(monthKey) === 'true';
+      setIsAlertDismissed(isDismissed);
+    }
+  }, [user]);
+
+  const handleDismissAlert = () => {
+    if (user?.id) {
+      const now = new Date();
+      const monthKey = `weight_alert_dismissed_${user.id}_${now.getFullYear()}_${now.getMonth()}`;
+      localStorage.setItem(monthKey, 'true');
+      setIsAlertDismissed(true);
+    }
+  };
 
   if (error) {
     return (
@@ -25,8 +48,50 @@ export default function ClientDashboardHome() {
     ? (data.weight_progress[data.weight_progress.length - 1].weight - data.weight_progress[data.weight_progress.length - 2].weight).toFixed(1)
     : '0';
 
+  const hasWeightThisMonth = data?.weight_progress?.some(log => {
+    const logDate = new Date(log.date);
+    const now = new Date();
+    return logDate.getMonth() === now.getMonth() && logDate.getFullYear() === now.getFullYear();
+  });
+
+  const attendanceStats = React.useMemo(() => {
+    if (!data?.monthly_attendance) return { percentage: 0, daysAttended: 0, totalPossible: 0 };
+    
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    const today = now.getDate();
+    
+    let totalPossible = 0;
+    let daysAttended = 0;
+    
+    // Create a set of attended dates for easy lookup
+    const attendedDates = new Set(
+      data.monthly_attendance
+        .filter(record => record.attended)
+        .map(record => record.date)
+    );
+    
+    // Iterate through all days of the month up to today
+    for (let day = 1; day <= today; day++) {
+      const date = new Date(currentYear, currentMonth, day);
+      // Skip Sundays (0)
+      if (date.getDay() !== 0) {
+        totalPossible++;
+        const dateStr = date.toISOString().split('T')[0];
+        if (attendedDates.has(dateStr)) {
+          daysAttended++;
+        }
+      }
+    }
+    
+    const percentage = totalPossible > 0 ? Math.round((daysAttended / totalPossible) * 100) : 0;
+    
+    return { percentage, daysAttended, totalPossible };
+  }, [data?.monthly_attendance]);
+
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
+    <div className="space-y-6 animate-in fade-in duration-500 max-w-7xl mx-auto">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-black text-white italic uppercase tracking-tighter">Mi Dashboard</h1>
@@ -34,30 +99,63 @@ export default function ClientDashboardHome() {
         </div>
       </div>
 
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-        <MetricCard title="Peso Actual" value={data?.quick_metrics.current_weight ? `${data.quick_metrics.current_weight} kg` : '--'} icon={Scale} trend={`${weightTrend} kg`} subtitle="vs. anterior" color="#3b82f6" loading={loading} />
-        <MetricCard title="Racha (Días)" value={data?.quick_metrics.streak ?? 0} icon={Flame} trend="Fuego" subtitle="Días seguidos" color="#f59e0b" loading={loading} />
-        <MetricCard title="Entrenamientos" value={data?.quick_metrics.workouts_this_week ?? 0} icon={Calendar} trend="Este mes" subtitle="Sesiones" color="#10b981" loading={loading} />
-        <MetricCard title="Rutinas" value={data?.quick_metrics.completed_routines ?? 0} icon={Target} trend="Completadas" subtitle="Total" color="#8b5cf6" loading={loading} />
+      {!loading && !hasWeightThisMonth && !isAlertDismissed && (
+        <Alert variant="destructive" className="bg-red-500/10 border-red-500/50 text-red-500 relative">
+          <AlertTriangle className="h-4 w-4" />
+          <button 
+            onClick={handleDismissAlert}
+            className="absolute right-4 top-4 text-red-500/50 hover:text-red-500 transition-colors"
+          >
+            <X className="h-4 w-4" />
+          </button>
+          <AlertTitle className="font-black italic uppercase tracking-tighter">Recordatorio de Peso</AlertTitle>
+          <AlertDescription className="font-medium">
+            No has registrado tu peso corporal este mes. Es importante mantener un seguimiento regular para ver tus avances.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 w-full overflow-hidden">
+        <MetricCard 
+          title="Peso Actual" 
+          value={data?.quick_metrics.current_weight ? `${data.quick_metrics.current_weight} kg` : '--'} 
+          icon={Scale} 
+          trend={`${weightTrend} kg`} 
+          subtitle="vs. anterior" 
+          color="#3b82f6" 
+          loading={loading} 
+        />
+        <MetricCard 
+          title="Asistencia" 
+          value={`${attendanceStats.percentage}%`} 
+          icon={CheckCircle2} 
+          trend={`${attendanceStats.daysAttended}/${attendanceStats.totalPossible}`} 
+          subtitle="días este mes" 
+          color="#10b981" 
+          loading={loading} 
+        />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-6">
-          <WeightProgressChart data={data?.weight_progress || []} goalType={data?.weight_goal_type || 'MAINTAIN'} loading={loading} />
-          <AttendanceCalendar attendance={data?.monthly_attendance || []} onToggle={toggleAttendance} />
+      <div className="grid gap-6 lg:grid-cols-3 items-start w-full overflow-hidden">
+        <div className="lg:col-span-2 space-y-6 w-full overflow-hidden">
+          <WeightProgressChart 
+            data={data?.weight_progress || []} 
+            goalType={data?.weight_goal_type || 'MAINTAIN'} 
+            loading={loading}
+            onLogWeight={logWeight}
+          />
+          <UnifiedCalendar 
+            attendance={data?.monthly_attendance || []} 
+            onToggleAttendance={toggleAttendance} 
+            loading={loading}
+          />
         </div>
-        <div className="space-y-6">
+        <div className="space-y-6 w-full overflow-hidden">
           <MembershipStatus membership={data?.membership || null} alert={data?.membership_status_alert || false} loading={loading} />
-          <RoutineOverview routine={data?.weekly_routine || null} loading={loading} />
+          <div className="animate-in slide-in-from-right duration-700 delay-200 w-full overflow-hidden">
+            <RoutineOverview routine={data?.weekly_routine || null} loading={loading} />
+          </div>
         </div>
-      </div>
-
-      <div className="pt-10 border-t border-[#333]">
-        <div className="mb-6">
-          <h2 className="text-xl md:text-2xl font-black text-white italic uppercase tracking-tighter">Seguimiento de Cargas</h2>
-          <p className="text-zinc-500 text-sm">Registra y visualiza el progreso de tus ejercicios</p>
-        </div>
-        <ProgressTab />
       </div>
     </div>
   );

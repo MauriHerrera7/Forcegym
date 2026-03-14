@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Pencil, Save, Camera, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useAuthContext } from '@/providers/AuthProvider';
 
@@ -141,20 +142,19 @@ export default function AdminProfile() {
           </CardHeader>
           <CardContent>
             {notification && (
-              <div className={`mb-8 p-4 rounded-2xl flex items-center gap-4 animate-in fade-in slide-in-from-top-4 duration-500 backdrop-blur-md border ${
-                notification.type === 'success' 
-                  ? 'bg-green-500/5 border-green-500/20 text-green-500' 
-                  : 'bg-red-500/5 border-red-500/20 text-red-500'
-              }`}>
-                <div className={`p-2 rounded-full ${notification.type === 'success' ? 'bg-green-500/10' : 'bg-red-500/10'}`}>
-                  {notification.type === 'success' ? (
-                    <CheckCircle2 className="h-5 w-5 flex-shrink-0" />
-                  ) : (
-                    <AlertCircle className="h-5 w-5 flex-shrink-0" />
-                  )}
-                </div>
-                <p className="text-sm font-bold tracking-tight">{notification.message}</p>
-              </div>
+              <Alert 
+                variant={notification.type === 'success' ? 'default' : 'destructive'} 
+                className={`mb-8 animate-in fade-in slide-in-from-top-4 duration-500 backdrop-blur-md ${
+                  notification.type === 'success' ? 'bg-green-500/10 border-green-500/20 text-green-500 [&>svg]:text-green-500' : 'bg-red-500/10 border-red-500/20 text-red-500 [&>svg]:text-red-500'
+                }`}
+              >
+                {notification.type === 'success' ? (
+                  <CheckCircle2 className="h-4 w-4" />
+                ) : (
+                  <AlertCircle className="h-4 w-4" />
+                )}
+                <AlertDescription className="font-bold tracking-tight ml-2">{notification.message}</AlertDescription>
+              </Alert>
             )}
             
             <form onSubmit={handleSubmit} className="space-y-8">

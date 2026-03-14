@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Search, Edit, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -139,7 +141,7 @@ export default function AdminUsersPage() {
   };
 
   return (
-    <div className="space-y-6 p-4 sm:p-6">
+    <div className="space-y-6 p-2 sm:p-6 w-full overflow-hidden">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="text-center sm:text-left">
@@ -153,31 +155,120 @@ export default function AdminUsersPage() {
       {/* Users Table */}
       <Card className="bg-[#191919] border-[#404040]">
         <CardHeader>
-          <CardTitle className="text-white">
-            Lista de Usuarios
-          </CardTitle>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <CardTitle className="text-white">
+              Lista de Usuarios
+            </CardTitle>
+          </div>
         </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-[#404040]">
-                  <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Usuario</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Rol</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Membresía</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Estado</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Fecha Registro</th>
-                  <th className="text-right py-3 px-4 text-sm font-medium text-gray-400">Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
+        <CardContent className="p-0 sm:p-6 p-4">
+          {/* Mobile View (Cards) */}
+          <div className="grid grid-cols-1 gap-4 md:hidden">
+            {filteredUsers.map((user) => (
+              <div key={user.id} className="bg-[#202020] p-4 rounded-xl border border-[#404040] space-y-4">
+                {/* Header: User Info & Status */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Avatar className="h-10 w-10 ring-2 ring-[#404040]">
+                      <AvatarImage src={user.profile_picture_url || user.profile_picture} alt={user.first_name || 'User'} />
+                      <AvatarFallback className="bg-[#ff0400] text-white font-semibold">
+                        {user.first_name?.[0] || user.username?.[0] || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-medium text-white text-sm">
+                        {user.full_name || (user.first_name || user.last_name ? 
+                          `${user.first_name || ''} ${user.last_name || ''}`.trim() 
+                          : user.username || user.email || 'Usuario')}
+                      </p>
+                      <p className="text-xs text-gray-400">
+                         {user.created_at && new Date(user.created_at).toString() !== 'Invalid Date' 
+                           ? format(new Date(user.created_at), "d MMM yyyy", { locale: es }) 
+                           : 'Sin fecha'}
+                      </p>
+                    </div>
+                  </div>
+                  {/* Status Toggle */}
+                  <div className="flex flex-col items-center gap-1">
+                    <Switch
+                      checked={user.is_active}
+                      onCheckedChange={() => handleToggleStatus(user.id)}
+                      disabled={loading}
+                    />
+                    <span className={`text-[10px] font-medium ${user.is_active ? 'text-green-400' : 'text-gray-500'}`}>
+                      {user.is_active ? 'Activo' : 'Inact.'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Body: Role & Membresia */}
+                <div className="grid grid-cols-2 gap-2 pb-1">
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">Rol</p>
+                    <Badge
+                      variant="outline"
+                      className={user.role?.toUpperCase() === 'ADMIN' 
+                        ? 'bg-orange-500/20 text-orange-400 border-orange-500/30'
+                        : 'bg-blue-500/20 text-blue-400 border-blue-500/30'
+                      }
+                    >
+                      {user.role?.toUpperCase() === 'ADMIN' ? '👑 Admin' : '👤 Cliente'}
+                    </Badge>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">Membresía</p>
+                    <Badge
+                      variant="outline"
+                      className={getMembershipColor(user.membership_info?.plan_name)}
+                    >
+                       {user.membership_info?.plan_name || 'Sin membresía'}
+                    </Badge>
+                  </div>
+                </div>
+
+                {/* Footer: Actions */}
+                <div className="flex justify-end pt-3 border-t border-[#404040]/50">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => deleteUser(user.id)}
+                    className="border-red-500/30 hover:bg-red-500/20 text-red-400 h-8"
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Eliminar
+                  </Button>
+                </div>
+              </div>
+            ))}
+            
+            {filteredUsers.length === 0 && (
+              <div className="text-center py-8">
+                <p className="text-gray-400 text-sm">No se encontraron usuarios</p>
+              </div>
+            )}
+          </div>
+
+          {/* Desktop View (Table) */}
+          <div className="hidden md:block w-full">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-[#404040]">
+                  <TableHead className="text-gray-400 whitespace-nowrap py-3">Usuario</TableHead>
+                  <TableHead className="text-gray-400 whitespace-nowrap py-3">Rol</TableHead>
+                  <TableHead className="text-gray-400 whitespace-nowrap py-3">Membresía</TableHead>
+                  <TableHead className="text-gray-400 whitespace-nowrap py-3">Estado</TableHead>
+                  <TableHead className="text-gray-400 whitespace-nowrap py-3">Fecha Registro</TableHead>
+                  <TableHead className="text-gray-400 text-right py-3">Acciones</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {filteredUsers.map((user) => (
-                  <tr
+                  <TableRow
                     key={user.id}
-                    className="border-b border-[#404040]/50 hover:bg-[#404040]/20 transition-colors"
+                    className="border-[#404040]/50 hover:bg-[#404040]/20 transition-colors"
                   >
                     {/* Usuario */}
-                    <td className="py-4 px-4">
+                    <TableCell className="py-4 whitespace-nowrap">
                       <div className="flex items-center gap-3">
                         <Avatar className="h-10 w-10 ring-2 ring-[#404040]">
                           <AvatarImage src={user.profile_picture_url || user.profile_picture} alt={user.first_name} />
@@ -194,10 +285,10 @@ export default function AdminUsersPage() {
                           </p>
                         </div>
                       </div>
-                    </td>
+                    </TableCell>
 
                     {/* Rol */}
-                    <td className="py-4 px-4">
+                    <TableCell className="py-4 whitespace-nowrap">
                       <Badge
                         variant="outline"
                         className={user.role?.toUpperCase() === 'ADMIN' 
@@ -207,44 +298,36 @@ export default function AdminUsersPage() {
                       >
                         {user.role?.toUpperCase() === 'ADMIN' ? '👑 Admin' : '👤 Cliente'}
                       </Badge>
-                    </td>
+                    </TableCell>
 
                     {/* Membresía */}
-                    <td className="py-4 px-4">
+                    <TableCell className="py-4 whitespace-nowrap">
                       <Badge
                         variant="outline"
                         className={getMembershipColor(user.membership_info?.plan_name)}
                       >
                         {user.membership_info?.plan_name || 'Sin membresía'}
                       </Badge>
-                    </td>
+                    </TableCell>
 
                     {/* Estado */}
-                    <td className="py-4 px-4">
+                    <TableCell className="py-4 whitespace-nowrap">
                       <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => handleToggleStatus(user.id)}
+                        <Switch
+                          checked={user.is_active}
+                          onCheckedChange={() => handleToggleStatus(user.id)}
                           disabled={loading}
-                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                            user.is_active ? 'bg-green-500' : 'bg-gray-600'
-                          } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                        >
-                          <span
-                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                              user.is_active ? 'translate-x-6' : 'translate-x-1'
-                            }`}
-                          />
-                        </button>
+                        />
                         <span className={`text-xs font-medium ${
                           user.is_active ? 'text-green-400' : 'text-gray-500'
                         }`}>
                           {user.is_active ? 'Activo' : 'Inactivo'}
                         </span>
                       </div>
-                    </td>
+                    </TableCell>
 
                     {/* Fecha */}
-                    <td className="py-4 px-4">
+                    <TableCell className="py-4 whitespace-nowrap">
                       <p className="text-sm text-gray-400">
                         {user.created_at ? (
                           new Date(user.created_at).toString() !== 'Invalid Date' ? (
@@ -252,10 +335,10 @@ export default function AdminUsersPage() {
                           ) : 'Fecha Inválida'
                         ) : 'Sin fecha'}
                       </p>
-                    </td>
+                    </TableCell>
 
                     {/* Acciones */}
-                    <td className="py-4 px-4">
+                    <TableCell className="py-4 whitespace-nowrap text-right">
                       <div className="flex items-center justify-end gap-2">
                         <Button
                           size="sm"
@@ -266,11 +349,11 @@ export default function AdminUsersPage() {
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
 
             {filteredUsers.length === 0 && (
               <div className="text-center py-12">
