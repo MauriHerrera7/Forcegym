@@ -155,11 +155,10 @@ export function UnifiedCalendar({ attendance, onToggleAttendance, loading }: Uni
                 classNames={{
                   months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
                   month: "space-y-4 w-full",
-                  table: "w-full border-collapse space-y-1",
-                  head_row: "flex w-full",
-                  head_cell: "text-zinc-500 rounded-md w-8 h-8 sm:w-9 sm:h-9 font-normal text-[0.8rem]",
-                  row: "flex w-full mt-2",
-                  cell: "h-8 w-8 sm:h-9 sm:w-9 text-center text-sm p-0 relative focus-within:relative focus-within:z-20",
+                  month_grid: "w-full border-collapse space-y-1",
+                  weekdays: "flex w-full",
+                  weekday: "text-zinc-500 rounded-md w-8 h-8 sm:w-9 sm:h-9 font-normal text-[0.8rem]",
+                  week: "flex w-full mt-2",
                   day: cn(
                     "h-8 w-8 sm:h-9 sm:w-9 p-0 font-normal aria-selected:opacity-100 hover:bg-[#ff0400]/20 rounded-md transition-colors"
                   ),
